@@ -1,0 +1,21 @@
+{% extends 'front-end/list.html' %}
+{% load static %}
+{% block elements %}
+    <br>
+    <div class="row">
+{% endblock %}
+{% block table %}
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Fecha</th>
+        <th>Archivo</th>
+        <th class="text-center">Descargar</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+{% endblock %}
+{% block extra %}
+    <script src="{% static 'apps/backup/backup_list.js' %}"></script>
+{% endblock %}

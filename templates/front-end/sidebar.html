@@ -1,0 +1,521 @@
+{% load static %}
+<div id="left">
+    <div class="media user-media bg-dark dker">
+        <div class="user-media-toggleHover">
+            <span class="fa fa-user"></span>
+        </div>
+        <div class="user-wrapper bg-dark">
+            <a class="user-link" href="">
+                <img class="media-object img-thumbnail user-img" alt="User Picture"
+                     src="{{ request.user.get_image }}" width="64" height="64">
+            </a>
+
+            <div class="media-body">
+                <h5 class="media-heading">{{ request.user.get_full_name }}</h5>
+                <ul class="list-unstyled user-info">
+                    <li><a href="">Administrator</a></li>
+                    <li>Ultimo acceso : <br>
+                        <small><i class="fa fa-calendar"></i>&nbsp;{{ request.user.last_login }}</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- #menu -->
+    <ul id="menu" class="bg-blue dker">
+        <li class="nav-header">Menu</li>
+        <li class="nav-divider"></li>
+        <li class="">
+            <a href="dashboard.html">
+                <i class="fa fa-dashboard"></i><span class="link-title">&nbsp;Dashboard</span>
+            </a>
+        </li>
+        <li class="">
+            <a href="javascript:;">
+                <i class="fa fa-building "></i>
+                <span class="link-title">Layouts</span>
+                <span class="fa arrow"></span>
+            </a>
+            <ul class="collapse">
+                <li>
+                    <a href="boxed.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Boxed Layout </a>
+                </li>
+                <li>
+                    <a href="fixed-header-boxed.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Boxed Layout &amp; Fixed Header </a>
+                </li>
+                <li>
+                    <a href="fixed-header-fixed-mini-sidebar.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Fixed Header and Fixed Mini Menu </a>
+                </li>
+                <li>
+                    <a href="fixed-header-menu.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Fixed Header &amp; Menu </a>
+                </li>
+                <li>
+                    <a href="fixed-header-mini-sidebar.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Fixed Header &amp; Mini Menu </a>
+                </li>
+                <li>
+                    <a href="fixed-header.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Fixed Header </a>
+                </li>
+                <li>
+                    <a href="fixed-menu-boxed.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Boxed Layout &amp; Fixed Menu </a>
+                </li>
+                <li>
+                    <a href="fixed-menu.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Fixed Menu </a>
+                </li>
+                <li>
+                    <a href="fixed-mini-sidebar.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Fixed &amp; Mini Menu </a>
+                </li>
+                <li>
+                    <a href="fxhmoxed.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Boxed and Fixed Header &amp; Nav </a>
+                </li>
+                <li>
+                    <a href="no-header-sidebar.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; No Header &amp; Sidebars </a>
+                </li>
+                <li>
+                    <a href="no-header.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; No Header </a>
+                </li>
+                <li>
+                    <a href="no-left-right-sidebar.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; No Left &amp; Right Sidebar </a>
+                </li>
+                <li>
+                    <a href="no-left-sidebar-main-search.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; No Left Sidebar &amp; Main Search </a>
+                </li>
+                <li>
+                    <a href="no-left-sidebar.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; No Left Sidebar </a>
+                </li>
+                <li>
+                    <a href="no-main-search.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; No Main Search </a>
+                </li>
+                <li>
+                    <a href="no-right-sidebar.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; No Right Sidebar </a>
+                </li>
+                <li>
+                    <a href="sm.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Mini Sidebar </a>
+                </li>
+            </ul>
+        </li>
+        <li class="">
+            <a href="javascript:;">
+                <i class="fa fa-tasks"></i>
+                <span class="link-title">Components</span>
+                <span class="fa arrow"></span>
+            </a>
+            <ul class="collapse">
+                <li>
+                    <a href="bgcolor.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Bg Color </a>
+                </li>
+                <li>
+                    <a href="bgimage.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Bg Image </a>
+                </li>
+                <li>
+                    <a href="button.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Buttons </a>
+                </li>
+                <li>
+                    <a href="icon.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Icon </a>
+                </li>
+                <li>
+                    <a href="pricing.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Pricing Table </a>
+                </li>
+                <li>
+                    <a href="progress.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Progress </a>
+                </li>
+            </ul>
+        </li>
+        <li class="">
+            <a href="javascript:;">
+                <i class="fa fa-pencil"></i>
+                <span class="link-title">
+                                    Forms
+                        	  </span>
+                <span class="fa arrow"></span>
+            </a>
+            <ul class="collapse">
+                <li>
+                    <a href="form-general.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Form General </a>
+                </li>
+                <li>
+                    <a href="form-validation.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Form Validation </a>
+                </li>
+                <li>
+                    <a href="form-wizard.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Form Wizard </a>
+                </li>
+                <li>
+                    <a href="form-wysiwyg.html">
+                        <i class="fa fa-angle-right"></i>&nbsp; Form WYSIWYG </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="table.html">
+                <i class="fa fa-table"></i>
+                <span class="link-title">Tables</span>
+            </a>
+        </li>
+        <li>
+            <a href="typography.html">
+                <i class="fa fa-font"></i>
+                <span class="link-title">
+                                    Typography
+                                  </span> </a>
+        </li>
+        <li>
+            <a href="maps.html">
+                <i class="fa fa-map-marker"></i><span class="link-title">
+                                    Maps
+                                  </span>
+            </a>
+        </li>
+        <li>
+            <a href="chart.html">
+                <i class="fa fa fa-bar-chart-o"></i>
+                <span class="link-title">
+                                    Charts
+                                  </span>
+            </a>
+        </li>
+        <li>
+            <a href="calendar.html">
+                <i class="fa fa-calendar"></i>
+                <span class="link-title">
+                                    Calendar
+                                  </span>
+            </a>
+        </li>
+        <li>
+            <a href="javascript:;">
+                <i class="fa fa-exclamation-triangle"></i>
+                <span class="link-title">
+                                      Error Pages
+                                    </span>
+                <span class="fa arrow"></span>
+            </a>
+            <ul class="collapse">
+                <li>
+                    <a href="403.html">
+                        <i class="fa fa-angle-right"></i>&nbsp;403</a>
+                </li>
+                <li>
+                    <a href="404.html">
+                        <i class="fa fa-angle-right"></i>&nbsp;404</a>
+                </li>
+                <li>
+                    <a href="405.html">
+                        <i class="fa fa-angle-right"></i>&nbsp;405</a>
+                </li>
+                <li>
+                    <a href="500.html">
+                        <i class="fa fa-angle-right"></i>&nbsp;500</a>
+                </li>
+                <li>
+                    <a href="503.html">
+                        <i class="fa fa-angle-right"></i>&nbsp;503</a>
+                </li>
+                <li>
+                    <a href="offline.html">
+                        <i class="fa fa-angle-right"></i>&nbsp;offline</a>
+                </li>
+                <li>
+                    <a href="countdown.html">
+                        <i class="fa fa-angle-right"></i>&nbsp;Under Construction</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="grid.html">
+                <i class="fa fa-columns"></i>
+                <span class="link-title">
+                            Grid
+                            </span>
+            </a>
+        </li>
+        <li>
+            <a href="blank.html">
+                <i class="fa fa-square-o"></i>
+                <span class="link-title">
+                            Blank Page
+                            </span>
+            </a>
+        </li>
+        <li class="nav-divider"></li>
+        <li>
+            <a href="login.html">
+                <i class="fa fa-sign-in"></i>
+                <span class="link-title">
+                            Login Page
+                            </span>
+            </a>
+        </li>
+        <li>
+            <a href="javascript:;">
+                <i class="fa fa-code"></i>
+                <span class="link-title">
+                            	Unlimited Level Menu
+                            	</span>
+                <span class="fa arrow"></span>
+            </a>
+            <ul class="collapse">
+                <li>
+                    <a href="javascript:;">Level 1 <span class="fa arrow"></span> </a>
+                    <ul class="collapse">
+                        <li><a href="javascript:;">Level 2</a></li>
+                        <li><a href="javascript:;">Level 2</a></li>
+                        <li>
+                            <a href="javascript:;">Level 2 <span class="fa arrow"></span> </a>
+                            <ul class="collapse">
+                                <li><a href="javascript:;">Level 3</a></li>
+                                <li><a href="javascript:;">Level 3</a></li>
+                                <li>
+                                    <a href="javascript:;">Level 3 <span class="fa arrow"></span> </a>
+                                    <ul class="collapse">
+                                        <li><a href="javascript:;">Level 4</a></li>
+                                        <li><a href="javascript:;">Level 4</a></li>
+                                        <li>
+                                            <a href="javascript:;">Level 4 <span class="fa arrow"></span> </a>
+                                            <ul class="collapse">
+                                                <li><a href="javascript:;">Level 5</a></li>
+                                                <li><a href="javascript:;">Level 5</a></li>
+                                                <li><a href="javascript:;">Level 5</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="javascript:;">Level 4</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="javascript:;">Level 2</a></li>
+                    </ul>
+                </li>
+                <li><a href="javascript:;">Level 1</a></li>
+                <li>
+                    <a href="javascript:;">Level 1 <span class="fa arrow"></span> </a>
+                    <ul class="collapse">
+                        <li><a href="javascript:;">Level 2</a></li>
+                        <li><a href="javascript:;">Level 2</a></li>
+                        <li><a href="javascript:;">Level 2</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <!-- /#menu -->
+</div>
+{#<!-- Sidebar -->#}
+{#<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">#}
+{##}
+{#    <!-- Sidebar - Brand -->#}
+{#    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">#}
+{#        <div class="sidebar-brand-icon rotate-n-15">#}
+{#            <i class="fas fa-tools"></i>#}
+{#        </div>#}
+{#        <div class="sidebar-brand-text mx-3" id="nombre_empresa">{{ empresa.nombre }}</div>#}
+{#    </a>#}
+{#    <!-- Divider -->#}
+{#    <hr class="sidebar-divider d-none d-md-block">#}
+{##}
+{#    <!-- Sidebar Toggler (Sidebar) -->#}
+{#    <div class="text-center d-none d-md-inline">#}
+{#        <button class="rounded-circle border-0" id="sidebarToggle"></button>#}
+{#    </div>#}
+{#    <!-- Divider -->#}
+{#    <hr class="sidebar-divider my-0">#}
+{##}
+{#    <!-- Nav Item - Dashboard -->#}
+{#    <li class="nav-item active">#}
+{#        <a class="nav-link" href="{% url 'menu' %}">#}
+{#            <i class="fas fa-fw fa-tachometer-alt"></i>#}
+{#            <span>Menu Principal</span></a>#}
+{#    </li>#}
+{##}
+{#    <!-- Divider -->#}
+{#    <hr class="sidebar-divider">#}
+{##}
+{#    <!-- Heading -->#}
+{#    <div class="sidebar-heading">#}
+{#        Gestión#}
+{#    </div>#}
+{##}
+{#    <!-- Nav Item - Pages Collapse Menu -->#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'cliente:lista' %}">#}
+{#            <i class="fa fa-users"></i>#}
+{#            <span>Clientes</span></a>#}
+{#    </li>#}
+{##}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'proveedor:lista' %}">#}
+{#            <i class="fas fa-toolbox"></i>#}
+{#            <span>Proveedores</span></a>#}
+{#    </li>#}
+{##}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'producto:lista' %}">#}
+{#            <i class="fas fa-fw fa-wrench"></i>#}
+{#            <span>Productos</span></a>#}
+{#    </li>#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'categoria:lista' %}">#}
+{#            <i class="fab fa-buffer"></i>#}
+{#            <span>Categoria</span></a>#}
+{#    </li>#}
+{##}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'presentacion:lista' %}">#}
+{#            <i class="fas fa-truck-loading"></i>#}
+{#            <span>Presentacion</span></a>#}
+{#    </li>#}
+{##}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'gasto:lista' %}">#}
+{#            <i class="fas fa-dollar-sign"></i>#}
+{#            <span>Gastos</span></a>#}
+{#    </li>#}
+{#    <!-- Nav Item - Utilities Collapse Menu -->#}
+{##}
+{##}
+{#    <!-- Divider -->#}
+{#    <hr class="sidebar-divider">#}
+{##}
+{#    <!-- Heading -->#}
+{#    <div class="sidebar-heading">#}
+{#        Comercial#}
+{#    </div>#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'venta:lista' %}">#}
+{#            <i class="fas fa-hand-holding-usd"></i>#}
+{#            <span>Ventas</span></a>#}
+{#    </li>#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'compra:lista' %}">#}
+{#            <i class="fas fa-shopping-bag"></i>#}
+{#            <span>Compras</span></a>#}
+{#    </li>#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'ctas_cobrar:lista' %}">#}
+{#            <i class="fas fa-search-dollar"></i>#}
+{#            <span>Cuentas por Cobrar</span></a>#}
+{#    </li>#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"#}
+{#           aria-expanded="true" aria-controls="collapseUtilities">#}
+{#            <i class="fas fa-fw fa-wrench"></i>#}
+{#            <span>Utilities</span>#}
+{#        </a>#}
+{#        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"#}
+{#             data-parent="#accordionSidebar">#}
+{#            <div class="bg-white py-2 collapse-inner rounded">#}
+{#                <h6 class="collapse-header">Custom Utilities:</h6>#}
+{#                <a class="collapse-item" href="{% static 'sistema/utilities-color.html' %}">Colors</a>#}
+{#                <a class="collapse-item" href="{% static 'sistema/utilities-border.html' %}">Borders</a>#}
+{#                <a class="collapse-item" href="{% static 'sistema/utilities-animation.html' %}">Animations</a>#}
+{#                <a class="collapse-item" href="{% static 'sistema/utilities-other.html' %}">Other</a>#}
+{#            </div>#}
+{#        </div>#}
+{#    </li>#}
+{#    <!-- Nav Item - Pages Collapse Menu -->#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"#}
+{#           aria-expanded="true" aria-controls="collapsePages">#}
+{#            <i class="fas fa-fw fa-folder"></i>#}
+{#            <span>Pages</span>#}
+{#        </a>#}
+{#        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">#}
+{#            <div class="bg-white py-2 collapse-inner rounded">#}
+{#                <h6 class="collapse-header">Login Screens:</h6>#}
+{#                <a class="collapse-item" href="login.html">Login</a>#}
+{#                <a class="collapse-item" href="register.html">Register</a>#}
+{#                <a class="collapse-item" href="{% static 'sistema/forgot-password.html' %}">Forgot Password</a>#}
+{#                <div class="collapse-divider"></div>#}
+{#                <h6 class="collapse-header">Other Pages:</h6>#}
+{#                <a class="collapse-item" href="{% static 'sistema/404.html' %}">404 Page</a>#}
+{#                <a class="collapse-item" href="{% static 'sistema/blank.html' %}">Blank Page</a>#}
+{#            </div>#}
+{#        </div>#}
+{#    </li>#}
+{##}
+{#    <!-- Nav Item - Charts -->#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% static 'sistema/charts.html' %}">#}
+{#            <i class="fas fa-fw fa-chart-area"></i>#}
+{#            <span>Charts</span></a>#}
+{#    </li>#}
+{##}
+{#    <!-- Nav Item - Tables -->#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% static 'sistema/tables.html' %}">#}
+{#            <i class="fas fa-fw fa-table"></i>#}
+{#            <span>Tables</span></a>#}
+{#    </li>#}
+{#    <hr class="sidebar-divider">#}
+{##}
+{#    <!-- Heading -->#}
+{#    <div class="sidebar-heading">#}
+{#        Reportes#}
+{#    </div>#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#venta_reportes"#}
+{#           aria-expanded="true" aria-controls="venta_reportes">#}
+{#            <i class="fas fa-fw fa-folder"></i>#}
+{#            <span>Ventas</span>#}
+{#        </a>#}
+{#        <div id="venta_reportes" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">#}
+{#            <div class="bg-white py-2 collapse-inner rounded">#}
+{#                <a class="collapse-item" href="{% url 'venta:report_total' %}">Ventas totales</a>#}
+{#                <a class="collapse-item" href="{% url 'venta:report_by_product' %}">Ventas por productos</a>#}
+{#                <a class="collapse-item" href="{% url 'venta:report_total_pedidos' %}">Pedidos (reservados)</a>#}
+{#            </div>#}
+{#        </div>#}
+{#    </li>#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'compra:lista' %}">#}
+{#            <i class="fas fa-shopping-bag"></i>#}
+{#            <span>Compras</span></a>#}
+{#    </li>#}
+{#<hr class="sidebar-divider">#}
+{##}
+{#    <!-- Heading -->#}
+{#    <div class="sidebar-heading">#}
+{#        Seguridad#}
+{#    </div>#}
+{#        <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'user:lista' %}">#}
+{#            <i class="fas fa-user-shield"></i>#}
+{#            <span>Usuarios</span></a>#}
+{#    </li>#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'compra:lista' %}">#}
+{#            <i class="fas fa-users-cog"></i>#}
+{#            <span>Grupos</span></a>#}
+{#    </li>#}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="{% url 'compra:lista' %}">#}
+{#            <i class="fas fa-server"></i>#}
+{#            <span>Respaldos</span></a>#}
+{#    </li>#}
+{#</ul>#}
+{#<!-- End of Sidebar -->#}

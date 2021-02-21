@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<title>{{ title }}</title>
+<meta http-equiv="Content-Type" content="multipart/mixed; charset=UTF-8"/>
+<style>
+    .img-invoice {
+        width: 400px;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+    {#font-size: xx-large#}
+    }
+
+    .fact {
+        text-align: right;
+        text-transform: uppercase;
+        font-size: xx-large;
+    }
+
+    .n {
+        color: red;
+    }
+
+    #invoice thead tr th {
+        text-align: left;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    #invoice thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    #invoice tbody tr {
+        padding: 0;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    table th {
+        color: #fff;
+        background-color: #4e73df;
+    }
+</style>
+<body>
+<img src="{{ icon }}" class="img-invoice" alt="logo">
+<p class="head">
+    <b>{{ empresa.nombre|upper }}</b><br>
+    <b>RUC: {{ empresa.ruc }}</b><br>
+    <b>TELF: {{ empresa.telefono }}</b>&nbsp;&nbsp;<b>EMAIL: {{ empresa.correo }}</b><br>
+    <b>{{ empresa.direccion|upper }} / ECUADOR</b>
+</p>
+<h1 class="head">
+    {{ title|upper }}</h1>
+<p class="fact">
+    <b>FACTURA N°:</b><br>
+    <b class="n">{{ sale.id|stringformat:"010d" }}</b>
+</p>
+<p>
+    <b>FECHA DE VENTA:</b> {{ sale.fecha }}<br>
+    <b>CLIENTE:</b> {{ sale.cliente.nombres|upper }}&nbsp;{{ sale.cliente.apellidos|upper }}<br>
+    <b>CEDULA:</b> {{ sale.cliente.cedula }}<br>
+
+</p>
+<table id="invoice">
+    <thead>
+    <tr>
+        <th style="width: 30%;"> PRODUCTO</th>
+        <th style="width: 20%;"> CATEGORIA</th>
+        <th style="width: 20%;"> PRESENTACION</th>
+        <th style="width: 15%;" >&nbsp;CANTIDAD</th>
+        <th style="width: 20%;"> PRECIO DE VENTA</th>
+        <th style="width: 15%;"> SUBTOTAL</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for d in det_sale %}
+        <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
+            <td>{{ d.producto.producto.producto_base.nombre }}</td>
+            <td>{{ d.producto.producto.producto_base.categoria.nombre }}</td>
+            <td>{{ d.producto.producto.presentacion.nombre }}</td>
+            <td style="text-align: center;">{{ d.cantidad }}</td>
+            <td class="text-center">${{ d.pvp }}</td>
+            <td style="text-align: center;">${{ d.subtotal }}</td>
+        </tr>
+        <tr></tr>
+        <tr style="border-top: 1px solid black; padding-top: 4px;"></tr>
+    {% endfor %}
+    <tr></tr>
+    <tr></tr>
+    <tr style="padding-top: 0px;">
+        <td colspan="5" style="text-align: right"><b>SUBTOTAL</b></td>
+        <td style="text-align: right">${{ sale.subtotal }}</td>
+    </tr>
+    <tr style="padding-top: 0px;">
+        <td colspan="5" style="text-align: right"><b>IVA {{ empresa.iva }}%</b></td>
+        <td style="text-align: right">${{ sale.iva }}</td>
+    </tr>
+    <tr style="padding-top: 0px;">
+        <td colspan="5" style="text-align: right"><b>TOTAL A PAGAR</b></td>
+        <td style="text-align: right">${{ sale.total }}</td>
+    </tr>
+    </tbody>
+</table>
+<table style="margin-top: 250px;">
+    <thead>
+    <tr>
+        <th><br>****GRACIAS POR PREFERIRNOS****</th>
+    </tr>
+    <tr>
+        <th><br>NO SE ACEPTAN CAMBIOS NI DEVOLUCIONES</th>
+    </tr>
+    </thead>
+</table>
+</body>
+</html>

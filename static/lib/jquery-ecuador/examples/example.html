@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+  <title>ruc_jquery_validator.js</title>
+  <meta charset="utf-8" />
+  <!-- jquery --><script type="text/javascript" src="../lib/jquery-1.9.1/jquery-1.9.1.js"></script>
+  <!-- validator --><script type="text/javascript" src="../dist/ruc_jquery_validator.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="example.css">
+</head>
+<body>
+
+  <header>
+    <h1>RUC / cédula jquery validador ecuador</h1>
+    <div id="tagline">
+      de <a href="http://twitter.com/macool">@macool</a>
+    </div>
+  </header>
+
+  <div id="title">
+    <h2>ejemplos</h2>
+  </div>
+
+  <div>
+    github: <a href="https://github.com/macool/cedula-ruc-ecuador-validator-jquery">https://github.com/macool/cedula-ruc-ecuador-validator-jquery</a>
+  </div>
+
+  <div>
+    <h3>uso básico</h3>
+    <label for="cedula_1">cédula:</label>
+    <input type="text" id="cedula_1" name="cedula_1">
+
+    <code>
+$("#cedula_1").validarCedulaEC();
+    </code>
+
+    <script type="text/javascript">
+      $("#cedula_1").validarCedulaEC();
+    </script>
+  </div>
+
+  <div class="division"></div>
+
+  <div>
+    <h3>con opciones</h3>
+    <label for="cedula_2">cédula:</label>
+    <input type="text" id="cedula_2" name="cedula_2">
+
+    <code>
+$("#cedula_2").validarCedulaEC({
+  the_classes: "color_blue",
+  events: "blur"
+});
+    </code>
+
+    <script type="text/javascript">
+      $("#cedula_2").validarCedulaEC({
+        the_classes: "color_blue",
+        events: "blur"
+      });
+    </script>
+  </div>
+
+  <div class="division"></div>
+
+  <div>
+    <h3>no validar a menos que hayan 10 o 13 caracteres</h3>
+    <label for="cedula_4">cédula:</label>
+    <input type="text" id="cedula_4" name="cedula_4">
+
+    <code>
+$("#cedula_4").validarCedulaEC({
+  strict: false
+});
+    </code>
+
+    <script type="text/javascript">
+      $("#cedula_4").validarCedulaEC({
+        strict: false
+      });
+    </script>
+  </div>
+
+  <div class="division"></div>
+
+  <div>
+    <h3>con callbacks</h3>
+    <label for="cedula_3">cédula:</label>
+    <input type="text" id="cedula_3" name="cedula_3">
+
+    <code>
+$("#cedula_3").validarCedulaEC({
+  onValid: function () {
+    window.alert("cédula válida.");
+    console.log(this);
+  },
+  onInvalid: function () {
+    window.alert("cédula inválida.");
+    console.log(this);
+  }
+});
+    </code>
+
+    <script type="text/javascript">
+      $("#cedula_3").validarCedulaEC({
+        onValid: function () {
+          console.log(this);
+          window.alert("cédula válida.");
+        },
+        onInvalid: function () {
+          console.log(this);
+          window.alert("cédula inválida.");
+        }
+      });
+    </script>
+
+  </div>
+
+</body>
+</html>
