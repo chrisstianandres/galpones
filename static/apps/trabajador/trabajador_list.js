@@ -106,7 +106,7 @@ $(function () {
             if (data.estado === 'ACTIVO') {
                 $('td', row).eq(8).find('span').addClass('badge badge-success');
             } else if (data.estado === 'INACTIVO') {
-                $('td', row).eq(8).find('span').addClass('badge btn-danger');
+                $('td', row).eq(8).find('span').addClass('badge badge-danger');
             }
 
         }

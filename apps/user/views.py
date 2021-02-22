@@ -93,7 +93,6 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         data = {}
         action = request.POST['action']
-        pk = request.POST['id']
         try:
             if action == 'add':
                 f = UserForm(request.POST, request.FILES)
@@ -101,17 +100,21 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                     f.save(commit=False)
                     if verificar(f.data['cedula']):
                         f.save()
-                        return HttpResponseRedirect('/empleado/lista')
+                        return HttpResponseRedirect('/user/lista')
                     else:
+                        data = self.get_context_data()
                         f.add_error("cedula", "Numero de Cedula no valido para Ecuador")
                         data['form'] = f
                 else:
+                    data = self.get_context_data()
+                    data['error'] = f.errors
                     data['form'] = f
                 return render(request, 'front-end/user/form.html', data)
             elif action == 'delete':
-               cli = User.objects.get(pk=pk)
-               cli.delete()
-               data['resp'] = True
+                pk = request.POST['id']
+                cli = User.objects.get(pk=pk)
+                cli.delete()
+                data['resp'] = True
             else:
                 data['error'] = 'No ha seleccionado ninguna opción'
         except Exception as e:
@@ -119,12 +122,13 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
         return HttpResponse(json.dumps(data), content_type='application/json')
 
     def get_context_data(self, **kwargs):
-        data = super().get_context_data(**kwargs)
+        data = super(CrudView, self).get_context_data(**kwargs)
         data['icono'] = opc_icono
         data['entidad'] = opc_entidad
-        data['boton'] = 'Nuevo Usuario'
+        data['boton'] = 'Guardar Usuario'
         data['titulo'] = 'Registro de Usuarios'
         data['nuevo'] = '/usuario/nuevo'
+        data['action'] = 'add'
         data['form'] = UserForm
         data['empresa'] = empresa
         return data

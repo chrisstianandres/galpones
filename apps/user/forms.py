@@ -28,8 +28,8 @@ class UserForm(forms.ModelForm):
                 attrs={'placeholder': 'Ingrese numero de cedula', 'class': 'form-control form-rounded'})
             self.fields['email'].widget = EmailInput(
                 attrs={'placeholder': 'abc@correo.com', 'class': 'form-control form-rounded'})
-            self.fields['direccion'].widget = TextInput(
-                attrs={'placeholder': 'Ingresa una direccion', 'class': 'form-control form-rounded'})
+            # self.fields['direccion'].widget = TextInput(
+            #     attrs={'placeholder': 'Ingresa una direccion', 'class': 'form-control form-rounded'})
             self.fields['telefono'].widget = TextInput(
                 attrs={'placeholder': 'Ingresa un numero de telefono', 'class': 'form-control form-rounded'})
             self.fields['celular'].widget = TextInput(
@@ -74,8 +74,7 @@ class UserForm(forms.ModelForm):
             'telefono': 'Telefono',
             'celular': 'Celular',
             'direccion': 'Direccion',
-            'password': 'Contraseña',
-
+            'password': 'Contraseña'
         }
         widgets = {
             'username': forms.TextInput(),
@@ -87,9 +86,11 @@ class UserForm(forms.ModelForm):
             'correo': forms.EmailInput(),
             'telefono': forms.TextInput(),
             'celular': forms.TextInput(),
-            'direccion': forms.Textarea(),
+            'direccion': forms.Textarea(attrs={'placeholder': 'Ingresa una direccion', 'class': 'form-control',
+                                               'rows': '4', 'cols': '30'}),
             'groups': forms.SelectMultiple(attrs={'class': 'form-control', 'style': '100%', 'multiple': 'multiple'}),
-            'password': forms.PasswordInput(attrs={'class': 'form-control'}, render_value=True)
+            'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa una contraseña'},
+                                            render_value=True)
         }
 
     def save(self, commit=True):

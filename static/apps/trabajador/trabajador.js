@@ -12,17 +12,17 @@ $(document).ready(function () {
 
 
     $.validator.setDefaults({
-        errorClass: 'invalid-feedback',
+        errorClass: 'help-block',
 
         highlight: function (element, errorClass, validClass) {
-            $(element)
-                .addClass("is-invalid")
-                .removeClass("is-valid");
+            $(element).parent()
+                .addClass("has-error")
+                .removeClass("has-success");
         },
         unhighlight: function (element, errorClass, validClass) {
-            $(element)
-                .addClass("is-valid")
-                .removeClass("is-invalid");
+            $(element).parent()
+                .addClass("has-success")
+                .removeClass("has-error");
         }
     });
     $("#form").validate({
@@ -50,7 +50,7 @@ $(document).ready(function () {
                 maxlength: 10,
                 digits: true
             },
-            correo: {
+            email: {
                 required: true,
                 email: true
             },
@@ -60,6 +60,7 @@ $(document).ready(function () {
             telefono: {
                 required: true,
                 minlength: 9,
+                maxlength: 9,
                 digits: true
             },
             celular: {
@@ -100,8 +101,7 @@ $(document).ready(function () {
                 digits: "Debe ingresar unicamente numeros",
                 maxlength: "Tu numero de documento debe tener maximo 10 digitos",
             },
-            correo: "Debe ingresar un correo valido",
-            cargo: "Debe seleccionar un cargo",
+            email: "Debe ingresar un correo valido",
             password: {
                 required: "Debe Ingresar una contraseña",
                 minlength: "Tu contraseña debe tener al menos 5 digitos"
@@ -109,8 +109,8 @@ $(document).ready(function () {
             telefono: {
                 required: "Por favor ingresa tu numero convencional",
                 minlength: "Tu numero de documento debe tener al menos 9 digitos",
+                maxlength: "Tu numero de documento debe tener al menos 9 digitos",
                 digits: "Debe ingresar unicamente numeros",
-                maxlength: "Tu numero de documento debe tener maximo 10 digitos",
             },
             celular: {
                 required: "Por favor ingresa tu numero celular",
@@ -138,19 +138,25 @@ $(document).ready(function () {
         });
         $(this).val(changue);
     });
-    if (user_tipo==='0'){
-         $('#id_groups').select2({
-        theme: 'classic',
-        languaje: 'es',
-        placeholder: 'Buscar...',
-    }).prop('disabled',true);
+    if (user_tipo === '0') {
+        $('#id_groups').select2({
+            theme: 'classic',
+        }).prop('disabled', true);
     } else {
-         $('#id_groups').select2({
-        theme: 'classic',
-        languaje: 'es',
-        placeholder: 'Buscar...',
-    });
+        $('#id_groups').select2({
+            theme: 'classic',
+            language: {
+                inputTooShort: function () {
+                    return "Ingresa al menos un caracter...";
+                },
+                "noResults": function () {
+                    return "Sin resultados";
+                },
+                "searching": function () {
+                    return "Buscando...";
+                }
+            },
+            placeholder: 'Buscar...',
+        });
     }
-
-
 });

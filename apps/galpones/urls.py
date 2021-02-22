@@ -19,7 +19,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import path, include
 
 from apps import backEnd
-from galpones import settings
+from apps.galpones import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),

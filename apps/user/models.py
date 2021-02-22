@@ -1,8 +1,8 @@
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.forms import model_to_dict
 
-from galpones.settings import MEDIA_URL, STATIC_URL
+from apps.galpones import MEDIA_URL
 
 SEXO = (
     (1, 'Masculino'),
@@ -15,7 +15,7 @@ ESTADO = (
 )
 
 tipo = (
-    (1, 'USER'),
+    (1, 'ADMINISTRADOR'),
     (0, 'CLIENTE'),
 )
 

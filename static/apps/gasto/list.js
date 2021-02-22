@@ -78,7 +78,7 @@ function datatable_fun() {
                     className: 'btn btn-info btn-space',
                     text: '<i class="far fa-keyboard"></i> &nbsp;Tipo de Gasto</a>',
                     action: function (e, dt, node, config) {
-                        window.location.href = '/tipo_gasto/lista'
+                        window.location.href = '../../../apps/tipo_gasto/lista'
                     }
                 },
             ],

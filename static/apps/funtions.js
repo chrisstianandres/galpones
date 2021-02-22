@@ -184,14 +184,21 @@ function save_estado(title, url, content, parametros, callback) {
                 data: parametros,
             }).done(function (data) {
                 if (!data.hasOwnProperty('error')) {
-                    callback();
+                    $.isLoading({
+                        text: "<strong>" + 'Cargando..' + "</strong>",
+                        tpl: '<span class="isloading-wrapper %wrapper%"><i class="fas fa-spinner fa-2x fa-spin"></i><br>%text%</span>',
+                    });
+                    setTimeout(function (data) {
+                        $.isLoading('hide');
+                        callback(data);
+                    }, 1000);
                     return false;
                 }
                 menssaje_error(data.error, data.content, 'fa fa-times-circle');
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                alert(textStatus + ': ' + errorThrown);
-            });
-
+            })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    alert(textStatus + ': ' + errorThrown);
+                });
         }
     })
 }
