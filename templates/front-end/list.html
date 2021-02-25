@@ -33,11 +33,9 @@
                                         {% endfor %}
                                         {% for field in form.visible_fields %}
                                             <div class="col-lg-5">
-
                                                 <label class="control-label">{{ field.label_tag }}</label>
                                                 <label class="badge bg-important">{{ field.errors }}</label>
                                                 {{ field }}
-
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -58,7 +56,8 @@
             {% endblock %}
         </div>
     {% endblock %}
-    <div class="container-fluid">
+    {% block tablas %}
+        <div class="container-fluid">
         <div class="col-xl-12 col-sm-12" id="div_table">
             <!-- Tabla Listado -->
             <div class="panel panel-danger">
@@ -96,6 +95,8 @@
 
         <!-- /.container-fluid -->
     </div>
+    {% endblock %}
+
 
     {% block modal %}
 
