@@ -26,4 +26,4 @@ class ProvisionAlimento(models.Model):
         db_table = 'provision_alimento'
         verbose_name = 'provision_alimento'
         verbose_name_plural = 'provision_alimentos'
-        ordering = ['-id', '-nombre', '-fecha']
+        ordering = ['-id', '-alimento', '-fecha']

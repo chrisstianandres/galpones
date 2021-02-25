@@ -58,45 +58,80 @@ toDataURL('/media/logo_pdf.png').then(dataUrl => {
 // }
 //
 function save_with_ajax(title, url, content, parametros, callback) {
-    $.confirm({
-        theme: 'supervan',
-        icon: 'fas fa-exclamation-circle',
+    // $.confirm({
+    //     theme: 'supervan',
+    //     icon: 'fas fa-exclamation-circle',
+    //     title: title,
+    //     type: 'blue',
+    //     content: content,
+    //     columnClass: 'small',
+    //     draggable: true,
+    //     buttons: {
+    //         si: {
+    //             text: '<i class="fas fa-check"></i> Si',
+    //             btnClass: 'btn-blue',
+    //             action: function () {
+    //                 $.ajax({
+    //                     dataType: 'JSON',
+    //                     type: 'POST',
+    //                     url: url,
+    //                     data: parametros,
+    //                 }).done(function (data) {
+    //                     if (!data.hasOwnProperty('error')) {
+    //                         callback(data);
+    //                         return false;
+    //                     }
+    //                     menssaje_error('Error', data.error, 'fas fa-exclamation-circle');
+    //
+    //                 }).fail(function (jqXHR, textStatus, errorThrown) {
+    //                     alert(textStatus + ': ' + errorThrown);
+    //                 });
+    //             }
+    //         },
+    //         no: {
+    //             text: '<i class="fas fa-times"></i> No',
+    //             btnClass: 'btn-red',
+    //             action: function () {
+    //
+    //             }
+    //         }
+    //     }
+    // });
+    Swal.fire({
         title: title,
-        type: 'blue',
-        content: content,
-        columnClass: 'small',
-        draggable: true,
-        buttons: {
-            si: {
-                text: '<i class="fas fa-check"></i> Si',
-                btnClass: 'btn-blue',
-                action: function () {
-                    $.ajax({
-                        dataType: 'JSON',
-                        type: 'POST',
-                        url: url,
-                        data: parametros,
-                    }).done(function (data) {
-                        if (!data.hasOwnProperty('error')) {
-                            callback(data);
-                            return false;
-                        }
-                        menssaje_error('Error', data.error, 'fas fa-exclamation-circle');
-
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        alert(textStatus + ': ' + errorThrown);
+        text: content,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                dataType: 'JSON',
+                type: 'POST',
+                url: url,
+                data: parametros,
+            }).done(function (data) {
+                if (!data.hasOwnProperty('error')) {
+                    $.isLoading({
+                        text: "<strong>" + 'Cargando..' + "</strong>",
+                        tpl: '<span class="isloading-wrapper %wrapper%"><i class="fas fa-spinner fa-2x fa-spin"></i><br>%text%</span>',
                     });
+                    setTimeout(function () {
+                        $.isLoading('hide');
+                        callback(data);
+                    }, 1000);
+                    return false;
                 }
-            },
-            no: {
-                text: '<i class="fas fa-times"></i> No',
-                btnClass: 'btn-red',
-                action: function () {
+                menssaje_error('Error', data.error, 'fas fa-exclamation-circle');
 
-                }
-            }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ': ' + errorThrown);
+            });
         }
-    });
+    })
 }
 
 function callback(response) {
@@ -338,47 +373,85 @@ function login(url, parametros, callback, callback2) {
 }
 
 function save_with_ajax2(title, url, content, parametros, callback) {
-    $.confirm({
-        theme: 'supervan',
-        icon: 'fas fa-exclamation-circle',
+    // $.confirm({
+    //     theme: 'supervan',
+    //     icon: 'fas fa-exclamation-circle',
+    //     title: title,
+    //     type: 'blue',
+    //     content: content,
+    //     columnClass: 'small',
+    //     draggable: true,
+    //     buttons: {
+    //         si: {
+    //             text: '<i class="fas fa-check"></i> Si',
+    //             btnClass: 'btn-blue',
+    //             action: function () {
+    //                 $.ajax({
+    //                     dataType: 'JSON',
+    //                     type: 'POST',
+    //                     url: url,
+    //                     processData: false,
+    //                     contentType: false,
+    //                     data: parametros,
+    //                 }).done(function (data) {
+    //                     if (!data.hasOwnProperty('error')) {
+    //                         callback(data);
+    //                         return false;
+    //                     }
+    //                     menssaje_error_form('Error', data.error, 'fas fa-exclamation-circle');
+    //
+    //                 }).fail(function (jqXHR, textStatus, errorThrown) {
+    //                     alert(textStatus + ': ' + errorThrown);
+    //                 });
+    //             }
+    //         },
+    //         no: {
+    //             text: '<i class="fas fa-times"></i> No',
+    //             btnClass: 'btn-red',
+    //             action: function () {
+    //             }
+    //         }
+    //     }
+    // });
+    Swal.fire({
         title: title,
-        type: 'blue',
-        content: content,
-        columnClass: 'small',
-        draggable: true,
-        buttons: {
-            si: {
-                text: '<i class="fas fa-check"></i> Si',
-                btnClass: 'btn-blue',
-                action: function () {
-                    $.ajax({
-                        dataType: 'JSON',
-                        type: 'POST',
-                        url: url,
-                        processData: false,
-                        contentType: false,
-                        data: parametros,
-                    }).done(function (data) {
-                        if (!data.hasOwnProperty('error')) {
-                            callback(data);
-                            return false;
-                        }
-                        menssaje_error_form('Error', data.error, 'fas fa-exclamation-circle');
-
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        alert(textStatus + ': ' + errorThrown);
+        text: content,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                dataType: 'JSON',
+                type: 'POST',
+                url: url,
+                processData: false,
+                contentType: false,
+                data: parametros,
+            }).done(function (data) {
+                if (!data.hasOwnProperty('error')) {
+                    $.isLoading({
+                        text: "<strong>" + 'Cargando..' + "</strong>",
+                        tpl: '<span class="isloading-wrapper %wrapper%"><i class="fas fa-spinner fa-2x fa-spin"></i><br>%text%</span>',
                     });
+                    setTimeout(function () {
+                        $.isLoading('hide');
+                        callback(data);
+                    }, 1000);
+                    return false;
                 }
-            },
-            no: {
-                text: '<i class="fas fa-times"></i> No',
-                btnClass: 'btn-red',
-                action: function () {
-                }
-            }
+                menssaje_error('Error', data.error, 'fas fa-exclamation-circle');
+
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ': ' + errorThrown);
+            });
         }
-    });
+    })
 }
+
 
 // function reset(formulario) {
 //     $(formulario)[0].reset();
@@ -600,54 +673,50 @@ function customize(doc) {
 // }
 //
 //
-// function validador() {
-//     jQuery.validator.addMethod("lettersonly", function (value, element) {
-//         return this.optional(element) || /^[a-z," "]+$/i.test(value);
-//     }, "Solo puede ingresar letras y espacios");
-//
-//
-//     $.validator.setDefaults({
-//         errorClass: 'invalid-feedback',
-//
-//         highlight: function (element, errorClass, validClass) {
-//             $(element)
-//                 .addClass("is-invalid")
-//                 .removeClass("is-valid");
-//         },
-//         unhighlight: function (element, errorClass, validClass) {
-//             $(element)
-//                 .addClass("is-valid")
-//                 .removeClass("is-invalid");
-//         }
-//     });
-//
-//     jQuery.validator.addMethod("val_ced", function (value, element) {
-//         if (element.classList.contains('is-valid')) {
-//             return true
-//         } else {
-//             if (value.length === 10 || value.length === 13) {
-//                 $.ajax({
-//                     type: "POST",
-//                     url: '/verificar/',
-//                     data: {'data': value.toString()},
-//                     dataType: 'json',
-//                     success: function (data) {
-//                         if (!data.hasOwnProperty('error')) {
-//                             $(element).addClass("is-valid").removeClass("is-invalid");
-//                             return true
-//                         } else {
-//                             $(element).addClass("is-invalid").removeClass("is-valid");
-//                             return false
-//                         }
-//
-//                     },
-//                 })
-//             }
-//         }
-//
-//         // return this.optional(element) || /^[a-z," "]+$/i.test(value);
-//     }, "");
-// }
+function validador() {
+    jQuery.validator.addMethod("lettersonly", function (value, element) {
+        return this.optional(element) || /^[a-z," "]+$/i.test(value);
+    }, "Solo puede ingresar letras y espacios");
+
+
+    $.validator.setDefaults({
+        errorClass: 'help-block',
+
+        highlight: function (element, errorClass, validClass) {
+            $(element).parent().addClass("has-error").removeClass("has-success");
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).parent().addClass("has-success").removeClass("has-error");
+        }
+    });
+
+    jQuery.validator.addMethod("val_ced", function (value, element) {
+        var e = $(element).parent();
+        if (e[0].classList.contains('has-success')) {
+            return true;
+        } else {
+            if (value.length === 10 || value.length === 13) {
+                $.ajax({
+                    type: "POST",
+                    url: '/verificar/',
+                    data: {'data': value.toString()},
+                    dataType: 'json',
+                    success: function (data) {
+                        if (!data.hasOwnProperty('error')) {
+                            $(element).parent().addClass("has-success").removeClass("has-error");
+                            $('#' + element['id'] + '-error').html('').hide();
+                            return data['resp'];
+                        }
+                        $(element).parent().addClass("has-error").removeClass("has-success");
+                        return false;
+                    },
+                })
+            }
+        }
+
+        // return this.optional(element) || /^[a-z," "]+$/i.test(value);
+    }, "");
+}
 
 
 function year_footer() {

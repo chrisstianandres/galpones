@@ -1,0 +1,2 @@
+def tipogasto():
+    return None

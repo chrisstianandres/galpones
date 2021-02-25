@@ -1,90 +1,102 @@
 {% extends 'front-end/base.html' %}
 {% load static %}
 {% block content %}
-    <div class="container-fluid">
-        <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800"><i class="{{ icono }}"></i> {{ entidad }}</h1>
-        <!-- Content Row -->
-        <div class="row">
-            <div class="col-xl-12 col-sm-12" id="div_table">
-                <!-- Tabla Listado -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-list-ol"></i> {{ titulo_lista }}
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        {% block elements %}
-
-                        {% endblock %}
-                        <table id="datatable" class="table table-bordered table-condensed table-hover table-striped" style="width: 100%">
-                            {% block table %}
-
-                            {% endblock %}
-                        </table>
-                    </div>
-                    <div class="card-footer">
-                        <br>
-                        {% block table_footer %}
-                            <a type="button" class="btn btn-primary btn-sm" id="nuevo" style="color: white">
-                                <i class="fa fa-plus" aria-hidden="true"></i> Nuevo
-                            </a>
-                            <a type="button" class="btn btn-default btn-sm" id="reload"
-                               onclick=" location.reload();">
-                                <i class="fas fa-sync-alt"></i> Actualizar
-                            </a>
-                        {% endblock %}
-                    </div>
-                </div>
-            </div>
+    {% block otro %}
+        <div class="container-fluid">
+            <!-- Page Heading -->
+            <h1 class="h3 mb-2 text-gray-800"><i class="{{ icono }}"></i> {{ entidad }}</h1>
+            <!-- Content Row -->
             {% block formulario %}
                 <!-- Formulario -->
-                <div class="col-xl-4 col-lg-5" style="display: none" id="div_form">
-                    <form class="cmxform form-horizontal style-form" id="form" method="POST" action="{{ crud }}">
-                        <div class="card shadow mb-4">
-                            <!-- Card Header -->
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary"><i
-                                        class="far fa-edit"></i> Formulario de Registro</h6>
-                            </div>
-                            <!-- Card Body -->
-                            <div class="card-body">
-
-                                <input type="hidden" id="action" name="action" value="{{ action }}">
-                                <input type="hidden" id="indice" name="indice" value="{{ empresa.indice }}">
-                                <input type="hidden" id="iva" name="iva" value="{{ empresa.iva }}">
-                                <input type="hidden" name="option" value="{{ option }}">
-                                {% for hidden in form.hidden_fields %}
-                                    {{ hidden }}
-                                {% endfor %}
-                                <div class="form-group col-lg-12">
-                                    <div class="col-lg-12">
+                <div class="card col-xl-12">
+                    <div class="card-body">
+                        <div class="col-xl-12 col-lg-12" id="div_form">
+                            <form class="form-horizontal" id="form" method="POST" action="{{ crud }}">
+                                <div class="panel panel-primary">
+                                    <!-- Card Header -->
+                                    <div class="panel-heading">
+                                        <div class="container">
+                                            <h4 class="m-0 font-weight-bold"><i
+                                                    class="far fa-edit"></i> Formulario de Registro</h4>
+                                        </div>
+                                    </div>
+                                    <!-- Card Body -->
+                                    <div class="panel-body">
                                         {% csrf_token %}
                                         {{ form.media }}
-                                        {{ form.as_p }}
+                                        <input type="hidden" id="action" name="action" value="{{ action }}">
+                                        <input type="hidden" id="indice" name="indice" value="{{ empresa.indice }}">
+                                        <input type="hidden" id="iva" name="iva" value="{{ empresa.iva }}">
+                                        <input type="hidden" name="option" value="{{ option }}">
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                        {% for field in form.visible_fields %}
+                                            <div class="col-lg-5">
+
+                                                <label class="control-label">{{ field.label_tag }}</label>
+                                                <label class="badge bg-important">{{ field.errors }}</label>
+                                                {{ field }}
+
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="panel-footer">
+                                        <button class="btn btn-primary btn-sm" type="submit"><i
+                                                class="fa fa-save"></i> {{ boton }}
+                                        </button>
+                                        <a type="button" class="btn btn-danger btn-sm" style="color:white;"
+                                           id="cancel">
+                                            <i class="fas fa-times"></i> Cancelar
+                                        </a>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card-footer">
-                                <button class="btn btn-primary btn-sm" type="submit"><i
-                                        class="fa fa-save"></i> {{ boton }}
-                                </button>
-                                <a type="button" class="btn btn-danger btn-sm" style="color:white;" id="cancel">
-                                    <i class="fas fa-times"></i> Cancelar
-                                </a>
-
-                            </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 </div>
             {% endblock %}
-
-            {% block botones %}
-
-            {% endblock %}
         </div>
+    {% endblock %}
+    <div class="container-fluid">
+        <div class="col-xl-12 col-sm-12" id="div_table">
+            <!-- Tabla Listado -->
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <div class="container">
+                        <h4 class="m-0 font-weight-bold"><i class="fas fa-list-ol"></i> {{ titulo_lista }}
+                        </h4>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    {% block elements %}
+
+                    {% endblock %}
+                    <table id="datatable" class="table table-bordered table-condensed table-hover table-striped"
+                           style="width: 100%">
+                        {% block table %}
+
+                        {% endblock %}
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <br>
+                    {% block table_footer %}
+                        <a type="button" class="btn btn-default btn-sm" id="reload"
+                           onclick=" location.reload();">
+                            <i class="fas fa-sync-alt"></i> Actualizar
+                        </a>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        {% block botones %}
+
+        {% endblock %}
+
+        <!-- /.container-fluid -->
     </div>
-    <!-- /.container-fluid -->
+
     {% block modal %}
 
     {% endblock %}

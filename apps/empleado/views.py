@@ -10,19 +10,21 @@ from django.views.generic import *
 from apps.backEnd import nombre_empresa, verificar
 from apps.cliente.forms import ClienteForm
 from apps.cliente.models import Cliente
+from apps.empleado.forms import EmpleadoForm
+from apps.empleado.models import Empleado
 from apps.mixins import ValidatePermissionRequiredMixin
 from apps.ubicacion.models import *
 
-opc_icono = 'fa fa-user'
-opc_entidad = 'Clientes'
-crud = '/cliente/nuevo'
+opc_icono = 'fas fa-people-carry'
+opc_entidad = 'Empleados'
+crud = '/empleado/nuevo'
 empresa = nombre_empresa()
 
 
 class lista(ValidatePermissionRequiredMixin, ListView):
     model = Cliente
-    template_name = "front-end/cliente/list.html"
-    permission_required = 'cliente.view_cliente'
+    template_name = "front-end/empleado/list.html"
+    permission_required = 'empleado.view_empleado'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
@@ -35,13 +37,13 @@ class lista(ValidatePermissionRequiredMixin, ListView):
             action = request.POST['action']
             if action == 'list':
                 data = []
-                for c in Cliente.objects.all():
+                for c in Empleado.objects.all():
                     data.append(c.toJSON())
 
             elif action == 'search':
                 data = []
                 term = request.POST['term']
-                query = Cliente.objects.filter(
+                query = Empleado.objects.filter(
                     Q(nombres__icontains=term) | Q(apellidos__icontains=term) | Q(cedula__icontains=term))[0:10]
                 for a in query:
                     item = a.toJSON()
@@ -60,17 +62,17 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['icono'] = opc_icono
         data['entidad'] = opc_entidad
         data['boton'] = 'Guardar'
-        data['titulo'] = 'Listado de Clientes'
-        data['titulo_lista'] = 'Listado de Clientes'
+        data['titulo'] = 'Empleados'
+        data['titulo_lista'] = 'Listado de Empleados'
         data['titulo_formulario'] = 'Formulario de Registro'
-        data['form'] = ClienteForm
-        data['nuevo'] = '/cliente/nuevo'
+        data['form'] = EmpleadoForm
+        data['nuevo'] = '/empleado/nuevo'
         data['empresa'] = empresa
         return data
 
 
 class CrudView(ValidatePermissionRequiredMixin, TemplateView):
-    form_class = ClienteForm
+    form_class = EmpleadoForm
     template_name = 'front-end/cliente/form.html'
 
     @method_decorator(csrf_exempt)
@@ -82,16 +84,16 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
         action = request.POST['action']
         try:
             if action == 'add':
-                f = ClienteForm(request.POST)
+                f = EmpleadoForm(request.POST)
                 data = self.save_data(f)
             elif action == 'edit':
                 pk = request.POST['id']
-                cliente = Cliente.objects.get(pk=int(pk))
-                f = ClienteForm(request.POST, instance=cliente)
+                cliente = Empleado.objects.get(pk=int(pk))
+                f = EmpleadoForm(request.POST, instance=cliente)
                 data = self.save_data(f)
             elif action == 'delete':
                 pk = request.POST['id']
-                cli = Cliente.objects.get(pk=pk)
+                cli = Empleado.objects.get(pk=pk)
                 cli.delete()
                 data['resp'] = True
             else:
@@ -107,7 +109,7 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
             if verificar(f.data['cedula']):
                 cli = f.save()
                 data['resp'] = True
-                data['cliente'] = cli.toJSON()
+                data['empleado'] = cli.toJSON()
             else:
                 f.add_error("cedula", "Numero de Cedula no valido para Ecuador")
                 data['error'] = f.errors

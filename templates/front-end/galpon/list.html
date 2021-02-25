@@ -1,0 +1,77 @@
+{% extends 'front-end/list.html' %}
+{% load static %}
+{% block formulario %}
+    <div class="card col-xl-12">
+        <div class="card-body">
+            <div class="col-xl-12 col-lg-12" id="div_form">
+                <form class="form-horizontal" id="form" method="POST" action="{{ crud }}">
+                     <div class="panel panel-primary">
+                        <!-- Card Header -->
+                        <div class="panel-heading py-3">
+                            <div class="container">
+                                <h4 class="m-0 font-weight-bold"><i
+                                        class="far fa-edit"></i> Formulario de Registro</h4>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="panel-body">
+                            {% csrf_token %}
+                            {{ form.media }}
+                            <input type="hidden" id="action" name="action" value="{{ action }}">
+                            <input type="hidden" id="indice" name="indice" value="{{ empresa.indice }}">
+                            <input type="hidden" id="iva" name="iva" value="{{ empresa.iva }}">
+                            <input type="hidden" name="option" value="{{ option }}">
+                            {% for hidden in form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                            <div class="row">
+                                <div class="col-lg-5" id="input_numero" style="display: none">
+                                    <label class="control-label">Numero de Galpon</label>
+                                    <input type="text" name="numero" readonly="readonly" value="1"
+                                           class="form-control input-sm" required=""
+                                           id="id_numero">
+                                </div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">{{ form.capacidad.label_tag }}</label>
+                                    <label class="badge bg-important">{{ form.capacidad.errors }}</label>
+                                    {{ form.capacidad }}
+                                </div>
+                            </div>
+                            <br>
+                            <div class="panel-footer">
+                                <div class="row">
+                                    <div class="col-lg-5">
+                                        <button class="btn btn-success btn-sm" type="button"
+                                                onclick="location.reload();"><i
+                                                class="fa fa-plus"></i> Nuevo
+                                        </button>
+                                        <button class="btn btn-primary btn-sm" type="submit"><i
+                                                class="fa fa-save"></i> {{ boton }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block table %}
+    <thead>
+    <tr>
+        <th style="width: 18%">Numero</th>
+        <th style="width: 10%">Capacidad</th>
+        <th style="width: 10%">Estado</th>
+        <th style="width: 10%" class="text-center">Opciones</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+{% endblock %}
+{% block extra %}
+    <script src="{% static 'apps/galpon/list.js' %}"></script>
+{% endblock %}

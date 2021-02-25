@@ -1,0 +1,23 @@
+{% extends 'front-end/list.html' %}
+{% load static %}
+{% block table %}
+    <thead>
+    <tr>
+        <th style="width: 18%">Empleado</th>
+        <th style="width: 10%">Cedula</th>
+        <th style="width: 10%">correo </th>
+        <th style="width: 10%">telefono  </th>
+        <th style="width: 10%">celular  </th>
+        <th style="width: 10%">direccion  </th>
+        <th style="width: 10%">estado  </th>
+        <th style="width: 10%" class="text-center">Opciones</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+{% endblock %}
+{% block extra %}
+    <script src="{% static 'apps/empleado/list.js' %}"></script>
+    <script src="{% static 'apps/empleado/form.js' %}"></script>
+{% endblock %}

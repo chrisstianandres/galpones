@@ -140,6 +140,7 @@ def check_ced(request):
         data['resp'] = True
     else:
         data['error'] = "Numero de Cedula no valido para Ecuador"
+    print(data)
     return JsonResponse(data)
 
 

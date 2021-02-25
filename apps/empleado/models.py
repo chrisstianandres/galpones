@@ -3,6 +3,8 @@ from datetime import datetime
 from django.db import models
 from django.forms import model_to_dict
 
+from apps.empresa.models import Empresa
+
 SEXO = (
     (1, 'Masculino'),
     (0, 'Femenino'),
@@ -38,7 +40,7 @@ class Empleado(models.Model):
         item['full_name_list'] = self.__str__()
         item['fecha'] = self.fecha.strftime('%d/%m/%Y')
         item['sexo'] = self.get_sexo_display()
-        item['estado'] = self.get_estado_display()
+        item['estado_text'] = self.get_estado_display()
         return item
 
     class Meta:
