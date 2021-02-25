@@ -102,7 +102,6 @@ function datatable_fun() {
         ],
         createdRow: function (row, data, dataIndex) {
             if (data.estado === 0 ) {
-                console.log(data.estado);
                 $('td', row).eq(2).find('span').addClass('badge badge-success').attr("style", "color: white");
             } else if (data.estado === 1) {
                  console.log(data.estado);
@@ -136,7 +135,7 @@ $(function () {
             pk = data.id;
             $('#id_capacidad').val(data.capacidad);
             $('#id_numero').val(data.id);
-            $('#input_numero').show();
+            $('#input_numero').show("slow");
         });
 
     $('#id_capacidad').TouchSpin({

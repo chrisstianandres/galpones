@@ -1,6 +1,6 @@
 var logotipo;
 var datatable;
-var action = '';
+var action = 'add';
 var pk = '';
 
 function datatable_fun() {
@@ -110,14 +110,15 @@ $(function () {
             var parametros = {'id': data.id};
             parametros['action'] = action;
             save_estado('Alerta',
-                '/cliente/nuevo', 'Esta seguro que desea eliminar este cliente?', parametros,
+                '/empleado/nuevo', 'Esta seguro que desea eliminar este empleado?', parametros,
                 function () {
-                    menssaje_ok('Exito!', 'Exito al eliminar este cliente!', 'far fa-smile-wink', function () {
-                        datatable.ajax.reload(null, false)
+                    menssaje_ok('Exito!', 'Exito al eliminar este empleado!', 'far fa-smile-wink', function () {
+                        location.reload();
                     })
                 })
         })
         .on('click', 'a[rel="edit"]', function () {
+            $('#form').validate().resetForm();
             var tr = datatable.cell($(this).closest('td, li')).index();
             var data = datatable.row(tr.row).data();
             var sexo = '1';
@@ -142,7 +143,6 @@ $(function () {
 
     //enviar formulario de nuevo cliente
     $('#form').on('submit', function (e) {
-        action = 'add';
         e.preventDefault();
         var parametros = new FormData(this);
         parametros.append('action', action);
