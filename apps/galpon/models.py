@@ -18,6 +18,7 @@ class Galpon(models.Model):
         item = model_to_dict(self)
         item['estado_text'] = self.get_estado_display()
         item['capacidad'] = int(self.capacidad)
+        item['cantidad'] = 0
         return item
 
     class Meta:

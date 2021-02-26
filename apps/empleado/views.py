@@ -1,6 +1,4 @@
 import json
-import os
-
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
@@ -8,8 +6,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
 from apps.backEnd import nombre_empresa, verificar
-from apps.cliente.forms import ClienteForm
-from apps.cliente.models import Cliente
 from apps.empleado.forms import EmpleadoForm
 from apps.empleado.models import Empleado
 from apps.mixins import ValidatePermissionRequiredMixin
@@ -22,7 +18,7 @@ empresa = nombre_empresa()
 
 
 class lista(ValidatePermissionRequiredMixin, ListView):
-    model = Cliente
+    model = Empleado
     template_name = "front-end/empleado/list.html"
     permission_required = 'empleado.view_empleado'
 
@@ -32,14 +28,21 @@ class lista(ValidatePermissionRequiredMixin, ListView):
 
     def post(self, request, *args, **kwargs):
         data = {}
-
         try:
             action = request.POST['action']
             if action == 'list':
                 data = []
                 for c in Empleado.objects.all():
                     data.append(c.toJSON())
-
+            elif action == 'list_lote':
+                import json
+                data = []
+                ids = json.loads(request.POST['ids'])
+                query = Empleado.objects.filter(estado=0)
+                for a in query.exclude(id__in=ids):
+                    item = a.toJSON()
+                    item['text'] = a.__str__()
+                    data.append(item)
             elif action == 'search':
                 data = []
                 term = request.POST['term']
@@ -119,7 +122,7 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
 
 
 class report(ValidatePermissionRequiredMixin, ListView):
-    model = Cliente
+    model = Empleado
     template_name = 'front-end/cliente/report.html'
     permission_required = 'cliente.view_cliente'
 
@@ -128,7 +131,7 @@ class report(ValidatePermissionRequiredMixin, ListView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Cliente.objects.none()
+        return self.model.objects.none()
 
     def post(self, request, *args, **kwargs):
         data = {}
@@ -139,9 +142,9 @@ class report(ValidatePermissionRequiredMixin, ListView):
             end_date = request.POST.get('end_date', '')
             try:
                 if start_date == '' and end_date == '':
-                    query = Cliente.objects.all()
+                    query = self.model.objects.all()
                 else:
-                    query = Cliente.objects.filter(fecha__range=[start_date, end_date])
+                    query = self.model.objects.filter(fecha__range=[start_date, end_date])
 
                 for p in query:
                     data.append(p.toJSON())

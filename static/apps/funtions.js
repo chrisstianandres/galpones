@@ -32,30 +32,24 @@ toDataURL('/media/logo_pdf.png').then(dataUrl => {
 //     ocultar('#form');
 // });
 //
-// function borrar_todo_alert(title, content, callback, callback2) {
-//     $.confirm({
-//         theme: 'supervan',
-//         title: title,
-//         icon: 'fas fa-exclamation-triangle',
-//         type: 'red',
-//         typeAnimated: true,
-//         content: content,
-//         draggable: true,
-//         buttons: {
-//             si: {
-//                 text: '<i class="fas fa-check"></i> Si',
-//                 btnClass: 'btn-blue',
-//                 action: function () {
-//                     callback();
-//                 }
-//             },
-//             no: {
-//                 text: '<i class="fas fa-times"></i> No',
-//                 btnClass: 'btn-red'
-//             },
-//         }
-//     });
-// }
+
+function borrar_todo_alert(title, content, callback, callback2) {
+    Swal.fire({
+        title: title,
+        html: content,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '<i class="far fa-thumbs-up"></i> Si',
+        cancelButtonText: '<i class="far fa-thumbs-down"></i> No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            callback();
+        }
+    })
+}
+
 //
 function save_with_ajax(title, url, content, parametros, callback) {
     // $.confirm({
@@ -159,47 +153,6 @@ function callback_2(response, entidad) {
 
 }
 
-// function save_estado(title, url, content, parametros, callback) {
-//     $.confirm({
-//         theme: 'supervan',
-//         type: 'red',
-//         icon: 'fas fa-exclamation-circle',
-//         title: title,
-//         content: content,
-//         columnClass: 'small',
-//         draggable: true,
-//         buttons: {
-//             si: {
-//                 text: '<i class="fas fa-check"></i> Si',
-//                 btnClass: 'btn-blue',
-//                 action: function () {
-//                     $.ajax({
-//                         dataType: 'JSON',
-//                         type: 'POST',
-//                         url: url,
-//                         data: parametros,
-//                     }).done(function (data) {
-//                         if (!data.hasOwnProperty('error')) {
-//                             callback();
-//                             return false;
-//                         }
-//                         menssaje_error(data.error, data.content, 'fa fa-times-circle');
-//                     }).fail(function (jqXHR, textStatus, errorThrown) {
-//                         alert(textStatus + ': ' + errorThrown);
-//                     });
-//                     //
-//
-//                 }
-//             },
-//             no: {
-//                 text: '<i class="fas fa-times"></i> No',
-//                 btnClass: 'btn-red',
-//                 action: function () {
-//                 }
-//             }
-//         }
-//     });
-// }
 function save_estado(title, url, content, parametros, callback) {
     Swal.fire({
         title: title,
@@ -267,26 +220,6 @@ function printpdf(title, content, callback, cancel) {
     );
 }
 
-// function menssaje_error(title, content, icon, callback) {
-//     var obj = $.confirm({
-//         theme: 'supervan',
-//         icon: icon,
-//         title: title,
-//         type: 'red',
-//         content: content,
-//         draggable: true,
-//         buttons: {
-//             info: {
-//                 text: '<i class="fas fa-check"></i> Ok',
-//                 btnClass: 'btn-blue'
-//             },
-//         }
-//     });
-//     setTimeout(function () {
-//         // some point in future.
-//         obj.close();
-//     }, 3000);
-// }
 function menssaje_error(title, content, icon, callback) {
     var obj = Swal.fire(
         title,
@@ -320,25 +253,6 @@ function error_login(title, content, icon, callback) {
     });
 }
 
-// function menssaje_ok(title, content, icon, callback) {
-//     $.confirm({
-//         theme: 'supervan',
-//         icon: icon,
-//         type: 'green',
-//         title: title,
-//         content: content,
-//         draggable: true,
-//         buttons: {
-//             info: {
-//                 text: '<i class="fas fa-check"></i> Ok',
-//                 btnClass: 'btn-blue',
-//                 action: function (data) {
-//                     callback(data);
-//                 }
-//             },
-//         }
-//     });
-// }
 function menssaje_ok(title, content, icon, callback) {
     Swal.fire({
             title: title,

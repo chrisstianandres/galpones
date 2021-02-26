@@ -18,7 +18,7 @@ empresa = nombre_empresa()
 
 
 class lista(ValidatePermissionRequiredMixin, ListView):
-    model = Medicina
+    model = Galpon
     template_name = 'front-end/galpon/list.html'
     permission_required = 'galpon.view_galpon'
 
@@ -34,6 +34,14 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 data = []
                 for c in Galpon.objects.all():
                     data.append(c.toJSON())
+            elif action == 'list_lote':
+                import json
+                data = []
+                ids = json.loads(request.POST['ids'])
+                query = Galpon.objects.filter(estado=0)
+                for a in query.exclude(id__in=ids):
+                    item = a.toJSON()
+                    data.append(item)
             # elif action == 'search':
             #     data = []
             #     term = request.POST['term']

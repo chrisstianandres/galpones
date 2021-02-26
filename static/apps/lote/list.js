@@ -1,5 +1,8 @@
 var logotipo;
-var datatable;
+var datatable_empleado_list;
+var datatable_empleado_select;
+var datatable_galpon_list;
+var datatable_galpon_select;
 var action;
 var pk;
 var dt_tipo;
@@ -9,6 +12,219 @@ var cantidad = $('#id_cantidad');
 var valor_ave = $('#id_valor_pollito');
 var raza = $('#id_raza');
 var ids = NaN;
+var ids_empleado = NaN;
+
+
+var lotes = {
+    items: {
+        empleados_array: [],
+        galpones_array: [],
+    },
+    calculate: function () {
+        console.clear();
+        console.log(this.items.galpones_array);
+        var cantidad = 0;
+        $.each(this.items.galpones_array, function (pos, dict) {
+            cantidad += dict.cantidad;
+        });
+        $('#id_cantidad').val(cantidad);
+    },
+    get_ids: function () {
+        var ids = [];
+        $.each(this.items.empleados_array, function (key, value) {
+            ids.push(value.id);
+        });
+        return ids;
+    },
+    add: function (data) {
+        this.items.empleados_array.push(data);
+        this.list();
+    },
+    list: function () {
+        datatable_empleado_list = $('#datatable_empleado_list').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json',
+            },
+            ajax: {
+                url: '/empleado/lista',
+                type: 'POST',
+                data: {'action': 'list_lote', 'ids': JSON.stringify(lotes.get_ids())},
+                dataSrc: ""
+            },
+            dom: 'ftrp',
+            columns: [
+                {"data": "text"},
+                {"data": "cedula"},
+                {"data": "id"}
+            ],
+            columnDefs: [
+                {
+                    targets: [-1],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<a type="button" class="btn btn-primary btn-xs"  style="color: white" rel="select" ' +
+                            'data-toggle="tooltip" data-placement="top" title="Seleccionar">' +
+                            '<i class="fa fa-check"></i></a>' + ' ';
+
+                    }
+                }
+            ]
+        });
+        datatable_empleado_select = $('#datatable_empleado_select').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json',
+            },
+            data: this.items.empleados_array,
+            dom: 'ftrp',
+            columns: [
+                {"data": "id"},
+                {"data": "text"},
+                {"data": "cedula"},
+                {"data": "id"}
+            ],
+            columnDefs: [
+                {
+                    targets: [0],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<a type="button" class="btn btn-danger btn-xs"  style="color: white" rel="remove" ' +
+                            'data-toggle="tooltip" data-placement="top" title="Quitar">' +
+                            '<i class="fa fa-trash"></i></a>' + ' ';
+
+                    }
+                },
+                {
+                    targets: [-1],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="text" class="form-control input-sm" name="cantidad" value="1.00">';
+
+                    }
+                }
+            ],
+            rowCallback: function (row, data) {
+                $(row).find('input[name="cantidad"]').TouchSpin({
+                    min: 0.05,
+                    max: 1000000,
+                    step: 0.01,
+                    decimals: 2,
+                    forcestepdivisibility: 'none',
+                    boostat: 5,
+                    maxboostedstep: 10,
+                    prefix: '$',
+                    // verticalupclass: 'glyphicon glyphicon-plus',
+                    // verticaldownclass: 'glyphicon glyphicon-minus'
+                });
+            }
+        });
+    },
+    get_ids_galpon: function () {
+        var ids = [];
+        $.each(this.items.galpones_array, function (key, value) {
+            ids.push(value.id);
+        });
+        return ids;
+    },
+    add_galpon: function (data) {
+        this.items.galpones_array.push(data);
+        this.list_galpon();
+    },
+    list_galpon: function () {
+        this.calculate();
+        datatable_galpon_list = $('#datatable_galpon_list').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json',
+            },
+            ajax: {
+                url: '/galpon/lista',
+                type: 'POST',
+                data: {'action': 'list_lote', 'ids': JSON.stringify(lotes.get_ids_galpon())},
+                dataSrc: ""
+            },
+            dom: 'ftrp',
+            columns: [
+                {"data": "id"},
+                {"data": "capacidad"},
+                {"data": "id"}
+            ],
+            columnDefs: [
+                {
+                    targets: [-1],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<a type="button" class="btn btn-primary btn-xs"  style="color: white" rel="select" ' +
+                            'data-toggle="tooltip" data-placement="top" title="Seleccionar">' +
+                            '<i class="fa fa-check"></i></a>' + ' ';
+
+                    }
+                }
+            ]
+        });
+        datatable_galpon_select = $('#datatable_galpon_select').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json',
+            },
+            data: this.items.galpones_array,
+            dom: 'ftrp',
+            columns: [
+                {"data": "id"},
+                {"data": "id"},
+                {"data": "capacidad"},
+                {"data": "cantidad"}
+            ],
+            columnDefs: [
+                {
+                    targets: [0],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<a type="button" class="btn btn-danger btn-xs"  style="color: white" rel="remove" ' +
+                            'data-toggle="tooltip" data-placement="top" title="Quitar">' +
+                            '<i class="fa fa-trash"></i></a>' + ' ';
+
+                    }
+                },
+                {
+                    targets: [-1],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<input type="text" class="form-control input-sm" name="cantidad" value="'+data+'">';
+
+                    }
+                }
+            ],
+            rowCallback: function (row, data) {
+                console.log(data);
+                $(row).find('input[name="cantidad"]').TouchSpin({
+                    min: 1,
+                    max: data.capacidad,
+                    step: 1,
+                    forcestepdivisibility: 'none',
+                    boostat: 5,
+                    maxboostedstep: 10
+                });
+            }
+        });
+    }
+};
+
 function datatable_fun() {
     // datatable = $("#datatable").DataTable({
     //     responsive: true,
@@ -165,7 +381,7 @@ $(function () {
         },
     });
     $('#id_search_raza').on('click', function () {
-         $('.tooltip').remove();
+        $('.tooltip').remove();
         $('#modal_tipo').modal('show');
         dt_tipo = $('#datatable_tipo_ave').DataTable({
             responsive: true,
@@ -202,7 +418,7 @@ $(function () {
         });
     });
     $('#id_new_raza').on('click', function () {
-         $('.tooltip').remove();
+        $('.tooltip').remove();
         $('#modal_form').modal('show');
         action = 'add'
     });
@@ -307,4 +523,79 @@ $(function () {
                 });
         }
     });
+    $('#id_raza').on('change', function () {
+        if ($(this).val() === '') {
+            ids = NaN;
+        }
+
+    });
+
+
+    //Seccion Empleados
+    lotes.list();
+    $('#datatable_empleado_list tbody')
+        .on('click', 'a[rel="select"]', function () {
+            var tr = datatable_empleado_list.cell($(this).closest('td, li')).index();
+            var data = datatable_empleado_list.row(tr.row).data();
+            lotes.add(data);
+        });
+    $('#datatable_empleado_select tbody')
+        .on('click', 'a[rel="remove"]', function () {
+            var tr = datatable_empleado_select.cell($(this).closest('td, li')).index();
+            borrar_todo_alert('Alerta de Eliminación',
+                'Esta seguro que desea quitar a este empleado de la asignacion <br> ' +
+                '<strong>CONTINUAR?</strong>', function () {
+                    lotes.items.empleados_array.splice(tr.row, 1);
+                    lotes.list();
+                })
+        });
+    $('#quitar_todo_empleado')
+        .on('click', function () {
+            if (lotes.items.empleados_array.length === 0) return false;
+            borrar_todo_alert('Alerta de Eliminación',
+                'Esta seguro que desea quitar todos los empleados de la asignacion <br> ' +
+                '<strong>CONTINUAR?</strong>', function () {
+                    lotes.items.empleados_array = [];
+                    lotes.list();
+                })
+        });
+    //fin de seccion Empleados
+
+
+    //Seccion Galpones
+    lotes.list_galpon();
+    $('#datatable_galpon_list tbody')
+        .on('click', 'a[rel="select"]', function () {
+            var tr = datatable_galpon_list.cell($(this).closest('td, li')).index();
+            var data = datatable_galpon_list.row(tr.row).data();
+            lotes.add_galpon(data);
+        });
+    $('#datatable_galpon_select tbody')
+        .on('click', 'a[rel="remove"]', function () {
+            var tr = datatable_galpon_select.cell($(this).closest('td, li')).index();
+            borrar_todo_alert('Alerta de Eliminación',
+                'Esta seguro que desea quitar a este galpon de la asignacion <br> ' +
+                '<strong>CONTINUAR?</strong>', function () {
+                    lotes.items.galpones_array.splice(tr.row, 1);
+                    lotes.list_galpon();
+                })
+        })
+        .on('change keyup', 'input[name="cantidad"]', function () {
+            var cantidad = parseInt($(this).val());
+            var tr = datatable_galpon_select.cell($(this).closest('td, li')).index();
+            lotes.items.galpones_array[tr.row].cantidad = cantidad;
+            lotes.calculate();
+        });
+    $('#quitar_todo_galpon')
+        .on('click', function () {
+            if (lotes.items.galpones_array.length === 0) return false;
+            borrar_todo_alert('Alerta de Eliminación',
+                'Esta seguro que desea quitar todos los galpones de la asignacion <br> ' +
+                '<strong>CONTINUAR?</strong>', function () {
+                    lotes.items.galpones_array = [];
+                    lotes.list_galpon();
+                })
+        });
+
+    //fin de seccion Galpones
 });

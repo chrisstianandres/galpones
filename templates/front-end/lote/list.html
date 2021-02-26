@@ -28,7 +28,14 @@
                                 <div class="col-lg-5">
                                     <label class="control-label">{{ form.fecha.label_tag }}</label>
                                     <label class="badge bg-important">{{ form.fecha.errors }}</label>
-                                    {{ form.fecha }}
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="far fa-calendar-alt"></i>
+                                        </span>
+                                        {{ form.fecha }}
+
+                                    </div>
+
                                 </div>
                                 <div class="col-lg-5">
                                     <label class="control-label">{{ form.cantidad.label_tag }}</label>
@@ -86,7 +93,7 @@
 {% endblock %}
 {% block tablas %}
     <div class="container-fluid">
-        <div class="col-xl-12 col-sm-12" id="div_table">
+        <div class="col-xl-12 col-sm-12">
             <!-- Tabla Listado -->
             <div class="panel panel-danger">
                 <div class="panel-heading">
@@ -101,30 +108,42 @@
                             <table id="datatable_empleado_list"
                                    class="table table-bordered table-condensed table-hover table-striped"
                                    style="width: 100%">
+                                <thead>
                                 <tr>
                                     <th>Empleado</th>
                                     <th>Cedula</th>
-                                    <th>Elegir</th>
+                                    <th><i class="fas fa-user-check"></i></th>
                                 </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
 
                             </table>
                         </div>
-                        <div class="col-lg-5">
+                        <div class="col-lg-1">
+                            <a type="button" class="btn btn-danger" id="quitar_todo_empleado">
+                                <i class="far fa-trash-undo fa-2x"></i></a>
+                        </div>
+                        <div class="col-lg-6">
                             <table id="datatable_empleado_select"
                                    class="table table-bordered table-condensed table-hover table-striped"
                                    style="width: 100%">
+                                <thead>
                                 <tr>
                                     <th><i class="far fa-trash-undo"></i></th>
                                     <th>Empleado</th>
                                     <th>Cedula</th>
                                     <th>Salario</th>
                                 </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
 
                             </table>
                         </div>
-                        <div class="col-lg-2">
-                            <a type="button" class="btn btn-danger"><i class="fa fa-trash"></i> Quitar todos</a>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -132,7 +151,7 @@
         <!-- /.container-fluid -->
     </div>
     <div class="container-fluid">
-        <div class="col-xl-12 col-sm-12" id="div_table">
+        <div class="col-xl-12 col-sm-12">
             <!-- Tabla Listado -->
             <div class="panel panel-success">
                 <div class="panel-heading">
@@ -142,36 +161,46 @@
                     </div>
                 </div>
                 <div class="panel-body">
-
                     <div class="row">
                         <div class="col-lg-5">
-                            <table id="datatable_empleado_list"
+                            <table id="datatable_galpon_list"
                                    class="table table-bordered table-condensed table-hover table-striped"
                                    style="width: 100%">
+                                <thead>
                                 <tr>
                                     <th>N° Galpon</th>
                                     <th>Capacidad</th>
                                     <th>Elegir</th>
                                 </tr>
+                                </thead>
+                                <tbody>
 
+                                </tbody>
                             </table>
                         </div>
-                        <div class="col-lg-5">
-                            <table id="datatable_empleado_select"
+                        <div class="col-lg-1">
+                            <a type="button" class="btn btn-danger" id="quitar_todo_galpon"><i class="far fa-trash-undo fa-2x"></i></a>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="datatable_galpon_select"
                                    class="table table-bordered table-condensed table-hover table-striped"
                                    style="width: 100%">
+                                <thead>
                                 <tr>
                                     <th><i class="far fa-trash-undo"></i></th>
                                     <th>N° Galpon</th>
                                     <th>Capacidad</th>
                                     <th>Cantidad</th>
                                 </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+
 
                             </table>
                         </div>
-                        <div class="col-lg-2">
-                            <a type="button" class="btn btn-danger"><i class="fa fa-trash"></i> Quitar todos</a>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -221,14 +250,13 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modal_form" tabindex="-1" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
+    <div class="modal fade" id="modal_form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <form method="post" id="form_tipo" enctype="multipart/form-data" action=".">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel"><i
-                                class="fas fa-plus"></i>&nbsp;Agregar tipo de Ave/h5>
+                                class="fas fa-plus"></i>&nbsp;Agregar tipo de Ave</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

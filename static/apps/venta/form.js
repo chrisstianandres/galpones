@@ -90,7 +90,8 @@ var ventas = {
 
                     }
                 }
-            ], rowCallback: function (row, data) {
+            ],
+            rowCallback: function (row, data) {
                 $(row).find('input[name="cantidad"]').TouchSpin({
                     min: 1,
                     max: data.stock,
