@@ -17,6 +17,9 @@ $(document).ready(function () {
             },
             tipo_medicina: {
                 validaSelect: "SELECCIONE UNA OPCIÓN"
+            },
+            categoria: {
+                validaSelect: "SELECCIONE UNA OPCIÓN"
             }
         },
         messages: {
@@ -26,11 +29,15 @@ $(document).ready(function () {
                 lettersonly: "Debe ingresar unicamente letras y espacios"
             },
             descripcion: {
-                required: "Por favor ingresa una descripcion del producto",
+                required: "Por favor ingresa una descripcion de la medicina",
                 minlength: "Debe ingresar al menos 3 letras",
                 lettersonly: "Debe ingresar unicamente letras y espacios"
             },
             tipo_medicina: {
+                required: " ",
+
+            },
+            categoria: {
                 required: " ",
 
             },
@@ -49,6 +56,33 @@ $(document).ready(function () {
                 required: "Por favor ingresa el nombre de la medicina",
                 minlength: "Debe ingresar al menos 3 letras",
                 lettersonly: "Debe ingresar unicamente letras y espacios"
+            }
+        }
+    });
+    $("#form_cat").validate({
+        rules: {
+            nombre: {
+                required: true,
+                minlength: 3,
+                maxlength: 25
+            },
+            descripcion: {
+                required: true,
+                minlength: 3,
+                maxlength: 50
+
+            }
+        },
+        messages: {
+            nombre: {
+                required: "Por favor ingresa el nombre de la medicina",
+                maxlength: "Debe ingresar maximo 25 letras",
+                minlength: "Debe ingresar al menos 3 letras"
+            },
+            descripcion: {
+                required: "Por favor ingresa una descripcion",
+                minlength: "Debe ingresar al menos 3 letras",
+                maxlength: "Debe ingresar maximo 50 letras",
             }
         }
     });

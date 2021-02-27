@@ -21,6 +21,7 @@ class Insumo(models.Model):
     def toJSON(self):
         item = model_to_dict(self)
         item['categoria'] = self.categoria.toJSON()
+        item['tipo_insumo'] = self.get_tipo_insumo_display()
         return item
 
     class Meta:

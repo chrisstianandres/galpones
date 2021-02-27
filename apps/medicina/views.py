@@ -6,6 +6,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
 from apps.backEnd import nombre_empresa
+from apps.categoria.forms import CategoriaForm
+from apps.insumo.forms import InsumoForm
+from apps.insumo.models import Insumo
 from apps.medicina.forms import MedicinaForm, TipomedicinaForm
 from apps.medicina.models import Medicina
 from apps.mixins import ValidatePermissionRequiredMixin
@@ -36,7 +39,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
             elif action == 'search':
                 data = []
                 term = request.POST['term']
-                for c in Medicina.objects.filter(nombre__icontains=term):
+                for c in Medicina.objects.filter(insumo__nombre__icontains=term):
                     data.append({'id': c.id, 'text': c.nombre})
             else:
                 data['error'] = 'No ha seleccionado una opcion'
@@ -54,14 +57,21 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['titulo_lista'] = 'Listado de medicinas'
         data['titulo_formulario'] = 'Formulario de Registro'
         data['empresa'] = empresa
-        data['form'] = MedicinaForm
-        data['formp'] = TipomedicinaForm
+        if 'form' not in data:
+            data['form'] = MedicinaForm()
+        if 'formi' not in data:
+            data['formi'] = InsumoForm()
+        if 'formp' not in data:
+            data['formp'] = TipomedicinaForm()
+        if 'formc' not in data:
+            data['formc'] = CategoriaForm()
         data['titulo_modal_tipo'] = 'Agregar un tipo de medicina'
         return data
 
 
 class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     form_class = MedicinaForm
+    second_form_class = InsumoForm
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -72,13 +82,16 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
         action = request.POST['action']
         try:
             if action == 'add':
-                f = MedicinaForm(request.POST)
-                data = self.save_data(f)
+                f = self.form_class(request.POST)
+                f2 = self.second_form_class(request.POST)
+                data = self.save_data(f, f2)
             elif action == 'edit':
                 pk = request.POST['id']
-                cat = Medicina.objects.get(pk=int(pk))
-                f = MedicinaForm(request.POST, instance=cat)
-                data = self.save_data(f)
+                med = Medicina.objects.get(pk=int(pk))
+                ins = Insumo.objects.get(pk=int(med.insumo_id))
+                f = MedicinaForm(request.POST, instance=med)
+                f2 = InsumoForm(request.POST, instance=ins)
+                data = self.save_data(f, f2)
             elif action == 'delete':
                 pk = request.POST['id']
                 cat = Medicina.objects.get(pk=pk)
@@ -90,11 +103,15 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
             data['error'] = str(e)
         return HttpResponse(json.dumps(data), content_type='application/json')
 
-    def save_data(self, f):
+    def save_data(self, f, f2):
         data = {}
-        if f.is_valid():
-            var = f.save()
-            data['medicina'] = var.toJSON()
+        if f.is_valid() and f2.is_valid():
+            insumo = f2.save(commit=False)
+            insumo.tipo_insumo = 1
+            medicina = f.save(commit=False)
+            medicina.insumo = f2.save()
+            medicina.save()
+            data['medicina'] = medicina.toJSON()
             data['resp'] = True
         else:
             data['error'] = f.errors

@@ -1,10 +1,8 @@
 from django import forms
-from datetime import *
-from django.forms import SelectDateWidget, TextInput, NumberInput, EmailInput
+from django.forms import TextInput
 
 from .models import Medicina
 from ..tipo_medicina.models import Tipo_medicina
-from ..ubicacion.models import Parroquia
 
 
 class MedicinaForm(forms.ModelForm):
@@ -20,19 +18,12 @@ class MedicinaForm(forms.ModelForm):
                 'class': 'form-control select2 input-sm',
                 'style': "width: 100%"
             }
-            self.fields['precio'].widget = TextInput(
-                attrs={'class': 'form-control input-sm'})
         # habilitar, desabilitar, y mas
 
     class Meta:
         model = Medicina
-        fields = ['insumo',
-                  'tipo_medicina'
-                  ]
-        labels = {
-            'insumo': 'insumo',
-            'tipo_medicina': 'Tipo'
-        }
+        fields = ['tipo_medicina']
+        labels = {'tipo_medicina': 'Tipo'}
 
 
 class TipomedicinaForm(forms.ModelForm):

@@ -26,9 +26,9 @@
                             {% endfor %}
                             <div class="row">
                                 <div class="col-lg-5">
-                                    <label class="control-label">{{ form.nombre.label_tag }}</label>
-                                    <label class="badge bg-important">{{ form.nombre.errors }}</label>
-                                    {{ form.nombre }}
+                                    <label class="control-label">{{ formi.nombre.label_tag }}</label>
+                                    <label class="badge bg-important">{{ formi.nombre.errors }}</label>
+                                    {{ formi.nombre }}
                                 </div>
                                 <div class="col-lg-5">
                                     <label class="control-label">{{ form.tipo_medicina.label_tag }}</label>
@@ -45,14 +45,21 @@
                             </div>
                             <div class="row">
                                 <div class="col-lg-5">
-                                    <label class="control-label">{{ form.descripcion.label_tag }}</label>
-                                    <label class="badge bg-important">{{ form.descripcion.errors }}</label>
-                                    {{ form.descripcion }}
+                                    <label class="control-label">{{ formi.descripcion.label_tag }}</label>
+                                    <label class="badge bg-important">{{ formi.descripcion.errors }}</label>
+                                    {{ formi.descripcion }}
                                 </div>
                                 <div class="col-lg-5">
-                                    <label class="control-label">{{ form.precio.label_tag }}</label>
-                                    <label class="badge bg-important">{{ form.precio.errors }}</label>
-                                    {{ form.precio }}
+                                    <label class="control-label">{{ formi.categoria.label_tag }}</label>
+                                    <div class="input-group">
+                                        {{ formi.categoria }}
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-success btn-sm" id="id_new_categoria" type="button">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    <p id="tipo_error_cat" class="help-block"></p>
                                 </div>
                             </div>
                             <br>
@@ -82,7 +89,6 @@
         <th style="width: 18%">Nombre</th>
         <th style="width: 10%">Tipo</th>
         <th style="width: 10%;">Descripcion</th>
-        <th style="width: 10%;">Precio</th>
         <th style="width: 10%" class="text-center">Opciones</th>
     </tr>
     </thead>
@@ -107,6 +113,40 @@
                         <div class="container-fluid">
                             <div class="form-group">
                                 {{ formp.as_p }}
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" value="{{ action }}">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <i class="far fa-window-close"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary"><i class="far fa-save"></i>&nbsp;Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal fade" id="modal_cat" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <form method="post" id="form_cat" enctype="multipart/form-data" action=".">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><i
+                                class="fas fa-plus"></i>&nbsp;Nueva Categoria</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                {{ formc.as_p }}
                             </div>
                             <div class="form-group">
                                 <input type="hidden" value="{{ action }}">
