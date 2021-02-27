@@ -1,14 +1,18 @@
 import json
+from datetime import datetime
 
+from django.db import transaction
 from django.http import JsonResponse, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
 from apps.backEnd import nombre_empresa
+from apps.distribucion.models import Distribucion
 from apps.lote.forms import LoteForm
 from apps.lote.models import Lote
 from apps.mixins import ValidatePermissionRequiredMixin
+from apps.produccion.models import Produccion
 from apps.raza.forms import RazaForm
 
 opc_icono = 'fas fa-crop-alt'
@@ -71,8 +75,31 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
         action = request.POST['action']
         try:
             if action == 'add':
-                f = LoteForm(request.POST)
-                data = self.save_data(f)
+                with transaction.atomic():
+                    datos = json.loads(request.POST['lote'])
+                    lote = Lote()
+                    lote.fecha = datetime.now()
+                    lote.cantidad = int(datos['cantidad'])
+                    lote.valor_pollito = float(datos['valor_ave'])
+                    lote.raza_id = int(datos['raza'])
+                    lote.save()
+
+                    for e in datos['empleados_array']:
+                        produccion = Produccion()
+                        produccion.lote_id = lote.id
+                        produccion.empleado_id = int(e['id'])
+                        produccion.sueldo = float(e['sueldo'])
+                        produccion.save()
+                    for g in datos['galpones_array']:
+                        distribucion = Distribucion()
+                        distribucion.lote_id = lote.id
+                        distribucion.galpon_id = int(g['id'])
+                        distribucion.cantidad_pollos = int(g['cantidad'])
+                        distribucion.save()
+                    data['resp'] = True
+
+                # f = LoteForm(request.POST)
+                # data = self.save_data(f)
             elif action == 'edit':
                 pk = request.POST['id']
                 cat = Lote.objects.get(pk=int(pk))

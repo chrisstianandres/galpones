@@ -16,10 +16,6 @@ class MedicinaForm(forms.ModelForm):
                 'class': 'form-control'
             })
 
-            self.fields['nombre'].widget = TextInput(
-                attrs={'placeholder': 'Nombre de la Medicina', 'class': 'form-control input-sm'})
-            self.fields['descripcion'].widget = TextInput(
-                attrs={'placeholder': 'Escribe una descripcion', 'class': 'form-control input-sm'})
             self.fields['tipo_medicina'].widget.attrs = {
                 'class': 'form-control select2 input-sm',
                 'style': "width: 100%"
@@ -30,21 +26,12 @@ class MedicinaForm(forms.ModelForm):
 
     class Meta:
         model = Medicina
-        fields = ['nombre',
-                  'tipo_medicina',
-                  'descripcion',
-                  'precio'
+        fields = ['insumo',
+                  'tipo_medicina'
                   ]
         labels = {
-            'nombre': 'Nombre',
-            'tipo_medicina': 'Tipo',
-            'descripcion': 'Descripcion',
-            'precio': 'Precio'
-        }
-        widgets = {
-            'nombre': forms.TextInput(),
-            'descripcion': forms.TextInput(),
-            'precio': forms.TextInput(),
+            'insumo': 'insumo',
+            'tipo_medicina': 'Tipo'
         }
 
 

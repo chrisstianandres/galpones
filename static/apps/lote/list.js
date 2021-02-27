@@ -3,7 +3,7 @@ var datatable_empleado_list;
 var datatable_empleado_select;
 var datatable_galpon_list;
 var datatable_galpon_select;
-var action;
+var action = 'add';
 var pk;
 var dt_tipo;
 
@@ -17,14 +17,17 @@ var ids_empleado = NaN;
 
 var lotes = {
     items: {
+        fecha,
+        valor_ave,
+        cantidad,
+        raza,
         empleados_array: [],
         galpones_array: [],
     },
     calculate: function () {
-        console.clear();
-        console.log(this.items.galpones_array);
-        var cantidad = 0;
+        var cantidad =  0;
         $.each(this.items.galpones_array, function (pos, dict) {
+            console.log(dict.cantidad);
             cantidad += dict.cantidad;
         });
         $('#id_cantidad').val(cantidad);
@@ -205,13 +208,12 @@ var lotes = {
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
-                        return '<input type="text" class="form-control input-sm" name="cantidad" value="'+data+'">';
+                        return '<input type="text" class="form-control input-sm" name="cantidad" value="' + data + '">';
 
                     }
                 }
             ],
             rowCallback: function (row, data) {
-                console.log(data);
                 $(row).find('input[name="cantidad"]').TouchSpin({
                     min: 1,
                     max: data.capacidad,
@@ -487,23 +489,34 @@ $(function () {
     //     max: 1000000
     // });
     //
-    // //enviar formulario de nuevo producto
-    // $('#form').on('submit', function (e) {
-    //     e.preventDefault();
-    //     var parametros = new FormData(this);
-    //     parametros.append('action', action);
-    //     parametros.append('id', pk);
-    //     var isvalid = $(this).valid();
-    //     if (isvalid) {
-    //         save_with_ajax2('Alerta',
-    //             '/galpon/nuevo', 'Esta seguro que desea guardar este galpon?', parametros,
-    //             function (response) {
-    //                 menssaje_ok('Exito!', 'Exito al guardar este galpon!', 'far fa-smile-wink', function () {
-    //                     location.reload();
-    //                 });
-    //             });
-    //     }
-    // });
+    //enviar formulario de nuevo producto
+    $('#guardar').on('click', function (e) {
+        e.preventDefault();
+        if (raza.val()=== ''){
+             menssaje_error('Error!', "Debe seleccionar un tipo de ave", 'far fa-times-circle');
+                return false
+        } else if (lotes.items.empleados_array.length === 0) {
+             menssaje_error('Error!', "Debe Asignar al menos a un empleado a este lote", 'far fa-times-circle');
+                return false
+        } else if (lotes.items.galpones_array.length === 0) {
+            menssaje_error('Error!', "Debe Asignar al menos a un Galpon a este lote", 'far fa-times-circle');
+            return false
+        }
+        lotes.items.fecha = fecha.val();
+        lotes.items.valor_ave = valor_ave.val();
+        lotes.items.cantidad = cantidad.val();
+        lotes.items.raza = raza.val();
+        var parametros = {'lote': JSON.stringify(lotes.items)};
+        parametros['action'] = action;
+        parametros['id'] = pk;
+        save_with_ajax('Alerta',
+                '/lote/nuevo', 'Esta seguro que desea guardar este lote?', parametros,
+                function (response) {
+                    menssaje_ok('Exito!', 'Exito al guardar este lote!', 'far fa-smile-wink', function () {
+                        location.href = '/menu';
+                    });
+                });
+    });
     $('#form_tipo').on('submit', function (e) {
         e.preventDefault();
         var parametros = new FormData(this);
@@ -548,6 +561,11 @@ $(function () {
                     lotes.items.empleados_array.splice(tr.row, 1);
                     lotes.list();
                 })
+        })
+        .on('change keyup', 'input[name="cantidad"]', function () {
+            var sueldo = parseFloat($(this).val());
+            var tr = datatable_empleado_select.cell($(this).closest('td, li')).index();
+            lotes.items.empleados_array[tr.row].sueldo = sueldo;
         });
     $('#quitar_todo_empleado')
         .on('click', function () {

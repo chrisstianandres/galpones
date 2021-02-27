@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'apps.DatabaseBackups',
     'apps.user',
     'apps.ubicacion',
-
     'apps.alimentacion',
     'apps.alimento',
     'apps.causa_muerte',
@@ -57,16 +56,17 @@ INSTALLED_APPS = [
     'apps.mortalidad',
     'apps.peso',
     'apps.produccion',
-    'apps.provision',
-    'apps.provision_medicina',
     'apps.raza',
     'apps.tipo_gasto',
     'apps.tipo_medicina',
-    # 'apps.cliente',
+    'apps.cliente',
     # 'apps.venta',
-    # 'apps.inventario',
-    # 'apps.compra',
-    # 'apps.proveedor',
+    'apps.inventario',
+    'apps.compra',
+    'apps.proveedor',
+    'apps.insumo',
+    'apps.categoria',
+    'apps.presentacion',
 ]
 
 MIDDLEWARE = [

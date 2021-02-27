@@ -1,8 +1,7 @@
 from django.db import models
 from django.forms import model_to_dict
 
-from apps.compra.models import Compra
-
+from apps.compra.models import Compra, Detalle_compra
 
 ESTADO = (
     (1, 'En stock'),
@@ -11,17 +10,15 @@ ESTADO = (
 
 
 class Inventario(models.Model):
-    compra = models.ForeignKey(Compra, on_delete=models.PROTECT)
-    producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
+    compra = models.ForeignKey(Detalle_compra, on_delete=models.PROTECT)
     estado = models.IntegerField(choices=ESTADO, default=1)
 
     def __str__(self):
-        return '%s' % self.producto.producto_base.nombre
+        return '{}'.format(self.compra)
 
     def toJSON(self):
         item = model_to_dict(self)
         item['compra'] = self.compra.toJSON()
-        item['producto'] = self.producto.toJSON()
         return item
 
     class Meta:
