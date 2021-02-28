@@ -16,6 +16,9 @@ class Medicina(models.Model):
         item = model_to_dict(self)
         item['insumo'] = self.insumo.toJSON()
         item['tipo_medicina'] = self.tipo_medicina.toJSON()
+        item['precio'] = 1.00
+        item['cantidad'] = 1
+        item['subtotal'] = 1.00
         return item
 
     class Meta:

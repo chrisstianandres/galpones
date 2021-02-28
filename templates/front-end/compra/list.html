@@ -90,38 +90,80 @@
             </div>
             <div class="panel-body">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a data-toggle="tab" href="#medicina"><i class="fas fa-capsules"></i> Medicinas</a></li>
+                    <li class="active"><a data-toggle="tab" href="#medicina"><i class="fas fa-capsules"></i>
+                        Medicinas</a></li>
                     <li><a data-toggle="tab" href="#alimento"><i class="fas fa-utensils"></i> Alimento</a></li>
                 </ul>
-                <div class="row">
-                    <div class="col-lg-5">
-                        <label for="id_insumo">Buscar Insumos:</label>
-                        {{ form2.insumo }}
+
+                <div class="tab-content">
+                    <br>
+                    <div id="medicina" class="tab-pane fade in active">
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <label for="id_insumo">Buscar Medicinas:</label>
+                                <br>
+                                {{ form2.insumo }}
+                            </div>
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-3">
+                                <p></p>
+                                <a type="button" class="btn btn-danger btn-lg"><i class="fas fa-trash-restore-alt"></i>
+                                    Vaciar Detalle</a>
+                            </div>
+                        </div>
+                        <br>
+                        <table id="datatable_detalle"
+                               class="table table-bordered table-condensed table-hover table-striped"
+                               style="width: 100%">
+                            <thead>
+                            <tr>
+                                <th>Insumo</th>
+                                <th>Categoria</th>
+                                <th>Tipo</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
+                                <th>Opciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+
+                        </table>
                     </div>
-                    <div class="col-lg-2"></div>
-                    <div class="col-lg-3">
-                        <p></p>
-                        <a type="button" class="btn btn-danger btn-lg"><i class="fas fa-trash-restore-alt"></i>
-                            Vaciar Detalle</a>
+                    <div id="alimento" class="tab-pane fade">
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <label for="id_insumo">Buscar Alimento:</label>
+                                {{ form2.insumo }}
+                            </div>
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-3">
+                                <p></p>
+                                <a type="button" class="btn btn-danger btn-lg"><i class="fas fa-trash-restore-alt"></i>
+                                    Vaciar Detalle</a>
+                            </div>
+                        </div>
+                        <br>
+                        <table id="datatable_alimento"
+                               class="table table-bordered table-condensed table-hover table-striped"
+                               style="width: 100%">
+                            <thead>
+                            <tr>
+                                <th>Alimento</th>
+                                <th>Categoria</th>
+                                <th>Presentacion</th>
+                                <th>Precio</th>
+                                <th>Subtotal</th>
+                                <th>Opciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+
+                        </table>
                     </div>
                 </div>
-                <br>
-                <table id="datatable_detalle" class="table table-bordered table-condensed table-hover table-striped"
-                       style="width: 100%">
-                    <thead>
-                    <tr>
-                        <th>Insumo</th>
-                        <th>Categoria</th>
-                        <th>Tipo</th>
-                        <th>Precio</th>
-                        <th>Subtotal</th>
-                        <th>Opciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-
-                </table>
             </div>
         </div>
     </div>
@@ -201,6 +243,7 @@
 
 {% block extra %}
     <script src="{% static 'apps/compra/list.js' %}"></script>
+    <script src="{% static 'apps/compra/form.js' %}"></script>
     <script src="{% static 'apps/funtions.js' %}"></script>
 {% endblock %}
 {% block javascript %}

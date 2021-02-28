@@ -73,7 +73,8 @@ class Detalle_CompraForm(forms.ModelForm):
             })
             self.fields['insumo'].widget.attrs = {
                 'class': 'form-control select2',
-                'data-live-search': "true"
+                'data-live-search': "true",
+                'style': 'width: 95%'
             }
         # habilitar, desabilitar, y mas
 
