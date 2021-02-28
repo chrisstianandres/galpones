@@ -1,5 +1,137 @@
 {% extends 'front-end/list.html' %}
 {% load static %}
+{% block formulario %}
+    <div class="card col-xl-12">
+        <div class="card-body">
+            <div class="col-xl-12 col-lg-12" id="div_form">
+                <form class="form-horizontal" id="form" method="POST" action="{{ crud }}">
+                    <div class="panel panel-primary">
+                        <!-- Card Header -->
+                        <div class="panel-heading">
+                            <div class="container">
+                                <h4 class="m-0 font-weight-bold"><i
+                                        class="far fa-edit"></i> Formulario de Compra</h4>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="panel-body">
+                            <div class="col-lg-5">
+                                <div class="row">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4>
+                                                <i class="fas fa-book-open"></i> Datos de la compra
+                                            </h4>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="col-lg-10">
+                                                <label class="control-label">{{ form.fecha_compra.label_tag }}</label>
+                                                {{ form.fecha_compra }}
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label class="control-label">{{ form.proveedor.label_tag }}</label>
+                                                {{ form.proveedor }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-lg-1"></div>
+                            <div class="col-lg-5">
+                                <div class="row">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4>
+                                                <i class="fas fa-dollar-sign"></i> Totales de la compra
+                                            </h4>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="col-lg-10">
+                                                <label class="control-label">{{ form.subtotal.label_tag }}</label>
+                                                {{ form.subtotal }}
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label class="control-label">{{ form.iva.label_tag }}</label>
+                                                {{ form.iva }}
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label class="control-label">{{ form.total.label_tag }}</label>
+                                                {{ form.total }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-save"></i> {{ boton }}
+                            </button>
+                            <a type="button" class="btn btn-danger btn-sm" style="color:white;"
+                               id="cancal_shop">
+                                <i class="fas fa-ban"></i> Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block transaccion %}
+    <div class="col-xl-12 col-sm-12">
+        <!-- Tabla Listado -->
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="container">
+                    <h4 class="m-0 font-weight-bold"><i class="fas fa-list-ol"></i> Detalle de Insumos
+                    </h4>
+                </div>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#medicina"><i class="fas fa-capsules"></i> Medicinas</a></li>
+                    <li><a data-toggle="tab" href="#alimento"><i class="fas fa-utensils"></i> Alimento</a></li>
+                </ul>
+                <div class="row">
+                    <div class="col-lg-5">
+                        <label for="id_insumo">Buscar Insumos:</label>
+                        {{ form2.insumo }}
+                    </div>
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-3">
+                        <p></p>
+                        <a type="button" class="btn btn-danger btn-lg"><i class="fas fa-trash-restore-alt"></i>
+                            Vaciar Detalle</a>
+                    </div>
+                </div>
+                <br>
+                <table id="datatable_detalle" class="table table-bordered table-condensed table-hover table-striped"
+                       style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th>Insumo</th>
+                        <th>Categoria</th>
+                        <th>Tipo</th>
+                        <th>Precio</th>
+                        <th>Subtotal</th>
+                        <th>Opciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+    {% block botones %}
+
+    {% endblock %}
+    <!-- /.container-fluid -->
+{% endblock %}
+
+
 {% block elements %}
     <br>
     <div class="row">
@@ -24,6 +156,15 @@
     </thead>
     <tbody>
     </tbody>
+{% endblock %}
+{% block table_footer %}
+    <a type="button" class="btn btn-warning btn-sm" id="nuevo">
+        <i class="fas fa-store"></i> Nueva Compra
+    </a>
+    <a type="button" class="btn btn-default btn-sm" id="reload"
+       onclick=" location.reload();">
+        <i class="fas fa-sync-alt"></i> Actualizar
+    </a>
 {% endblock %}
 {% block modal %}
     <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"

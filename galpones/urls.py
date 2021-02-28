@@ -34,6 +34,7 @@ urlpatterns = [
     path('lote/', include('apps.lote.urls', namespace='lote')),
     path('tipo_ave/', include('apps.raza.urls', namespace='raza')),
     path('categoria/', include('apps.categoria.urls', namespace='categoria')),
+    path('compra/', include('apps.compra.urls', namespace='compra')),
     path('tipo_medicine/', include('apps.tipo_medicina.urls', namespace='tipo_medicine')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)\
                   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

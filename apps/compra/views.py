@@ -17,7 +17,7 @@ from apps.compra.models import Compra, Detalle_compra
 from apps.empresa.models import Empresa
 from apps.inventario.models import Inventario
 from apps.mixins import ValidatePermissionRequiredMixin
-from apps.producto.models import Producto
+from apps.insumo.models import Insumo
 from datetime import date
 import os
 from django.conf import settings
@@ -25,7 +25,6 @@ from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.contrib.staticfiles import finders
 
-from apps.producto_base.models import Producto_base
 from apps.proveedor.forms import ProveedorForm
 
 opc_icono = 'fa fa-shopping-bag'
@@ -66,7 +65,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                     data = []
                     for p in Detalle_compra.objects.filter(compra_id=id):
                         item = p.toJSON()
-                        item['p_compra'] = p.p_compra_actual
+                        item['p_compra'] = p.p_compra
                         item['subtotal'] = float(p.subtotal)
                         data.append(item)
                 else:
@@ -86,6 +85,10 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['titulo'] = 'Listado de Compras'
         data['titulo_lista'] = 'Listado de Compras'
         data['empresa'] = empresa
+        data['form'] = CompraForm
+        data['form2'] = Detalle_CompraForm()
+        # data['detalle'] = []
+        # data['formp'] = ProveedorForm()
         return data
 
 
@@ -101,12 +104,10 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         data = {}
         action = request.POST['action']
-        pk = request.POST['id']
         try:
             if action == 'add':
                 datos = json.loads(request.POST['compras'])
                 if datos:
-                    pr = []
                     with transaction.atomic():
                         c = Compra()
                         c.fecha_compra = datos['fecha_compra']
@@ -119,19 +120,14 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                         for i in datos['productos']:
                             dv = Detalle_compra()
                             dv.compra_id = c.id
-                            dv.producto_id = i['id']
+                            dv.insumo_id = i['id']
                             dv.cantidad = int(i['cantidad'])
                             dv.subtotal = float(i['subtotal'])
-                            x = Producto.objects.get(pk=i['id'])
-                            dv.p_compra_actual = float(x.pcp)
-                            x.stock = x.stock + int(i['cantidad'])
-                            x.save()
+                            dv.p_compra = float(i['p_compra'])
                             dv.save()
-                            for p in range(0, i['cantidad']):
-                                inv = Inventario()
-                                inv.compra_id = c.id
-                                inv.producto_id = x.id
-                                inv.save()
+                            inv = Inventario()
+                            inv.compra_id = c.id
+                            inv.save()
                         data['id'] = c.id
                         data['resp'] = True
                 else:

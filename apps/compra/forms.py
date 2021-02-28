@@ -71,7 +71,7 @@ class Detalle_CompraForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
-            self.fields['producto'].widget.attrs = {
+            self.fields['insumo'].widget.attrs = {
                 'class': 'form-control select2',
                 'data-live-search': "true"
             }
@@ -80,5 +80,5 @@ class Detalle_CompraForm(forms.ModelForm):
     class Meta:
         model = Detalle_compra
         fields = [
-            'producto'
+            'insumo'
         ]
