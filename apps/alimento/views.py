@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
+from apps.alimento.models import Alimento
 from apps.backEnd import nombre_empresa
 from apps.categoria.forms import CategoriaForm
 from apps.categoria.models import Categoria
@@ -17,7 +18,7 @@ empresa = nombre_empresa()
 
 
 class lista(ValidatePermissionRequiredMixin, ListView):
-    model = Categoria
+    model = Alimento
     template_name = 'front-end/categoria/list.html'
     permission_required = 'categoria.view_categoria'
 
@@ -31,13 +32,26 @@ class lista(ValidatePermissionRequiredMixin, ListView):
             action = request.POST['action']
             if action == 'list':
                 data = []
-                for c in Categoria.objects.all():
+                for c in self.model.objects.all():
+                    data.append(c.toJSON())
+            elif action == 'list_list':
+                data = []
+                ids = json.loads(request.POST['ids'])
+                query = self.model.objects.all()
+                for c in query.exclude(id__in=ids):
                     data.append(c.toJSON())
             elif action == 'search':
                 data = []
+                ids = json.loads(request.POST['ids'])
                 term = request.POST['term']
-                for c in Categoria.objects.filter(nombre__icontains=term):
-                    data.append({'id': c.id, 'text': c.nombre})
+                query = self.model.objects.filter(insumo__nombre__icontains=term)
+                for c in query.exclude(id__in=ids)[0:10]:
+                    data.append({'id': c.id, 'text': str(c.insumo.nombre + ' / ' + c.insumo.descripcion)})
+            elif action == 'get':
+                data = []
+                id = request.POST['id']
+                for c in self.model.objects.filter(id=id):
+                    data.append(c.toJSON())
             else:
                 data['error'] = 'No ha seleccionado una opcion'
         except Exception as e:

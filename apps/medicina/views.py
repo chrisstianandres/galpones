@@ -36,10 +36,18 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 data = []
                 for c in Medicina.objects.all():
                     data.append(c.toJSON())
+            elif action == 'list_list':
+                data = []
+                ids = json.loads(request.POST['ids'])
+                query = Medicina.objects.all()
+                for c in query.exclude(id__in=ids):
+                    data.append(c.toJSON())
             elif action == 'search':
                 data = []
+                ids = json.loads(request.POST['ids'])
                 term = request.POST['term']
-                for c in Medicina.objects.filter(insumo__nombre__icontains=term, insumo__tipo_insumo=1):
+                query = Medicina.objects.filter(insumo__nombre__icontains=term, insumo__tipo_insumo=1)
+                for c in query.exclude(id__in=ids)[0:10]:
                     data.append({'id': c.id, 'text': str(c.insumo.nombre + ' / ' + c.insumo.descripcion)})
             elif action == 'get':
                 data = []

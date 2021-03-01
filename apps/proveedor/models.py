@@ -19,10 +19,10 @@ class Proveedor(models.Model):
     fecha = models.DateField(default=datetime.now)
 
     def __str__(self):
-        return '{} / {} / {}'.format(self.nombre, self.direccion, self.num_doc)
+        return '{} / {}'.format(self.nombre, self.num_doc)
 
     def get_full_name(self):
-        return '{} / {} / {}'.format(self.nombre, self.direccion, self.num_doc)
+        return '{} / {}'.format(self.nombre, self.num_doc)
 
     def toJSON(self):
         item = model_to_dict(self)

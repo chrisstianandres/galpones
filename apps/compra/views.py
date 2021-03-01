@@ -11,11 +11,13 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
+from apps.alimento.models import Alimento
 from apps.backEnd import nombre_empresa
 from apps.compra.forms import CompraForm, Detalle_CompraForm
 from apps.compra.models import Compra, Detalle_compra
 from apps.empresa.models import Empresa
 from apps.inventario.models import Inventario
+from apps.medicina.models import Medicina
 from apps.mixins import ValidatePermissionRequiredMixin
 from apps.insumo.models import Insumo
 from datetime import date
@@ -59,13 +61,29 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                     compra = Compra.objects.all()
                 for c in compra:
                     data.append(c.toJSON())
-            elif action == 'detalle':
+            elif action == 'detalle_medicina':
                 id = request.POST['id']
                 if id:
                     data = []
-                    for p in Detalle_compra.objects.filter(compra_id=id):
+                    for p in Detalle_compra.objects.filter(compra_id=id, insumo__tipo_insumo=1):
+                        med = Medicina.objects.get(insumo_id=int(p.insumo_id))
                         item = p.toJSON()
                         item['p_compra'] = p.p_compra
+                        item['insumo'] = med.toJSON()
+                        item['subtotal'] = float(p.subtotal)
+                        data.append(item)
+                else:
+
+                    data['error'] = 'Ha ocurrido un error'
+            elif action == 'detalle_alimentos':
+                id = request.POST['id']
+                if id:
+                    data = []
+                    for p in Detalle_compra.objects.filter(compra_id=id, insumo__tipo_insumo=0):
+                        al = Alimento.objects.get(insumo_id=int(p.insumo_id))
+                        item = p.toJSON()
+                        item['p_compra'] = p.p_compra
+                        item['insumo'] = al.toJSON()
                         item['subtotal'] = float(p.subtotal)
                         data.append(item)
                 else:
@@ -82,13 +100,14 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['icono'] = opc_icono
         data['entidad'] = opc_entidad
         data['boton'] = 'Guardar'
-        data['titulo'] = 'Listado de Compras'
+        data['titulo'] = 'Compras'
         data['titulo_lista'] = 'Listado de Compras'
+        data['titulo_modal_person'] = 'Agregar Proveedor'
         data['empresa'] = empresa
         data['form'] = CompraForm
         data['form2'] = Detalle_CompraForm()
         # data['detalle'] = []
-        # data['formp'] = ProveedorForm()
+        data['formp'] = ProveedorForm()
         return data
 
 
@@ -110,25 +129,37 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                 if datos:
                     with transaction.atomic():
                         c = Compra()
+                        c.comprobante = datos['comprobante']
                         c.fecha_compra = datos['fecha_compra']
                         c.proveedor_id = datos['proveedor']
                         c.user_id = request.user.id
                         c.subtotal = float(datos['subtotal'])
+                        c.tasa_iva = float(datos['tasa_iva']) / float(100)
                         c.iva = float(datos['iva'])
                         c.total = float(datos['total'])
                         c.save()
-                        for i in datos['productos']:
-                            dv = Detalle_compra()
-                            dv.compra_id = c.id
-                            dv.insumo_id = i['id']
-                            dv.cantidad = int(i['cantidad'])
-                            dv.subtotal = float(i['subtotal'])
-                            dv.p_compra = float(i['p_compra'])
-                            dv.save()
-                            inv = Inventario()
-                            inv.compra_id = c.id
-                            inv.save()
-                        data['id'] = c.id
+                        if datos['medicinas']:
+                            for m in datos['medicinas']:
+                                dv = Detalle_compra()
+                                dv.compra_id = c.id
+                                dv.insumo_id = int(m['insumo']['id'])
+                                dv.cantidad = int(m['cantidad'])
+                                dv.stock_inicial = int(m['cantidad'])
+                                dv.stock_actual = int(m['cantidad'])
+                                dv.subtotal = float(m['subtotal'])
+                                dv.p_compra = float(m['precio'])
+                                dv.save()
+                        if datos['alimentos']:
+                            for a in datos['alimentos']:
+                                dv = Detalle_compra()
+                                dv.compra_id = c.id
+                                dv.insumo_id = int(a['insumo']['id'])
+                                dv.cantidad = int(a['cantidad'])
+                                dv.stock_inicial = int(m['cantidad'])
+                                dv.stock_actual = int(m['cantidad'])
+                                dv.subtotal = float(a['subtotal'])
+                                dv.p_compra = float(a['precio'])
+                                dv.save()
                         data['resp'] = True
                 else:
                     data['resp'] = False

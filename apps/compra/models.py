@@ -15,9 +15,11 @@ estado = (
 
 class Compra(models.Model):
     fecha_compra = models.DateField(default=datetime.now)
+    comprobante = models.TextField(null=True, blank=True)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    tasa_iva = models.DecimalField(default=0.12, max_digits=9, decimal_places=2)
     iva = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     estado = models.IntegerField(choices=estado, default=1)
@@ -29,6 +31,7 @@ class Compra(models.Model):
         item = model_to_dict(self)
         item['proveedor'] = self.proveedor.toJSON()
         item['user'] = self.user.username
+        item['estado_text'] = self.get_estado_display()
         item['subtotal'] = format(self.subtotal, '.2f')
         item['iva'] = format(self.iva, '.2f')
         item['total'] = format(self.total, '.2f')
@@ -46,6 +49,8 @@ class Detalle_compra(models.Model):
     insumo = models.ForeignKey(Insumo, on_delete=models.PROTECT)
     p_compra = models.DecimalField(default=0.00, max_digits=9, decimal_places=2, blank=True, null=True)
     cantidad = models.IntegerField(default=1)
+    stock_inicial = models.IntegerField(default=1)
+    stock_actual = models.IntegerField(default=1)
     subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
 
     def __str__(self):

@@ -1,9 +1,9 @@
 from django.conf.urls import url
 from django.urls import path
 from . import views
-from apps.categoria.views import *
+from apps.alimento.views import *
 from django.contrib.auth.decorators import login_required
-app_name = 'Categoria'
+app_name = 'Alimento'
 
 urlpatterns = [
     path('lista', login_required(lista.as_view()), name='lista'),

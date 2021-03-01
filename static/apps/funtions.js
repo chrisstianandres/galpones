@@ -1,14 +1,4 @@
 var tbl_productos;
-const toDataURL = url => fetch(url).then(response => response.blob())
-    .then(blob => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob)
-    }));
-toDataURL('/media/logo_pdf.png').then(dataUrl => {
-    logotipo = dataUrl;
-});
 
 // function mostrar() {
 //     $('#div_table').removeClass('col-xl-12').addClass('col-xl-8 col-lg-12');
@@ -328,14 +318,14 @@ function save_with_ajax2(title, url, content, parametros, callback) {
 }
 
 
-// function reset(formulario) {
-//     $(formulario)[0].reset();
-//     var validator = $(formulario).validate();
-//     validator.resetForm();
-//     $('.is-valid').removeClass('is-valid');
-//     $('.is-invalid').removeClass('is-invalid');
-// }
-//
+function reset(formulario) {
+    $(formulario)[0].reset();
+    var validator = $(formulario).validate();
+    validator.resetForm();
+    $('.has-success').removeClass('has-success');
+    $('.has-error').removeClass('has-error');
+}
+
 function menssaje_error_form(title, content, icon, callback) {
     var html = '<ul>';
     $.each(content, function (key, value) {
@@ -400,22 +390,23 @@ function customize(doc) {
 
     var jsDate = formatDateToString(date);
     //[izquierda, arriba, derecha, abajo]
-    doc.pageMargins = [25, 150, 25, 50];
+    doc.pageMargins = [25, 50, 25, 50];
     doc.defaultStyle.fontSize = 12;
     doc.styles.tableHeader.fontSize = 12;
     doc.content[1].table.body[0].forEach(function (h) {
-        h.fillColor = '#4e73df'
+        h.fillColor = '#c4dfa9'
     });
     doc.styles.title = {color: '#2D1D10', fontSize: '16', alignment: 'center'};
     doc['header'] = (function () {
         return {
             columns: [
                 {
-                    alignment: 'left', image: logotipo, width: 100, height: 100
+                    text: $("#nombre_empresa").val()+'\n\n', fontSize: 30,
+                    alignment: 'center',
                 },
-                {
-                    text: $('#nombre_empresa').text(), fontSize: 45, alignment: 'center', margin: [-90, 30, 0]
-                },
+                // {
+                //     text: $('#direccion_empresa').val(), fontSize: 45, alignment: 'center', margin: [-90, 33, 0]
+                // },
             ],
             margin: [20, 10, 0, 0],  //[izquierda, arriba, derecha, abajo]
 
