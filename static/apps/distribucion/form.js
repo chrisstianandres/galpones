@@ -1,5 +1,5 @@
 var tblcompra;
-var tblalimentos_seacrh;
+var tbl_galpon_seacrh;
 var tasa_iva = ($('#id_tasa_iva').val()) * 100.00;
 var dt_detalle;
 var dt_detalle_alimentos;
@@ -304,6 +304,7 @@ $(function () {
             $('#modal_search_medicina').modal('hide');
         });
 
+
     //seccion alimentos
     $('#datatable_alimento tbody')
         .on('click', 'a[rel="remove"]', function () {
@@ -452,7 +453,7 @@ $(function () {
             minimumInputLength: 1,
         });
 
-    $('#id_insumo')
+    $('#id_galpon')
         .select2({
             theme: "classic",
             language: {
@@ -470,12 +471,11 @@ $(function () {
             ajax: {
                 delay: 250,
                 type: 'POST',
-                url: '/medicina/lista',
+                url: '/produccion/control',
                 data: function (params) {
                     return {
                         term: params.term,
-                        'action': 'search',
-                        'ids': JSON.stringify(compras.get_ids())
+                        'action': 'search_galpon'
                     };
                 },
                 processResults: function (data) {
@@ -486,87 +486,116 @@ $(function () {
                 },
 
             },
-            placeholder: 'Busca una medicina',
+            placeholder: 'Busca una galpon por numero',
             minimumInputLength: 1,
         })
         .on('select2:select', function (e) {
             $.ajax({
                 type: "POST",
-                url: '/medicina/lista',
+                url: '/produccion/control',
                 data: {
-                    "id": $('#id_insumo option:selected').val(),
-                    "action": 'get'
+                    "id": $('#id_galpon option:selected').val(),
+                    "action": 'get_data'
                 },
                 dataType: 'json',
                 success: function (data) {
-                    compras.add(data[0]);
-                    $('#id_insumo').val(null).trigger('change');
-
+                    var datos = data[0];
+                    $('#id_lote').val(datos.lote.id);
+                    $('#id_lote_cantidad').val(datos.lote.cantidad);
+                    $('#id_capacidad').val(datos.galpon.capacidad);
+                    $('#id_cantidad_in_galpon').val(datos.cantidad_pollos);
+                    $('#id_lote_fecha').val(datos.lote.fecha);
+                    $('#id_tipo_ave').val(datos.lote.raza.nombre);
                 },
                 error: function (xhr, status, data) {
                     alert(data['0']);
                 },
 
             })
-        });
-    $('#id_alimento')
-        .select2({
-            theme: "classic",
-            language: {
-                inputTooShort: function () {
-                    return "Ingresa al menos un caracter...";
-                },
-                "noResults": function () {
-                    return "Sin resultados";
-                },
-                "searching": function () {
-                    return "Buscando...";
-                }
-            },
-            allowClear: true,
-            ajax: {
-                delay: 250,
-                type: 'POST',
-                url: '/alimento/lista',
-                data: function (params) {
-                    return {
-                        term: params.term,
-                        'action': 'search',
-                        'ids': JSON.stringify(compras.get_ids_alimento())
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-
-                },
-
-            },
-            placeholder: 'Busca un alimento',
-            minimumInputLength: 1,
         })
-        .on('select2:select', function (e) {
-            $.ajax({
+        .on('select2:clearing', function () {
+            $('#id_lote').val(null);
+            $('#id_lote_cantidad').val(null);
+            $('#id_capacidad').val(null);
+            $('#id_cantidad_in_galpon').val(null);
+            $('#id_lote_fecha').val(null);
+            $('#id_tipo_ave').val(null);
+
+        })
+        .on('change', function () {
+            if ($(this).val()>0){
+                $.ajax({
                 type: "POST",
-                url: '/alimento/lista',
+                url: '/produccion/control',
                 data: {
-                    "id": $('#id_alimento option:selected').val(),
-                    "action": 'get'
+                    "id": $(this).val(),
+                    "action": 'get_data'
                 },
                 dataType: 'json',
                 success: function (data) {
-                    compras.add_alimento(data[0]);
-                    $('#id_alimento').val(null).trigger('change');
-
+                    var datos = data[0];
+                    $('#id_lote').val(datos.lote.id);
+                    $('#id_lote_cantidad').val(datos.lote.cantidad);
+                    $('#id_capacidad').val(datos.galpon.capacidad);
+                    $('#id_cantidad_in_galpon').val(datos.cantidad_pollos);
+                    $('#id_lote_fecha').val(datos.lote.fecha);
+                    $('#id_tipo_ave').val(datos.lote.raza.nombre);
                 },
                 error: function (xhr, status, data) {
                     alert(data['0']);
                 },
 
             })
+            }
+
         });
 
+    $('#id_search_galpon')
+        .on('click', function () {
+            $('#modal_search_galpon').modal('show');
+            tbl_galpon_seacrh = $("#datatable_search_galpon").DataTable({
+                destroy: true,
+                autoWidth: false,
+                dataSrc: "",
+                responsive: true,
+                ajax: {
+                    url: '/produccion/control',
+                    type: 'POST',
+                    data: {'action': 'list_list'},
+                    dataSrc: ""
+                },
+                language: {
+                    "url": '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json'
+                },
+                columns: [
+                    {data: "galpon.id"},
+                    {data: "galpon.estado_text"},
+                    {data: "id"}
+                ],
+                columnDefs: [
+                    {
+                        targets: [-1],
+                        class: 'text-center',
+                        width: '10%',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<a style="color: white" type="button" class="btn btn-success btn-xs" rel="take" ' +
+                                'data-toggle="tooltip" title="Seleccionar Galpon"><i class="fa fa-check"></i></a>' + ' '
+
+                        }
+                    },
+                ]
+            });
+        });
+
+    $('#datatable_search_galpon tbody')
+        .on('click', 'a[rel="take"]', function () {
+            var tr = tbl_galpon_seacrh.cell($(this).closest('td, li')).index();
+            var data = tbl_galpon_seacrh.row(tr.row).data();
+            var newOption = new Option('Galpon N°: ' + data.galpon['id'], data['id'], false, true);
+            $('#id_galpon').append(newOption).trigger('change');
+            $('#modal_search_galpon').modal('hide');
+        });
     $('#Modal_person')
         .on('hidden.bs.modal', function (e) {
             reset('#form_person');
@@ -601,12 +630,10 @@ $(function () {
             }
         });
 
-    $("#id_comprobante").keypress(function (e) {
-        //if the letter is not digit then display error and don't type anything
-        if (e.which !== 8 && e.which !== 0 && (e.which < 48 || e.which > 57)) {
-            //display error message
-            $("#errmsg").html("Solo numeros").show().fadeOut("slow");
-            return false;
+    $(document).on('keypress', '.select2-search__field', function (e) {
+        $(this).val($(this).val().replace(/[^\d].+/, ""));
+        if ((e.which < 48 || e.which > 57)) {
+            e.preventDefault();
         }
     });
 

@@ -38,11 +38,6 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 data = []
                 for c in Lote.objects.all():
                     data.append(c.toJSON())
-            # elif action == 'search':
-            #     data = []
-            #     term = request.POST['term']
-            #     for c in Galpon.objects.filter(capacidad__range=term):
-            #         data.append({'id': c.id, 'text': c.nombre})
             else:
                 data['error'] = 'No ha seleccionado una opcion'
         except Exception as e:

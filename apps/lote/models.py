@@ -5,10 +5,16 @@ from django.forms import model_to_dict
 
 from apps.raza.models import Raza
 
+ESTADO = (
+    (1, 'CERRADO'),
+    (0, 'EN PRODUCCION'),
+)
+
 
 class Lote(models.Model):
     raza = models.ForeignKey(Raza, on_delete=models.PROTECT)
     cantidad = models.IntegerField(default=0)
+    estado = models.IntegerField(choices=ESTADO, default=0)
     fecha = models.DateField(default=datetime.now)
     valor_pollito = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
 
