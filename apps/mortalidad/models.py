@@ -11,8 +11,7 @@ class Mortalidad(models.Model):
     distribucion = models.ForeignKey(Distribucion, on_delete=models.PROTECT)
     causa = models.ForeignKey(Causa_muerte, on_delete=models.PROTECT)
     fecha = models.DateField(default=datetime.now)
-    cantidad_muertes = models.IntegerField()
-
+    cantidad_muertes = models.IntegerField(default=1)
     descrpcion = models.CharField(max_length=100)
 
     def __str__(self):
@@ -20,6 +19,7 @@ class Mortalidad(models.Model):
 
     def toJSON(self):
         item = model_to_dict(self)
+        item['causa'] = self.causa.toJSON()
         return item
 
     class Meta:

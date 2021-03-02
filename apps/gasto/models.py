@@ -3,12 +3,13 @@ from datetime import datetime
 from django.db import models
 from django.forms import model_to_dict
 
+from apps.distribucion.models import Distribucion
 from apps.empresa.models import Empresa
 from apps.tipo_gasto.models import Tipo_gasto
 
 
 class Gasto(models.Model):
-    empresa = models.ForeignKey(Empresa, on_delete=models.PROTECT)
+    distribucion = models.ForeignKey(Distribucion, on_delete=models.PROTECT, null=True)
     tipo_gasto = models.ForeignKey(Tipo_gasto, on_delete=models.PROTECT)
     fecha_pago = models.DateField(default=datetime.now)
     valor = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
@@ -19,7 +20,7 @@ class Gasto(models.Model):
 
     def toJSON(self):
         item = model_to_dict(self)
-        item['empresa'] = self.empresa.toJSON()
+        item['distribucion'] = self.distribucion.toJSON()
         item['fecha_pago'] = self.fecha_pago.strftime('%Y/%m/%d')
         item['tipo_gasto'] = self.tipo_gasto.toJSON()
         item['valor'] = format(self.valor, '.2f')

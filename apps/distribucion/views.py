@@ -12,6 +12,9 @@ from apps.galpon.forms import GalponForm
 from apps.galpon.models import Galpon
 from apps.medicina.models import Medicina
 from apps.mixins import ValidatePermissionRequiredMixin
+from apps.mortalidad.forms import MortalidadForm
+from apps.peso.forms import PesoForm
+from apps.peso.models import Peso
 
 opc_icono = 'fas fa-crow'
 opc_entidad = 'Control de Produccion'
@@ -32,7 +35,6 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data = {}
         try:
             action = request.POST['action']
-            print(action)
             if action == 'list':
                 data = []
                 for c in Galpon.objects.all():
@@ -45,11 +47,34 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                     data.append({'id': a.id, 'text': str('Galpon N°: ' + str(a.galpon_id))})
             elif action == 'get_data':
                 data = []
+                peso_data = []
+                gastos_data = []
+                mortalidad_data = []
+                alimento_data = []
+                medicina_data = []
                 id = request.POST['id']
-                print(id)
                 query = Distribucion.objects.get(id=id, lote__estado=0)
-                print(query)
-                data.append(query.toJSON())
+                lote_data = [query.toJSON()]
+                for p in query.peso_set.all():
+                    peso_data.append(p.toJSON())
+                for g in query.gasto_set.all():
+                    gastos_data.append(g.toJSON())
+                for m in query.mortalidad_set.all():
+                    mortalidad_data.append(m.toJSON())
+                for a in query.alimentacion_set.all():
+                    alimento_data.append(a.toJSON())
+                for med in query.medicacion_set.all():
+                    medicina_data.append(med.toJSON())
+                data.append({
+                    'peso': peso_data,
+                    'lote_data': lote_data,
+                    'gastos': gastos_data,
+                    'mortalidad': mortalidad_data,
+                    'alimentacion': alimento_data,
+                    'medicacion': medicina_data
+                })
+
+
             elif action == 'list_list':
                 data = []
                 query = Distribucion.objects.filter(lote__estado=0)
@@ -76,6 +101,8 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['titulo_formulario'] = 'Formulario de Registro'
         data['empresa'] = empresa
         data['form'] = DistribucionForm
+        data['form_peso'] = PesoForm
+        data['form_mortalidad'] = MortalidadForm
         return data
 
 

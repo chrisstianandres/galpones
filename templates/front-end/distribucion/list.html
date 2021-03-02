@@ -107,9 +107,10 @@
                     <li class="active"><a data-toggle="tab" href="#medicina"><i class="fas fa-capsules"></i>
                         Medicinas</a></li>
                     <li><a data-toggle="tab" href="#alimento"><i class="fas fa-utensils"></i> Alimento</a></li>
-                     <li><a data-toggle="tab" href="#mortalidad"><i class="fas fa-skull-crossbones"></i> Mortalidad</a></li>
+                    <li><a data-toggle="tab" href="#mortalidad"><i class="fas fa-skull-crossbones"></i> Mortalidad</a>
+                    </li>
                     <li><a data-toggle="tab" href="#peso"><i class="fas fa-balance-scale-right"></i> Pesos</a></li>
-                     <li><a data-toggle="tab" href="#gastos"><i class="fas fa-hand-holding-usd"></i> Gastos</a></li>
+                    <li><a data-toggle="tab" href="#gastos"><i class="fas fa-hand-holding-usd"></i> Gastos</a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -129,15 +130,9 @@
                                         </span>
                                 </div>
                             </div>
-                            <div class="col-lg-2"></div>
-                            <div class="col-lg-3">
-                                <p></p>
-                                <a type="button" class="btn btn-danger btn-lg" id="vaciar_medicina">
-                                    <i class="fas fa-trash-restore-alt"></i> Vaciar Detalle</a>
-                            </div>
                         </div>
                         <br>
-                        <table id="datatable_detalle"
+                        <table id="datatable_medicinas"
                                class="table table-bordered table-condensed table-hover table-striped"
                                style="width: 100%">
                             <thead>
@@ -200,41 +195,21 @@
                         </table>
                     </div>
                     <div id="mortalidad" class="tab-pane fade">
-                        <div class="row">
-                            <div class="col-lg-5">
-                                <label for="id_alimento">Buscar Alimento:</label>
-                                <div class="input-group">
-                                    <select name="alimento" class="form-control select2" data-live-search="true"
-                                            style="width: 100%" required="" id="id_alimento">
-                                    </select>
-                                    <span class="input-group-btn">
-                                            <button class="btn btn-primary btn-sm" id="id_search_alimentos"
-                                                    data-toggle="tooltip" title="Buscar Alimentos" type="button">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </span>
-                                </div>
-                            </div>
-                            <div class="col-lg-2"></div>
-                            <div class="col-lg-3">
-                                <p></p>
-                                <a type="button" class="btn btn-danger btn-lg" id="vaciar_alimentos">
-                                    <i class="fas fa-trash-restore-alt"></i> Vaciar Detalle</a>
-                            </div>
-                        </div>
                         <br>
-                        <table id="datatable_alimento"
+                        <button type="button" class="btn btn-danger" id="add_mortalidad">
+                            <i class="fas fa-skull-crossbones"></i> Agregar Bajas
+                        </button>
+                        <br><br>
+                        <table id="datatable_mortalidad"
                                class="table table-bordered table-condensed table-hover table-striped"
                                style="width: 100%">
                             <thead>
                             <tr>
-                                <th>Alimento</th>
-                                <th>Categoria</th>
-                                <th>Presentacion</th>
-                                <th>Precio</th>
+                                <th>Fecha</th>
+                                <th>Causa</th>
                                 <th>Cantidad</th>
-                                <th>Subtotal</th>
-                                <th>Quitar</th>
+                                <th>Descripcion</th>
+                                <th>Opciones</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -243,46 +218,23 @@
                         </table>
                     </div>
                     <div id="peso" class="tab-pane fade">
-                        <div class="row">
-                            <div class="col-lg-5">
-                                <label for="id_alimento">Buscar Alimento:</label>
-                                <div class="input-group">
-                                    <select name="alimento" class="form-control select2" data-live-search="true"
-                                            style="width: 100%" required="" id="id_alimento">
-                                    </select>
-                                    <span class="input-group-btn">
-                                            <button class="btn btn-primary btn-sm" id="id_search_alimentos"
-                                                    data-toggle="tooltip" title="Buscar Alimentos" type="button">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </span>
-                                </div>
-                            </div>
-                            <div class="col-lg-2"></div>
-                            <div class="col-lg-3">
-                                <p></p>
-                                <a type="button" class="btn btn-danger btn-lg" id="vaciar_alimentos">
-                                    <i class="fas fa-trash-restore-alt"></i> Vaciar Detalle</a>
-                            </div>
-                        </div>
                         <br>
-                        <table id="datatable_alimento"
+                        <button type="button" class="btn btn-danger" id="add_peso"><i
+                                class="fas fa-balance-scale-left"></i> Agregar nuevo valor de peso
+                        </button>
+                        <br><br>
+                        <table id="datatable_peso"
                                class="table table-bordered table-condensed table-hover table-striped"
                                style="width: 100%">
                             <thead>
                             <tr>
-                                <th>Alimento</th>
-                                <th>Categoria</th>
-                                <th>Presentacion</th>
-                                <th>Precio</th>
-                                <th>Cantidad</th>
-                                <th>Subtotal</th>
-                                <th>Quitar</th>
+                                <th style="width: 10%">Fecha</th>
+                                <th style="width: 80%">Peso Promedio</th>
+                                <th style="width: 10%">Opciones</th>
                             </tr>
                             </thead>
                             <tbody>
                             </tbody>
-
                         </table>
                     </div>
                     <div id="gastos" class="tab-pane fade">
@@ -333,6 +285,9 @@
         </div>
     </div>
 {% endblock %}
+{% block tablas %}
+
+{% endblock %}
 {% block modal %}
     <div class="modal fade" id="modal_search_galpon" tabindex="-1" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
@@ -368,6 +323,64 @@
 
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="far fa-window-close"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal_form_peso" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-balance-scale-left"></i>&nbsp;Agregar Peso promedio</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            {{ form_peso.as_p }}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id=save_peso>
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="far fa-window-close"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal_form_mortalidad" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-skull-crossbones"></i>&nbsp;Agregar Bajas</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            {{ form_mortalidad.as_p }}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id=save_mortalidad>
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">
                         <i class="far fa-window-close"></i> Cancelar
                     </button>
