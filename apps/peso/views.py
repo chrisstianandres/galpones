@@ -43,11 +43,11 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                 peso.fecha = datos['fecha']
                 peso.save()
                 data['resp'] = True
-            # elif action == 'delete':
-            #     pk = request.POST['id']
-            #     cat = Galpon.objects.get(pk=pk)
-            #     cat.delete()
-            #     data['resp'] = True
+            elif action == 'delete':
+                pk = request.POST['id']
+                cat = self.model_class.objects.get(pk=pk)
+                cat.delete()
+                data['resp'] = True
             else:
                 data['error'] = 'No ha seleccionado ninguna opción'
         except Exception as e:

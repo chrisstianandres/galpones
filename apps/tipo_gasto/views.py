@@ -34,6 +34,11 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 data = []
                 for c in Tipo_gasto.objects.all():
                     data.append(c.toJSON())
+            elif action == 'search':
+                data = []
+                term = request.POST['term']
+                for c in self.model.objects.filter(nombre__icontains=term):
+                    data.append({'id': c.id, 'text': c.nombre})
             else:
                 data['error'] = 'No ha seleccionado una opcion'
         except Exception as e:

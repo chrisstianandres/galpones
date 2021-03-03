@@ -238,41 +238,21 @@
                         </table>
                     </div>
                     <div id="gastos" class="tab-pane fade">
-                        <div class="row">
-                            <div class="col-lg-5">
-                                <label for="id_alimento">Buscar Alimento:</label>
-                                <div class="input-group">
-                                    <select name="alimento" class="form-control select2" data-live-search="true"
-                                            style="width: 100%" required="" id="id_alimento">
-                                    </select>
-                                    <span class="input-group-btn">
-                                            <button class="btn btn-primary btn-sm" id="id_search_alimentos"
-                                                    data-toggle="tooltip" title="Buscar Alimentos" type="button">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </span>
-                                </div>
-                            </div>
-                            <div class="col-lg-2"></div>
-                            <div class="col-lg-3">
-                                <p></p>
-                                <a type="button" class="btn btn-danger btn-lg" id="vaciar_alimentos">
-                                    <i class="fas fa-trash-restore-alt"></i> Vaciar Detalle</a>
-                            </div>
-                        </div>
                         <br>
-                        <table id="datatable_alimento"
+                        <button type="button" class="btn btn-danger" id="add_gasto">
+                            <i class="fas fa-hand-holding-usd"></i> Agregar Gastos
+                        </button>
+                        <br><br>
+                        <table id="datatable_gasto"
                                class="table table-bordered table-condensed table-hover table-striped"
                                style="width: 100%">
                             <thead>
                             <tr>
-                                <th>Alimento</th>
-                                <th>Categoria</th>
-                                <th>Presentacion</th>
-                                <th>Precio</th>
-                                <th>Cantidad</th>
-                                <th>Subtotal</th>
-                                <th>Quitar</th>
+                                <th>Fecha</th>
+                                <th>Tipo de gasto</th>
+                                <th>Valor</th>
+                                <th>Detalle</th>
+                                <th>Opciones</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -361,6 +341,7 @@
     </div>
     <div class="modal fade" id="modal_form_mortalidad" tabindex="-1" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
+    <form id="form_mortalidad" method="post">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -372,13 +353,42 @@
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="row">
-                            {{ form_mortalidad.as_p }}
+                            <div class="col-lg-5">
+                                <label for="id_fecha_mortalidad">{{ form_mortalidad.fecha.label_tag }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="far fa-calendar-alt"></i>
+                                    </div>
+                                    {{ form_mortalidad.fecha }}
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <label for="id_causa">{{ form_mortalidad.causa.label_tag }}</label>
+                                <div class="input-group">
+                                    {{ form_mortalidad.causa }}
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-primary btn-sm"  type="button" data-toggle="tooltip" id="add_causa_muerte"
+                                                title="Agregar Causa de muerte"><i class="fa fa-plus"></i></button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <label for="id_cantidad_muertes">{{ form_mortalidad.cantidad_muertes.label_tag }}</label>
+                                {{ form_mortalidad.cantidad_muertes }}
+                            </div>
+                            <div class="col-lg-5">
+                                <label for="id_descrpcion_mortalidad">{{ form_mortalidad.descrpcion.label_tag }}</label>
+                                {{ form_mortalidad.descrpcion }}
+                            </div>
                         </div>
                     </div>
-
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id=save_mortalidad>
+                    <button type="submit" class="btn btn-primary" id=save_mortalidad>
                         <i class="fa fa-save"></i> Guardar
                     </button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -387,8 +397,134 @@
                 </div>
             </div>
         </div>
+    </form>
+
+    </div>
+    <div class="modal fade" id="modal_form_causa_muerte" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+    <form id="form_causa_muerte" method="post">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-book-dead"></i>&nbsp;Agregar Causa de muerte</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                           {{ form_causa_muerte.as_p }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="far fa-window-close"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    </div>
+    <div class="modal fade" id="modal_form_gasto" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+    <form id="form_gasto" method="post">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-hand-holding-usd"></i>&nbsp;Agregar Gasto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <label for="id_fecha_pago">{{ form_gasto.fecha_pago.label_tag }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    {{ form_gasto.fecha_pago }}
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <label for="id_tipo_gasto">{{ form_gasto.tipo_gasto.label_tag }}</label>
+                                <div class="input-group">
+                                    {{ form_gasto.tipo_gasto }}
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-primary btn-sm" type="button" data-toggle="tooltip" id="add_tipo_gasto"
+                                                title="Agregar tipo de Gasto"><i class="fa fa-plus"></i></button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <label for="id_valor">{{ form_gasto.valor.label_tag }}</label>
+                                {{ form_gasto.valor }}
+                            </div>
+                            <div class="col-lg-5">
+                                <label for="id_detalle">{{ form_gasto.detalle.label_tag }}</label>
+                                {{ form_gasto.detalle }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="far fa-window-close"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    </div>
+    <div class="modal fade" id="modal_form_tipo_gasto" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+    <form id="form_tipo_gasto" method="post">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-search-dollar"></i>&nbsp;Agregar Tipo de Gasto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                           {{ form_tipo_gasto.as_p }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="far fa-window-close"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
     </div>
 {% endblock %}
 {% block extra %}
     <script src="{% static 'apps/distribucion/form.js' %}"></script>
+    <script src="{% static 'apps/distribucion/validacion_form.js' %}"></script>
 {% endblock %}

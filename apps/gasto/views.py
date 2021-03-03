@@ -11,7 +11,7 @@ from apps.backEnd import nombre_empresa
 from apps.gasto.forms import GastoForm
 from apps.gasto.models import Gasto
 from apps.mixins import ValidatePermissionRequiredMixin
-from apps.tipogasto.forms import TipogastoForm
+from apps.tipo_gasto.forms import TipogastoForm
 
 opc_icono = 'fas fa-file-invoice-dollar'
 opc_entidad = 'Gasto'

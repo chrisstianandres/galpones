@@ -3,11 +3,11 @@ var tbl_galpon_seacrh;
 var tasa_iva = ($('#id_tasa_iva').val()) * 100.00;
 var dt_detalle;
 var dt_detalle_alimentos;
-//<<<------------VARIEBLES PARA SECCION PESO------------------------>>>
+var id_galpon = $('#id_galpon');
+//<<<------------VARIEBLES PARA SECCION MORTALIDAD------------------------>>>
 
-var dt_mortalidad,  action_mortalidad, id_mortalidad;
+var dt_mortalidad, action_mortalidad, id_mortalidad;
 var modal_mortalidad = $('#modal_form_mortalidad');
-
 
 
 //<<<------------VARIEBLES PARA SECCION PESO------------------------>>>
@@ -15,7 +15,52 @@ var modal_mortalidad = $('#modal_form_mortalidad');
 var dt_peso, action_peso, id_peso;
 var modal_peso = $('#modal_form_peso');
 
+//<<<------------VARIEBLES PARA SECCION GASTO------------------------>>>
 
+var dt_gasto, action_gasto, id_gasto;
+var modal_gasto = $('#modal_form_gasto');
+
+function ajax_get_data(id) {
+    $.ajax({
+        type: "POST",
+        url: '/produccion/control',
+        data: {
+            "id": id,
+            "action": 'get_data'
+        },
+        dataType: 'json',
+        success: function (data) {
+            $.isLoading({
+                text: "<strong>" + 'Cargando datos por favor espera...' + "</strong>",
+                tpl: '<span class="isloading-wrapper %wrapper%"><i class="fas fa-spinner fa-2x fa-spin"></i><br>%text%</span>',
+            });
+            setTimeout(function () {
+                $.isLoading('hide');
+                produccion.add(data[0]);
+            }, 3000);
+            return false;
+        }
+    })
+}
+
+function clear_all() {
+    $('#id_lote').val(null);
+    $('#id_lote_cantidad').val(null);
+    $('#id_capacidad').val(null);
+    $('#id_cantidad_in_galpon').val(null);
+    $('#id_lote_fecha').val(null);
+    $('#id_tipo_ave').val(null);
+    produccion.items.peso = [];
+    produccion.items.mortalidad = [];
+    produccion.list();
+}
+
+$(document).on('keypress', 'input[aria-controls="select2-id_galpon-results"]', function (e) {
+    $(this).val($(this).val().replace(/[^\d].+/, ""));
+    if ((e.which < 48 || e.which > 57)) {
+        e.preventDefault();
+    }
+});
 
 var produccion = {
     items: {
@@ -24,6 +69,7 @@ var produccion = {
         alimentos: [],
         peso: [],
         mortalidad: [],
+        gasto:[],
     },
     get_ids: function () {
         var ids = [];
@@ -67,6 +113,7 @@ var produccion = {
         $('#id_tipo_ave').val(data.lote_data[0].lote.raza.nombre);
         this.items.peso = data.peso;
         this.items.mortalidad = data.mortalidad;
+        this.items.gasto = data.gastos;
         console.log(data);
         this.list();
 
@@ -150,7 +197,7 @@ var produccion = {
             destroy: true,
             responsive: true,
             autoWidth: false,
-            "order": [[ 0, "desc" ]],
+            "order": [[0, "desc"]],
             dom: 'tipr',
             data: this.items.peso,
             columns: [
@@ -179,8 +226,11 @@ var produccion = {
                     targets: [-1],
                     class: 'text-center',
                     render: function (data, type, row) {
-                        return '<button class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" ' +
-                            'title="Tooltip on top" name="edit"><i class="fas fa-edit"></i></button>'
+                        var edit = '<button class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" ' +
+                            'title="Editar" name="edit"><i class="fas fa-edit"></i></button>' + ' ';
+                        var del = '<button class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="top" ' +
+                            'title="Eliminar" name="del"><i class="fas fa-trash"></i></button>';
+                        return edit + del
                     }
                 },
 
@@ -190,7 +240,7 @@ var produccion = {
             destroy: true,
             responsive: true,
             autoWidth: false,
-            "order": [[ 0, "desc" ]],
+            "order": [[0, "desc"]],
             dom: 'tipr',
             data: this.items.mortalidad,
             columns: [
@@ -213,8 +263,48 @@ var produccion = {
                     targets: [-1],
                     class: 'text-center',
                     render: function (data, type, row) {
-                        return '<button class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" ' +
-                            'title="Tooltip on top" name="edit"><i class="fas fa-edit"></i></button>'
+                        var edit = '<button class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" ' +
+                            'title="Editar" name="edit"><i class="fas fa-edit"></i></button>' + ' ';
+                        var del = '<button class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="top" ' +
+                            'title="Eliminar" name="del"><i class="fas fa-trash"></i></button>';
+                        return edit + del
+                    }
+                },
+
+            ]
+        });
+        dt_gasto = $("#datatable_gasto").DataTable({
+            destroy: true,
+            responsive: true,
+            autoWidth: false,
+            "order": [[0, "desc"]],
+            dom: 'tipr',
+            data: this.items.gasto,
+            columns: [
+                {"data": "fecha_pago"},
+                {"data": "tipo_gasto.nombre"},
+                {"data": "valor"},
+                {"data": "detalle"},
+                {"data": "id"},
+            ],
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json',
+            },
+            columnDefs: [
+                {
+                    targets: '_all',
+                    class: 'text-center',
+
+                },
+                {
+                    targets: [-1],
+                    class: 'text-center',
+                    render: function (data, type, row) {
+                        var edit = '<button class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" ' +
+                            'title="Editar" name="edit"><i class="fas fa-edit"></i></button>' + ' ';
+                        var del = '<button class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="top" ' +
+                            'title="Eliminar" name="del"><i class="fas fa-trash"></i></button>';
+                        return edit + del
                     }
                 },
 
@@ -431,42 +521,41 @@ $(function () {
         });
 
 
-    $('#id_galpon')
-        .select2({
-            theme: "classic",
-            language: {
-                inputTooShort: function () {
-                    return "Ingresa al menos un caracter...";
-                },
-                "noResults": function () {
-                    return "Sin resultados";
-                },
-                "searching": function () {
-                    return "Buscando...";
-                }
+    id_galpon.select2({
+        theme: "classic",
+        language: {
+            inputTooShort: function () {
+                return "Ingresa al menos un caracter...";
             },
-            allowClear: true,
-            ajax: {
-                delay: 250,
-                type: 'POST',
-                url: '/produccion/control',
-                data: function (params) {
-                    return {
-                        term: params.term,
-                        'action': 'search_galpon'
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-
-                },
+            "noResults": function () {
+                return "Sin resultados";
+            },
+            "searching": function () {
+                return "Buscando...";
+            }
+        },
+        allowClear: true,
+        ajax: {
+            delay: 250,
+            type: 'POST',
+            url: '/produccion/control',
+            data: function (params) {
+                return {
+                    term: params.term,
+                    'action': 'search_galpon'
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
 
             },
-            placeholder: 'Busca una galpon por numero',
-            minimumInputLength: 1,
-        })
+
+        },
+        placeholder: 'Busca una galpon por numero',
+        minimumInputLength: 1,
+    })
         .on('select2:select', function (e) {
             ajax_get_data($('#id_galpon option:selected').val());
         })
@@ -522,7 +611,7 @@ $(function () {
             var tr = tbl_galpon_seacrh.cell($(this).closest('td, li')).index();
             var data = tbl_galpon_seacrh.row(tr.row).data();
             var newOption = new Option('Galpon N°: ' + data.galpon['id'], data['id'], false, true);
-            $('#id_galpon').append(newOption).trigger('change');
+            id_galpon.append(newOption).trigger('change');
             $('#modal_search_galpon').modal('hide');
         });
 
@@ -555,60 +644,82 @@ $(function () {
             }
         });
 
-    function ajax_get_data(id) {
-        $.ajax({
-            type: "POST",
-            url: '/produccion/control',
-            data: {
-                "id": id,
-                "action": 'get_data'
-            },
-            dataType: 'json',
-            success: function (data) {
-                $.isLoading({
-                    text: "<strong>" + 'Cargando datos por favor espera...' + "</strong>",
-                    tpl: '<span class="isloading-wrapper %wrapper%"><i class="fas fa-spinner fa-2x fa-spin"></i><br>%text%</span>',
-                });
-                setTimeout(function () {
-                    $.isLoading('hide');
-                    produccion.add(data[0]);
-                }, 3000);
-                return false;
-            }
-        })
-    }
-
-    function clear_all() {
-        $('#id_lote').val(null);
-        $('#id_lote_cantidad').val(null);
-        $('#id_capacidad').val(null);
-        $('#id_cantidad_in_galpon').val(null);
-        $('#id_lote_fecha').val(null);
-        $('#id_tipo_ave').val(null);
-        produccion.items.peso = [];
-        produccion.list();
-    }
-
-    $(document).on('keypress', '.select2-search__field', function (e) {
-        $(this).val($(this).val().replace(/[^\d].+/, ""));
-        if ((e.which < 48 || e.which > 57)) {
-            e.preventDefault();
-        }
-    });
-
-
-
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-------SECCION MORTALIDAD------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     $('#add_mortalidad')
         .on('click', function () {
-            if (produccion.items.mortalidad.length === 0) return false;
+            if (id_galpon.val() === '') return false;
             action_mortalidad = 'add';
             data_form_mortalidad();
         });
 
+    $('#add_causa_muerte')
+        .on('click', function () {
+            $('#modal_form_causa_muerte').modal('show');
+        });
+    $('#id_causa')
+        .select2({
+            theme: "classic",
+            language: {
+                inputTooShort: function () {
+                    return "Ingresa al menos un caracter...";
+                },
+                "noResults": function () {
+                    return "Sin resultados";
+                },
+                "searching": function () {
+                    return "Buscando...";
+                }
+            },
+            allowClear: true,
+            ajax: {
+                delay: 250,
+                type: 'POST',
+                url: '/causa_muerte/lista',
+                data: function (params) {
+                    return {
+                        term: params.term,
+                        'action': 'search'
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+
+                },
+
+            },
+            placeholder: 'Busca una Causa de muerte',
+            minimumInputLength: 1,
+        });
+
+    $('#modal_form_causa_muerte').on('hidden.bs.modal', function () {
+        $('#form_causa_muerte').validate().resetForm();
+        $('#id_nombre_causa_muerte').val('');
+    });
+
+    $('#form_causa_muerte').on('submit', function (e) {
+        e.preventDefault();
+        var parametros = new FormData(this);
+        var isvalid = $(this).valid();
+        if (isvalid) {
+            save_with_ajax2('Alerta',
+                '/causa_muerte/nuevo', 'Esta seguro que desea guardar esta causa de muerte?', parametros,
+                function (response) {
+                    menssaje_ok('Exito!', 'Exito al guardar!', 'far fa-smile-wink', function () {
+                        $('#modal_form_causa_muerte').modal('hide');
+                        var newOption = new Option(response['nombre'], response['id'], false, true);
+                        $('#id_causa').append(newOption).trigger('change');
+                    });
+                });
+        }
+
+    });
+
     function data_form_mortalidad() {
         modal_mortalidad.modal('show');
+        $('#modal_form_causa_muerte').modal('show').modal('hide');
         $('#id_cantidad_muertes').TouchSpin({
             min: 1,
             max: $('#id_cantidad_in_galpon').val(),
@@ -622,52 +733,71 @@ $(function () {
     modal_mortalidad.on('hidden.bs.modal', function () {
         $('#id_cantidad_muertes').val(1);
         $('#id_descrpcion_mortalidad').val('');
+        $('#id_causa').val(null).trigger('change');
     });
 
-    $('#save_mortalidad').on('click', function () {
-        var parametros = {
-            'distribucion_id': produccion.items.distribuicion_id,
-            // 'peso_promedio': $('#id_peso_promedio').val(),
-            'action': action_mortalidad,
-            'id': id_mortalidad,
-            // 'fecha': $('#id_fecha_peso').val()
-        };
-        save_with_ajax('Alerta', '/mortalidad/nuevo', 'Esta seguro que desea guardar este numero de bajas a ' +
-            'este Galpon?', parametros, function () {
-            $('#modal_form_mortalidad').modal('hide');
-            ajax_get_data(produccion.items.distribuicion_id);
+    $('#form_mortalidad').on('submit', function (e) {
+        e.preventDefault();
+        var isvalid = $(this).valid();
+        if (isvalid) {
+            var parametros = {
+                'distribucion_id': produccion.items.distribuicion_id,
+                'cantidad_muertes': $('#id_cantidad_muertes').val(),
+                'causa': $('#id_causa').val(),
+                'descrpcion': $('#id_descrpcion_mortalidad').val(),
+                'action': action_mortalidad,
+                'id': id_mortalidad,
+                'fecha': $('#id_fecha_mortalidad').val()
+            };
+            save_with_ajax('Alerta', '/mortalidad/nuevo', 'Esta seguro que desea guardar este numero de bajas a ' +
+                'este Galpon?', parametros, function () {
+                $('#modal_form_mortalidad').modal('hide');
+                ajax_get_data(produccion.items.distribuicion_id);
+            })
+        }
+    });
+
+    $('#datatable_mortalidad tbody')
+        .on('click', 'button[name="edit"]', function () {
+            action_mortalidad = 'edit';
+            var tr = dt_mortalidad.cell($(this).closest('td, li')).index();
+            id_mortalidad = parseInt(produccion.items.mortalidad[tr.row].id);
+            var newOption = new Option(produccion.items.mortalidad[tr.row].causa.nombre, produccion.items.mortalidad[tr.row].causa.id, false, true);
+            $('#id_causa').append(newOption).trigger('change');
+            $('#id_cantidad_muertes').val(parseInt(produccion.items.mortalidad[tr.row].cantidad_muertes));
+            $('#id_descrpcion_mortalidad').val(produccion.items.mortalidad[tr.row].descrpcion);
+            $('#id_fecha_mortalidad').val(produccion.items.mortalidad[tr.row].fecha).prop('disabled', false).daterangepicker({
+                locale: {
+                    format: 'YYYY-MM-DD',
+                    applyLabel: '<i class="fas fa-search"></i> Selccionar',
+                    cancelLabel: '<i class="fas fa-times"></i> Cancelar',
+                },
+                singleDatePicker: true,
+                maxDate: new Date(),
+
+            });
+            data_form_mortalidad();
         })
-    });
-
-    $('#datatable_mortalidad tbody').on('click', 'button[name="edit"]', function () {
-        action_mortalidad = 'edit';
-        var tr = dt_mortalidad.cell($(this).closest('td, li')).index();
-        id_mortalidad = parseInt(produccion.items.mortalidad[tr.row].id);
-        console.log(produccion.items.mortalidad[tr.row]);
-        $('#id_cantidad_muertes').val(parseInt(produccion.items.mortalidad[tr.row].cantidad_muertes));
-        $('#id_descrpcion_mortalidad').val(produccion.items.mortalidad[tr.row].descrpcion);
-        // $('#id_fecha_peso').val(produccion.items.peso[tr.row].fecha).prop('disabled', false).daterangepicker({
-        //     locale: {
-        //         format: 'YYYY-MM-DD',
-        //         applyLabel: '<i class="fas fa-search"></i> Selccionar',
-        //         cancelLabel: '<i class="fas fa-times"></i> Cancelar',
-        //     },
-        //     singleDatePicker: true,
-        //     maxDate: new Date(),
-        //
-        // });
-        data_form_mortalidad();
-    });
-
-
-
-
+        .on('click', 'button[name="del"]', function () {
+            action_mortalidad = 'delete';
+            var tr = dt_mortalidad.cell($(this).closest('td, li')).index();
+            id_mortalidad = parseInt(produccion.items.mortalidad[tr.row].id);
+            var parametros = {
+                'action': action_mortalidad,
+                'distribucion_id': produccion.items.distribuicion_id,
+                'id': id_mortalidad
+            };
+            save_estado('Alerta', '/mortalidad/nuevo', 'Esta seguro que desea eliminar estas bajas',
+                parametros, function () {
+                    ajax_get_data(produccion.items.distribuicion_id);
+                })
+        });
 
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-------SECCION PESO------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     $('#add_peso')
         .on('click', function () {
-            if (produccion.items.peso.length === 0) return false;
+            if (id_galpon.val() === '') return false;
             action_peso = 'add';
             data_form_peso();
         });
@@ -705,12 +835,163 @@ $(function () {
         })
     });
 
-    $('#datatable_peso tbody').on('click', 'button[name="edit"]', function () {
-        action_peso = 'edit';
-        var tr = dt_peso.cell($(this).closest('td, li')).index();
-        id_peso = parseInt(produccion.items.peso[tr.row].id);
-        $('#id_peso_promedio').val(parseFloat(produccion.items.peso[tr.row].peso_promedio).toFixed(2));
-        $('#id_fecha_peso').val(produccion.items.peso[tr.row].fecha).prop('disabled', false).daterangepicker({
+    $('#datatable_peso tbody')
+        .on('click', 'button[name="edit"]', function () {
+            action_peso = 'edit';
+            var tr = dt_peso.cell($(this).closest('td, li')).index();
+            id_peso = parseInt(produccion.items.peso[tr.row].id);
+            $('#id_peso_promedio').val(parseFloat(produccion.items.peso[tr.row].peso_promedio).toFixed(2));
+            $('#id_fecha_peso').val(produccion.items.peso[tr.row].fecha).prop('disabled', false).daterangepicker({
+                locale: {
+                    format: 'YYYY-MM-DD',
+                    applyLabel: '<i class="fas fa-search"></i> Selccionar',
+                    cancelLabel: '<i class="fas fa-times"></i> Cancelar',
+                },
+                singleDatePicker: true,
+                maxDate: new Date(),
+
+            });
+            data_form_peso();
+        })
+        .on('click', 'button[name="del"]', function () {
+            action_peso = 'delete';
+            var tr = dt_peso.cell($(this).closest('td, li')).index();
+            id_peso = parseInt(produccion.items.peso[tr.row].id);
+            var parametros = {
+                'action': action_peso,
+                'id': id_peso
+            };
+            save_estado('Alerta', '/peso/nuevo', 'Esta seguro que desea eliminar este registro de peso',
+                parametros, function () {
+                    ajax_get_data(produccion.items.distribuicion_id);
+                })
+        });
+});
+
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-------SECCION GASTO------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+$('#add_gasto')
+    .on('click', function () {
+        if (id_galpon.val() === '') return false;
+        action_gasto = 'add';
+        data_form_gasto();
+    });
+
+$('#add_tipo_gasto')
+    .on('click', function () {
+        $('#modal_form_tipo_gasto').modal('show');
+    });
+$('#id_tipo_gasto')
+    .select2({
+        theme: "classic",
+        language: {
+            inputTooShort: function () {
+                return "Ingresa al menos un caracter...";
+            },
+            "noResults": function () {
+                return "Sin resultados";
+            },
+            "searching": function () {
+                return "Buscando...";
+            }
+        },
+        allowClear: true,
+        ajax: {
+            delay: 250,
+            type: 'POST',
+            url: '/tipo_gasto/lista',
+            data: function (params) {
+                return {
+                    term: params.term,
+                    'action': 'search'
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+
+            },
+
+        },
+        placeholder: 'Busca una tipo de Gasto',
+        minimumInputLength: 1,
+    });
+
+$('#modal_form_tipo_gasto').on('hidden.bs.modal', function () {
+    $('#form_tipo_gasto').validate().resetForm();
+    $('#id_nombre_tipo_gasto').val('');
+});
+
+$('#form_tipo_gasto').on('submit', function (e) {
+    e.preventDefault();
+    var parametros = new FormData(this);
+    var isvalid = $(this).valid();
+    if (isvalid) {
+        save_with_ajax2('Alerta',
+            '/tipo_gasto/nuevo', 'Esta seguro que desea guardar este tipo de Gasto?', parametros,
+            function (response) {
+                menssaje_ok('Exito!', 'Exito al guardar!', 'far fa-smile-wink', function () {
+                    $('#modal_form_tipo_gasto').modal('hide');
+                    var newOption = new Option(response['nombre'], response['id'], false, true);
+                    $('#id_tipo_gasto').append(newOption).trigger('change');
+                });
+            });
+    }
+
+});
+
+function data_form_gasto() {
+    modal_gasto.modal('show');
+    $('#modal_form_tipo_gasto').modal('show').modal('hide');
+    $('#id_valor').TouchSpin({
+        min: 1.00,
+        decimals: 2,
+        max: 10000000,
+        step: 0.01,
+        boostat: 5,
+        maxboostedstep: 10,
+        prefix: '$'
+    })
+}
+
+modal_gasto.on('hidden.bs.modal', function () {
+    $('#id_valor').val(1);
+    $('#id_detalle').val('');
+    $('#id_tipo_gasto').val(null).trigger('change');
+});
+
+$('#form_gasto').on('submit', function (e) {
+    e.preventDefault();
+    var isvalid = $(this).valid();
+    if (isvalid) {
+        var parametros = {
+            'distribucion_id': produccion.items.distribuicion_id,
+            'valor': $('#id_valor').val(),
+            'tipo_gasto': $('#id_tipo_gasto').val(),
+            'detalle': $('#id_detalle').val(),
+            'action': action_gasto,
+            'id': id_gasto,
+            'fecha_pago': $('#id_fecha_pago').val()
+        };
+        save_with_ajax('Alerta', '/gasto/nuevo', 'Esta seguro que desea guardar este nuevo gasto a ' +
+            'este Galpon?', parametros, function () {
+            $('#modal_form_gasto').modal('hide');
+            ajax_get_data(produccion.items.distribuicion_id);
+        })
+    }
+});
+
+$('#datatable_gasto tbody')
+    .on('click', 'button[name="edit"]', function () {
+        action_gasto = 'edit';
+        var tr = dt_gasto.cell($(this).closest('td, li')).index();
+        id_gasto = parseInt(produccion.items.gasto[tr.row].id);
+        var newOption = new Option(produccion.items.gasto[tr.row].tipo_gasto.nombre, produccion.items.gasto[tr.row].tipo_gasto.id, false, true);
+        $('#id_tipo_gasto').append(newOption).trigger('change');
+        $('#id_valor').val(parseFloat(produccion.items.gasto[tr.row].valor).toFixed(2));
+        $('#id_detalle').val(produccion.items.gasto[tr.row].detalle);
+        $('#id_fecha_pago').val(produccion.items.gasto[tr.row].fecha_pago).prop('disabled', false).daterangepicker({
             locale: {
                 format: 'YYYY-MM-DD',
                 applyLabel: '<i class="fas fa-search"></i> Selccionar',
@@ -720,8 +1001,21 @@ $(function () {
             maxDate: new Date(),
 
         });
-        data_form_peso();
+        data_form_gasto();
     })
+    .on('click', 'button[name="del"]', function () {
+        action_gasto = 'delete';
+        var tr = dt_gasto.cell($(this).closest('td, li')).index();
+        id_gasto = parseInt(produccion.items.gasto[tr.row].id);
+        var parametros = {
+            'action': action_gasto,
+            'distribucion_id': produccion.items.distribuicion_id,
+            'id': id_gasto
+        };
+        save_estado('Alerta', '/gasto/nuevo', 'Esta seguro que desea eliminar estos gastos',
+            parametros, function () {
+                ajax_get_data(produccion.items.distribuicion_id);
+            })
+    });
 
-});
 

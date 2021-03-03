@@ -1,7 +1,6 @@
 from django import forms
 from datetime import *
 
-from apps.empresa.models import Empresa
 from apps.gasto.models import Gasto
 
 
@@ -19,13 +18,9 @@ class GastoForm(forms.ModelForm):
             }
             self.fields['tipo_gasto'].widget.attrs = {
                 'class': 'form-control select2',
-                'data-live-search': "true"
+                'data-live-search': "true",
+                'style': 'width:100%'
             }
-            self.fields['empresa'].widget.attrs = {
-                'class': 'form-control select2',
-                'hidden': 'hidden'
-            }
-            self.fields["empresa"].initial = Empresa.objects.first()
             self.fields['valor'].widget.attrs = {
                 'value': '0.00',
                 'class': 'form-control'
@@ -41,7 +36,6 @@ class GastoForm(forms.ModelForm):
         fields = [
             'fecha_pago',
             'tipo_gasto',
-            'empresa',
             'valor',
             'detalle'
         ]
@@ -49,7 +43,6 @@ class GastoForm(forms.ModelForm):
             'fecha_pago': 'Fecha de Pago',
             'tipo_gasto': 'Tipo de Gasto',
             'valor': 'Valor',
-            'empresa': '',
             'detalle': 'Detalle'
         }
         widgets = {

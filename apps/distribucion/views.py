@@ -6,15 +6,18 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
 from apps.backEnd import nombre_empresa
+from apps.causa_muerte.forms import Causa_muerteForm
 from apps.distribucion.forms import DistribucionForm
 from apps.distribucion.models import Distribucion
 from apps.galpon.forms import GalponForm
 from apps.galpon.models import Galpon
+from apps.gasto.forms import GastoForm
 from apps.medicina.models import Medicina
 from apps.mixins import ValidatePermissionRequiredMixin
 from apps.mortalidad.forms import MortalidadForm
 from apps.peso.forms import PesoForm
 from apps.peso.models import Peso
+from apps.tipo_gasto.forms import TipogastoForm
 
 opc_icono = 'fas fa-crow'
 opc_entidad = 'Control de Produccion'
@@ -80,11 +83,6 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 query = Distribucion.objects.filter(lote__estado=0)
                 for a in query:
                     data.append(a.toJSON())
-            # elif action == 'search':
-            #     data = []
-            #     term = request.POST['term']
-            #     for c in Galpon.objects.filter(capacidad__range=term):
-            #         data.append({'id': c.id, 'text': c.nombre})
             else:
                 data['error'] = 'No ha seleccionado una opcion'
         except Exception as e:
@@ -103,6 +101,9 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['form'] = DistribucionForm
         data['form_peso'] = PesoForm
         data['form_mortalidad'] = MortalidadForm
+        data['form_causa_muerte'] = Causa_muerteForm
+        data['form_gasto'] = GastoForm
+        data['form_tipo_gasto'] = TipogastoForm
         return data
 
 

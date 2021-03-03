@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.urls import path
 from . import views
-from apps.tipogasto.views import *
+from apps.tipo_gasto.views import *
 from django.contrib.auth.decorators import login_required
 app_name = 'Tipo_Gasto'
 
