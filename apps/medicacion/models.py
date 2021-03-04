@@ -14,7 +14,7 @@ class Medicacion(models.Model):
     dosis = models.IntegerField(default=1)
 
     def __str__(self):
-        return '{}/{}' .format(self.distribucion, self.medicina)
+        return '{} / {}' .format(self.distribucion, self.medicina)
 
     def toJSON(self):
         item = model_to_dict(self)

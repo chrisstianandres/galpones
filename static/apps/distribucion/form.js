@@ -7,14 +7,14 @@ var id_galpon = $('#id_galpon');
 
 //<<<------------VARIEBLES PARA SECCION MEDICINA------------------------>>>
 
-var dt_medicacion, action_medicacion, id_medicacion;
+var dt_medicacion, action_medicacion, id_select_medicina = 0, tbl_detalle_medicina, id_medicacion;
 var modal_medicacion = $('#modal_form_medicacion');
 
 
 //<<<------------VARIEBLES PARA SECCION ALIMENTOS------------------------>>>
 
-var dt_alimento, action_alimento, id_alimento;
-var modal_alimento = $('#modal_form_alimento');
+var dt_alimentacion, action_alimentacion, id_select_alimento = 0, tbl_detalle_alimento, id_alimentacion;
+var modal_alimentacion = $('#modal_form_alimentacion');
 
 //<<<------------VARIEBLES PARA SECCION MORTALIDAD------------------------>>>
 
@@ -83,38 +83,6 @@ var produccion = {
         mortalidad: [],
         gasto: [],
     },
-    get_ids: function () {
-        var ids = [];
-        $.each(this.items.medicinas, function (key, value) {
-            ids.push(value.id);
-        });
-        return ids;
-    },
-    get_ids_alimento: function () {
-        var ids = [];
-        $.each(this.items.alimentos, function (key, value) {
-            ids.push(value.id);
-        });
-        return ids;
-    },
-    calculate: function () {
-        var subtotal = 0.00;
-        var iva_emp = tasa_iva;
-        $.each(this.items.medicinas, function (pos, dict) {
-            dict.subtotal = dict.cantidad * parseFloat(dict.precio);
-            subtotal += dict.subtotal;
-        });
-        $.each(this.items.alimentos, function (pos, dict) {
-            dict.subtotal = dict.cantidad * parseFloat(dict.precio);
-            subtotal += dict.subtotal;
-        });
-        this.items.subtotal = subtotal;
-        this.items.iva = this.items.subtotal * (iva_emp / 100);
-        this.items.total = this.items.subtotal + this.items.iva;
-        $('input[name="subtotal"]').val(this.items.subtotal.toFixed(2));
-        $('input[name="iva"]').val(this.items.iva.toFixed(2));
-        $('input[name="total"]').val(this.items.total.toFixed(2));
-    },
     add: function (data) {
         this.items.distribuicion_id = data.lote_data[0].id;
         $('#id_lote').val(data.lote_data[0].lote.id);
@@ -131,81 +99,7 @@ var produccion = {
         this.list();
 
     },
-    add_alimento: function (data) {
-        this.items.alimentos.push(data);
-        this.list_alimentos();
-
-    },
     list: function () {
-        // dt_detalle = $("#datatable_detalle").DataTable({
-        //     destroy: true,
-        //     responsive: true,
-        //     autoWidth: false,
-        //     dom: 'tipr',
-        //     data: this.items.medicinas,
-        //     columns: [
-        //         {"data": "insumo.nombre"},
-        //         {"data": "insumo.categoria.nombre"},
-        //         {"data": "tipo_medicina.nombre"},
-        //         {"data": "precio"},
-        //         {"data": "cantidad"},
-        //         {"data": "subtotal"},
-        //         {"data": "id"}
-        //     ],
-        //     language: {
-        //         url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json',
-        //     },
-        //     columnDefs: [
-        //         {
-        //             targets: '_all',
-        //             class: 'text-center',
-        //
-        //         },
-        //         {
-        //             targets: [-1],
-        //             class: 'text-center',
-        //             width: "15%",
-        //             render: function (data, type, row) {
-        //                 return '<a type="button" rel="remove" class="btn btn-danger btn-xs btn-round" ' +
-        //                     'style="color: white" data-toggle="tooltip" title="Quitar"><i class="fa fa-times"></i>' +
-        //                     '</a>';
-        //             }
-        //         },
-        //         {
-        //             targets: [-4],
-        //             render: function (data, type, row) {
-        //                 return '<input type="text" class="form-control input-sm" value="' + data + '" name="precio">';
-        //             }
-        //         },
-        //         {
-        //             targets: [-3],
-        //             render: function (data, type, row) {
-        //                 return '<input type="text" class="form-control input-sm" value="' + data + '" name="cantidad">';
-        //             }
-        //         },
-        //         {
-        //             targets: [-2],
-        //             render: function (data, type, row) {
-        //                 return '$ ' + parseFloat(data).toFixed(2);
-        //             }
-        //         },
-        //     ],
-        //     createdRow: function (row, data, dataIndex) {
-        //         $(row).find('input[name="cantidad"]').TouchSpin({
-        //             min: 1,
-        //             max: 1000000,
-        //             step: 1
-        //         });
-        //         $(row).find('input[name="precio"]').TouchSpin({
-        //             min: 1.00,
-        //             decimals: 2,
-        //             max: 100000000,
-        //             step: 0.01,
-        //             prefix: '<i class="fas fa-dollar-sign"></i>'
-        //         });
-        //
-        //     }
-        // });
         dt_peso = $("#datatable_peso").DataTable({
             destroy: true,
             responsive: true,
@@ -332,10 +226,9 @@ var produccion = {
             data: this.items.medicacion,
             columns: [
                 {"data": "fecha"},
-                {"data": "insumo.nombre"},
-                {"data": "tipo_medicina.nombre"},
-                {"data": "cantidad"},
-                {"data": "id"},
+                {"data": "medicina__insumo__nombre"},
+                {"data": "medicina__tipo_medicina__nombre"},
+                {"data": "total"}
             ],
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json',
@@ -345,22 +238,10 @@ var produccion = {
                     targets: '_all',
                     class: 'text-center',
 
-                },
-                {
-                    targets: [-1],
-                    class: 'text-center',
-                    render: function (data, type, row) {
-                        var edit = '<button class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" ' +
-                            'title="Editar" name="edit"><i class="fas fa-edit"></i></button>' + ' ';
-                        var del = '<button class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="top" ' +
-                            'title="Eliminar" name="del"><i class="fas fa-trash"></i></button>';
-                        return edit + del
-                    }
-                },
-
+                }
             ]
         });
-        dt_alimentacion = $("#datatable_alimento").DataTable({
+        dt_alimentacion = $("#datatable_alimentacion").DataTable({
             destroy: true,
             responsive: true,
             autoWidth: false,
@@ -369,10 +250,9 @@ var produccion = {
             data: this.items.alimentacion,
             columns: [
                 {"data": "fecha"},
-                {"data": "insumo.nombre"},
-                {"data": "presentacion.nombre"},
-                {"data": "cantidad"},
-                {"data": "id"},
+                {"data": "alimento__insumo__nombre"},
+                {"data": "alimento__presentacion__nombre"},
+                {"data": "total"}
             ],
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json',
@@ -382,95 +262,10 @@ var produccion = {
                     targets: '_all',
                     class: 'text-center',
 
-                },
-                {
-                    targets: [-1],
-                    class: 'text-center',
-                    render: function (data, type, row) {
-                        var edit = '<button class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="top" ' +
-                            'title="Editar" name="edit"><i class="fas fa-edit"></i></button>' + ' ';
-                        var del = '<button class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="top" ' +
-                            'title="Eliminar" name="del"><i class="fas fa-trash"></i></button>';
-                        return edit + del
-                    }
-                },
-
+                }
             ]
         });
-    },
-    list_alimentos: function () {
-        this.calculate();
-        dt_detalle_alimentos = $("#datatable_alimento").DataTable({
-            destroy: true,
-            responsive: true,
-            autoWidth: false,
-            dom: 'tipr',
-            data: this.items.alimentos,
-            columns: [
-                {"data": "insumo.nombre"},
-                {"data": "insumo.categoria.nombre"},
-                {"data": "presentacion.nombre"},
-                {"data": "precio"},
-                {"data": "cantidad"},
-                {"data": "subtotal"},
-                {"data": "id"}
-            ],
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json',
-            },
-            columnDefs: [
-                {
-                    targets: '_all',
-                    class: 'text-center',
-
-                },
-                {
-                    targets: [-1],
-                    class: 'text-center',
-                    width: "15%",
-                    render: function (data, type, row) {
-                        return '<a type="button" rel="remove" class="btn btn-danger btn-xs btn-round" ' +
-                            'style="color: white" data-toggle="tooltip" title="Quitar"><i class="fa fa-times"></i>' +
-                            '</a>';
-                    }
-                },
-                {
-                    targets: [-4],
-                    render: function (data, type, row) {
-                        return '<input type="text" class="form-control input-sm" value="' + data + '" name="precio">';
-                    }
-                },
-                {
-                    targets: [-3],
-                    render: function (data, type, row) {
-                        return '<input type="text" class="form-control input-sm" value="' + data + '" name="cantidad">';
-                    }
-                },
-                {
-                    targets: [-2],
-                    render: function (data, type, row) {
-                        return '$ ' + parseFloat(data).toFixed(2);
-                    }
-                },
-            ],
-            createdRow: function (row, data, dataIndex) {
-                $(row).find('input[name="cantidad"]').TouchSpin({
-                    min: 1,
-                    max: 1000000,
-                    step: 1
-                });
-                $(row).find('input[name="precio"]').TouchSpin({
-                    min: 1.00,
-                    decimals: 2,
-                    max: 100000000,
-                    step: 0.01,
-                    prefix: '<i class="fas fa-dollar-sign"></i>'
-                });
-
-            }
-        });
-    },
-
+    }
 };
 $(function () {
     produccion.list();
@@ -502,44 +297,6 @@ $(function () {
             $('td:eq(5)', dt_detalle.row(tr.row).node()).html('$' + compras.items.medicinas[tr.row].subtotal.toFixed(2));
         });
 
-    $('#id_search_medicina')
-        .on('click', function () {
-            $('#modal_search_medicina').modal('show');
-            tbl_productos = $("#datatable_search_medicina").DataTable({
-                destroy: true,
-                autoWidth: false,
-                dataSrc: "",
-                responsive: true,
-                ajax: {
-                    url: '/medicina/lista',
-                    type: 'POST',
-                    // data: {'action': 'list_list', 'ids': JSON.stringify(compras.get_ids())},
-                    dataSrc: ""
-                },
-                language: {
-                    "url": '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json'
-                },
-                columns: [
-                    {data: "insumo.nombre"},
-                    {data: "insumo.categoria.nombre"},
-                    {data: "tipo_medicina.nombre"},
-                    {data: "id"}
-                ],
-                columnDefs: [
-                    {
-                        targets: [-1],
-                        class: 'text-center',
-                        width: '10%',
-                        orderable: false,
-                        render: function (data, type, row) {
-                            return '<a style="color: white" type="button" class="btn btn-success btn-xs" rel="take" ' +
-                                'data-toggle="tooltip" title="Seleccionar Insumo"><i class="fa fa-check"></i></a>' + ' '
-
-                        }
-                    },
-                ]
-            });
-        });
 
     //seccion alimentos
     $('#datatable_alimento tbody')
@@ -744,7 +501,6 @@ $(function () {
 
     function data_form_medicacion() {
         modal_medicacion.modal('show');
-
     }
 
     $('#id_medicina')
@@ -769,7 +525,8 @@ $(function () {
                 data: function (params) {
                     return {
                         term: params.term,
-                        'action': 'search'
+                        'action': 'search',
+                        'ids': id_select_medicina
                     };
                 },
                 processResults: function (data) {
@@ -784,11 +541,13 @@ $(function () {
             minimumInputLength: 1,
         })
         .on('select2:select', function (e) {
+            id_select_medicina = $('#id_medicina option:selected').val();
+            e.preventDefault();
             $.ajax({
                 type: "POST",
                 url: '/medicacion/lista',
                 data: {
-                    "id": $('#id_medicina option:selected').val(),
+                    "id": id_select_medicina,
                     'action': 'get'
                 },
                 dataType: 'json',
@@ -804,6 +563,7 @@ $(function () {
         .on('select2:clearing', function () {
             $('#dosis_cantidad').fadeOut();
             $("#id_dosis").trigger('touchspin.destroy').val(1);
+            id_select_medicina = 0;
         });
 
     function show_stock(max) {
@@ -817,15 +577,68 @@ $(function () {
         });
     }
 
+    $('#id_search_medicina')
+        .on('click', function () {
+            $('#modal_search_medicacion').modal('show');
+            tbl_detalle_medicina = $("#datatable_search_medicacion").DataTable({
+                destroy: true,
+                autoWidth: false,
+                dataSrc: "",
+                responsive: true,
+                ajax: {
+                    url: '/medicacion/lista',
+                    type: 'POST',
+                    data: {'action': 'list_list', 'ids': id_select_medicina},
+                    dataSrc: ""
+                },
+                language: {
+                    "url": '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json'
+                },
+                columns: [
+                    {data: "insumo.nombre"},
+                    {data: "tipo_medicina.nombre"},
+                    {data: 'stock'},
+                    {data: "id"}
+                ],
+                columnDefs: [
+                    {
+                        targets: [-1],
+                        class: 'text-center',
+                        width: '10%',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<a style="color: white" type="button" class="btn btn-success btn-xs" rel="take" ' +
+                                'data-toggle="tooltip" title="Seleccionar Insumo"><i class="fa fa-check"></i></a>' + ' '
+
+                        }
+                    },
+                ]
+            });
+        });
+    $("#datatable_search_medicacion tbody").on('click', 'a[rel="take"]', function () {
+        var tr = tbl_detalle_medicina.cell($(this).closest('td, li')).index();
+        var data = tbl_detalle_medicina.row(tr.row).data();
+        var newOption = new Option(data.insumo.nombre + ' / stock: ' + data.stock, data.insumo.id, false, true);
+        $('#id_medicina').append(newOption).trigger('change');
+        id_select_medicina = data.insumo.id;
+        $('#modal_search_medicacion').modal('hide');
+        show_stock(data.stock);
+    });
+
+
     modal_medicacion.on('hidden.bs.modal', function () {
         $('#id_dosis').val(1);
         $('#id_medicina').val(null).trigger('change');
+        $('#dosis_cantidad').hide();
+        $("#id_dosis").trigger('touchspin.destroy').val(1);
+        id_select_medicina = 0;
     });
 
     $('#save_medicacion').on('click', function () {
         var parametros = {
             'distribucion_id': produccion.items.distribuicion_id,
             'dosis': $('#id_dosis').val(),
+            'insumo': $('#id_medicina').val(),
             'action': action_medicacion,
             'id': id_medicacion,
             'fecha': $('#id_fecha_medicacion').val()
@@ -838,23 +651,6 @@ $(function () {
     });
 
     $('#datatable_medicacion tbody')
-        .on('click', 'button[name="edit"]', function () {
-            action_medicacion = 'edit';
-            var tr = dt_medicacion.cell($(this).closest('td, li')).index();
-            id_medicacion = parseInt(produccion.items.medicacion[tr.row].id);
-            // $('#id_peso_promedio').val(parseFloat(produccion.items.peso[tr.row].peso_promedio).toFixed(2));
-            // $('#id_fecha_peso').val(produccion.items.peso[tr.row].fecha).prop('disabled', false).daterangepicker({
-            //     locale: {
-            //         format: 'YYYY-MM-DD',
-            //         applyLabel: '<i class="fas fa-search"></i> Selccionar',
-            //         cancelLabel: '<i class="fas fa-times"></i> Cancelar',
-            //     },
-            //     singleDatePicker: true,
-            //     maxDate: new Date(),
-            //
-            // });
-            data_form_medicacion();
-        })
         .on('click', 'button[name="del"]', function () {
             action_medicacion = 'delete';
             var tr = dt_medicacion.cell($(this).closest('td, li')).index();
@@ -864,6 +660,180 @@ $(function () {
                 'id': id_medicacion
             };
             save_estado('Alerta', '/medicacion/nuevo', 'Esta seguro que desea eliminar este registro de medicacion',
+                parametros, function () {
+                    ajax_get_data(produccion.items.distribuicion_id);
+                })
+        });
+
+
+    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-------SECCION ALIMENTACION------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    $('#add_alimentacion')
+        .on('click', function () {
+            if (id_galpon.val() === '') return false;
+            action_alimentacion = 'add';
+            data_form_alimentacion();
+            $('#modal_search_alimentacion').modal('show').modal('hide');
+        });
+
+    function data_form_alimentacion() {
+        modal_alimentacion.modal('show');
+    }
+
+    $('#id_alimento')
+        .select2({
+            theme: "classic",
+            language: {
+                inputTooShort: function () {
+                    return "Ingresa al menos un caracter...";
+                },
+                "noResults": function () {
+                    return "Sin resultados";
+                },
+                "searching": function () {
+                    return "Buscando...";
+                }
+            },
+            allowClear: true,
+            ajax: {
+                delay: 250,
+                type: 'POST',
+                url: '/alimentacion/lista',
+                data: function (params) {
+                    return {
+                        term: params.term,
+                        'action': 'search',
+                        'ids': id_select_alimento
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+
+                },
+
+            },
+            placeholder: 'Busca un alimento',
+            minimumInputLength: 1,
+        })
+        .on('select2:select', function (e) {
+            id_select_alimento = $('#id_alimento option:selected').val();
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: '/alimentacion/lista',
+                data: {
+                    "id": id_select_alimento,
+                    'action': 'get'
+                },
+                dataType: 'json',
+                success: function (data) {
+                    show_stock_alimento(data[0]['stock_actual__sum']);
+                },
+                error: function (xhr, status, data) {
+                    alert(data);
+                },
+
+            })
+        })
+        .on('select2:clearing', function () {
+            $('#cantidad_alimento').fadeOut();
+            $("#id_cantidad").trigger('touchspin.destroy').val(1);
+            id_select_alimentacion = 0;
+        });
+
+    function show_stock_alimento(max) {
+        $('#cantidad_alimento').fadeIn();
+        $('#id_cantidad').TouchSpin({
+            min: 1,
+            max: max,
+            step: 1,
+            boostat: 5,
+            maxboostedstep: 10
+        });
+    }
+
+    $('#id_search_alimento')
+        .on('click', function () {
+            $('#modal_search_alimentacion').modal('show');
+            tbl_detalle_alimento = $("#datatable_search_alimentacion").DataTable({
+                destroy: true,
+                autoWidth: false,
+                dataSrc: "",
+                responsive: true,
+                ajax: {
+                    url: '/alimentacion/lista',
+                    type: 'POST',
+                    data: {'action': 'list_list', 'ids': id_select_alimento},
+                    dataSrc: ""
+                },
+                language: {
+                    "url": '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json'
+                },
+                columns: [
+                    {data: "insumo.nombre"},
+                    {data: "presentacion.nombre"},
+                    {data: 'stock'},
+                    {data: "id"}
+                ],
+                columnDefs: [
+                    {
+                        targets: [-1],
+                        class: 'text-center',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return '<a style="color: white" type="button" class="btn btn-success btn-xs" rel="take" ' +
+                                'data-toggle="tooltip" title="Seleccionar Alimento"><i class="fa fa-check"></i></a>' + ' '
+
+                        }
+                    },
+                ]
+            });
+        });
+    $("#datatable_search_alimentacion tbody").on('click', 'a[rel="take"]', function () {
+        var tr = tbl_detalle_alimento.cell($(this).closest('td, li')).index();
+        var data = tbl_detalle_alimento.row(tr.row).data();
+        var newOption = new Option(data.insumo.nombre + ' / stock: ' + data.stock, data.insumo.id, false, true);
+        $('#id_alimento').append(newOption).trigger('change');
+        id_select_alimento = data.insumo.id;
+        $('#modal_search_alimentacion').modal('hide');
+        show_stock_alimento(data.stock);
+    });
+
+
+    modal_alimentacion.on('hidden.bs.modal', function () {
+        $('#id_alimento').val(null).trigger('change');
+        $('#cantidad_alimento').hide();
+        $("#id_cantidad").trigger('touchspin.destroy').val(1);
+        id_select_alimento = 0;
+    });
+
+    $('#save_alimentacion').on('click', function () {
+        var parametros = {
+            'distribucion_id': produccion.items.distribuicion_id,
+            'cantidad': $('#id_cantidad').val(),
+            'insumo': $('#id_alimento').val(),
+            'action': action_alimentacion,
+            'id': id_alimentacion,
+            'fecha': $('#id_fecha_alimentacion').val()
+        };
+        save_with_ajax('Alerta', '/alimentacion/nuevo', 'Esta seguro que desea agregar esta alimentacion en ' +
+            'este Galpon?', parametros, function () {
+            $('#modal_form_alimentacion').modal('hide');
+            ajax_get_data(produccion.items.distribuicion_id);
+        })
+    });
+
+    $('#datatable_alimentacion tbody')
+        .on('click', 'button[name="del"]', function () {
+            action_alimentacion = 'delete';
+            var tr = dt_alimentacion.cell($(this).closest('td, li')).index();
+            id_alimentacion = parseInt(produccion.items.alimentacion[tr.row].id);
+            var parametros = {
+                'action': action_alimentacion,
+                'id': id_alimentacion
+            };
+            save_estado('Alerta', '/alimentacion/nuevo', 'Esta seguro que desea eliminar este registro de alimentacion',
                 parametros, function () {
                     ajax_get_data(produccion.items.distribuicion_id);
                 })

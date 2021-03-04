@@ -14,8 +14,6 @@ from apps.medicacion.forms import MedicacionForm
 from apps.medicacion.models import Medicacion
 from apps.medicina.models import Medicina
 from apps.mixins import ValidatePermissionRequiredMixin
-from apps.mortalidad.forms import MortalidadForm
-from apps.mortalidad.models import Mortalidad
 
 opc_icono = 'fas fa-book-dead'
 opc_entidad = 'Medicacion'
@@ -24,9 +22,9 @@ empresa = nombre_empresa()
 
 
 class lista(ValidatePermissionRequiredMixin, ListView):
-    model = Mortalidad
+    model = Medicacion
     template_name = 'front-end/categoria/list.html'
-    permission_required = 'mortalidad.view_mortalidad'
+    permission_required = 'medicacion.view_medicacion'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
@@ -43,40 +41,32 @@ class lista(ValidatePermissionRequiredMixin, ListView):
             elif action == 'search':
                 data = []
                 term = request.POST['term']
+                ids = request.POST['ids']
                 query = Detalle_compra.objects.values('insumo__nombre', 'insumo_id')\
                     .annotate(stock=Sum('stock_actual')).order_by('stock')\
                     .filter(insumo__nombre__icontains=term, stock_actual__gt=0, insumo__tipo_insumo=1)
-                for c in query:
+                for c in query.exclude(insumo_id=ids):
                     data.append({'id': c['insumo_id'], 'text': str(c['insumo__nombre']) + ' / '+'stock: ' + str(c['stock'])})
             elif action == 'get':
                 data = []
                 id = request.POST['id']
                 query = Detalle_compra.objects.filter(insumo_id=id).aggregate(Sum('stock_actual'))
                 data.append(query)
-            # elif action == 'list_list':
-            #     data = []
-            #     ids = json.loads(request.POST['ids'])
-            #     query = Detalle_compra.objects.filter(stock_actual__gt=0)
-            #     for c in query.exclude(id__in=ids):
-            #         data.append(c.toJSON())
-            # else:
-            #     data['error'] = 'No ha seleccionado una opcion'
+            elif action == 'list_list':
+                data = []
+                ids = request.POST['ids']
+                query = Detalle_compra.objects.values('insumo_id').annotate(stock=Sum('stock_actual'))\
+                    .order_by('stock').filter(stock_actual__gt=0, insumo__tipo_insumo=1)
+                for c in query.exclude(insumo_id=ids):
+                    ins = Medicina.objects.get(insumo_id=c['insumo_id'])
+                    item = ins.toJSON()
+                    item['stock'] = c['stock']
+                    data.append(item)
+            else:
+                data['error'] = 'No ha seleccionado una opcion'
         except Exception as e:
             data['error'] = str(e)
         return JsonResponse(data, safe=False)
-
-    def get_context_data(self, **kwargs):
-        data = super().get_context_data(**kwargs)
-        data['icono'] = opc_icono
-        data['entidad'] = opc_entidad
-        data['boton'] = 'Guardar'
-        data['titulo'] = 'Listado de Categorias'
-        data['nuevo'] = '/categoria/nuevo'
-        data['titulo_lista'] = 'Listado de Categorias'
-        data['titulo_formulario'] = 'Formulario de Registro'
-        data['empresa'] = empresa
-        # data['form'] = CategoriaForm
-        return data
 
 
 class CrudView(ValidatePermissionRequiredMixin, TemplateView):
@@ -95,10 +85,11 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
             if action == 'add':
                 med = self.model_class()
                 med.distribucion_id = int(datos['distribucion_id'])
-                med.medicina_id = int(datos['medicina'])
-                medc = Medicina.objects.get(id=int(datos['medicina']))
+                ins = Insumo.objects.get(id=datos['insumo'])
+                tkmed = Medicina.objects.get(insumo_id=ins.id)
+                med.medicina_id = tkmed.id
                 dosis = int(datos['dosis'])
-                for a in Detalle_compra.objects.filter(insumo_id=medc.insumo_id, stock_actual__gt=0):
+                for a in Detalle_compra.objects.filter(insumo_id=tkmed.insumo_id, stock_actual__gt=0):
                     if dosis <= a.stock_actual:
                         med.dosis = dosis
                         a.stock_actual -= dosis

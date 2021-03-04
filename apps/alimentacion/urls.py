@@ -1,10 +1,12 @@
-from django.conf.urls import url
-from django.urls import path
-from . import views
 from django.contrib.auth.decorators import login_required
-app_name = 'Empresa'
+from django.urls import path
+
+from .views import *
+
+app_name = 'Alimentacion'
 
 urlpatterns = [
-    path('configuracion/', login_required(views.editar), name='editar'),
+    path('lista', login_required(lista.as_view()), name='lista'),
+    path('nuevo', login_required(CrudView.as_view()), name='nuevo'),
 
 ]

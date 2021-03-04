@@ -1,12 +1,13 @@
-from django import forms
 from datetime import *
-from django.forms import SelectDateWidget, TextInput, NumberInput, EmailInput
 
-from .models import Empresa
-from ..ubicacion.models import Parroquia
+from django import forms
+from django.forms import TextInput
+
+from apps.alimentacion.models import Alimentacion
+from apps.alimento.models import Alimento
 
 
-class EmpresaForm(forms.ModelForm):
+class AlimentacionForm(forms.ModelForm):
     # constructor
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -15,74 +16,17 @@ class EmpresaForm(forms.ModelForm):
                 'class': 'form-control'
             })
 
-            self.fields['nombre'].widget = TextInput(
-                attrs={'placeholder': 'Ingrese el nombre de la Empresa', 'class': 'form-control form-rounded'})
-            self.fields['direccion'].widget = TextInput(
-                attrs={'placeholder': 'Ingrese numero la direccion de la empresa',
-                       'class': 'form-control form-rounded'})
-            self.fields['correo'].widget = TextInput(attrs={'placeholder': 'Ingrese numero la direccion de la empresa',
-                                                            'class': 'form-control form-rounded'})
-            # self.fields['ciudad'].widget = TextInput(attrs={'placeholder': 'Ingrese numero la direccion de la empresa',
-            #                                                 'class': 'form-control form-rounded'})
-            self.fields['telefono'].widget = TextInput(
-                attrs={'placeholder': 'Ingrese numero la direccion de la empresa',
-                       'class': 'form-control form-rounded'})
-            self.fields['iva'].widget = TextInput(attrs={'class': 'form-control form-rounded', 'value': 0.12})
-            self.fields['ruc'].widget = TextInput(attrs={'placeholder': 'Ingrese numero la direccion de la empresa',
-                                                         'class': 'form-control form-rounded'})
-            self.fields['indice'].widget = TextInput(attrs={'class': 'form-control form-rounded'})
-            self.fields['tasa'].widget = TextInput(attrs={'class': 'form-control form-rounded'})
-
-            self.fields['facebook'].widget = TextInput(attrs={'placeholder': 'Ingrese la direccion en Facebook',
-                                                            'class': 'form-control form-rounded'})
-            self.fields['instagram'].widget = TextInput(attrs={'placeholder': 'Ingrese la direccion en Instagram',
-                                                            'class': 'form-control form-rounded'})
-            self.fields['twitter'].widget = TextInput(attrs={'placeholder': 'Ingrese la direccion en Twitter',
-                                                            'class': 'form-control form-rounded'})
-            self.fields['ubicacion'].queryset = Parroquia.objects.none()
+            self.fields['fecha'].widget = TextInput(attrs={'class': 'form-control', 'disabled': True,
+                                                           'id': 'id_fecha_alimentacion'})
+            self.fields['fecha'].initial = datetime.now().strftime('%Y-%m-%d')
+            self.fields['alimento'].widget.attrs = {'class': 'form-control select2', 'style': 'width:100%'}
+            self.fields['alimento'].queryset = Alimento.objects.none()
+            self.fields['cantidad'].widget = TextInput(attrs={'class': 'form-control'})
 
         # habilitar, desabilitar, y mas
 
     class Meta:
-        model = Empresa
-        fields = ['nombre',
-                  'ubicacion',
-                  'ruc',
-                  'correo',
-                  'direccion',
-                  'facebook',
-                  'instagram',
-                  'twitter',
-                  'iva',
-                  'indice',
-                  'tasa',
-                  'telefono'
-                  ]
-        labels = {
-            'nombre': 'Nombre',
-            'ubicacion': 'Parroquia',
-            'ruc': 'Ruc',
-            'correo': 'Correo',
-            'direccion': 'Direecion',
-            'facebook': 'Sitio en Facebook',
-            'instagram': 'Sitio en Instagram',
-            'twitter': 'Sitio en Twitter',
-            'iva': 'Iva',
-            'tasa': 'Tasa de interes',
-            'indice': 'Indice de Ganancia',
-            'telefono': 'Telefono',
-        }
-        widgets = {
-            'nombre': forms.TextInput(),
-            # 'ciudad': forms.TextInput(),
-            'ruc': forms.TextInput(),
-            'correo': forms.TextInput(),
-            'direccion': forms.TextInput(),
-            'facebook': forms.TextInput(),
-            'instagram': forms.TextInput(),
-            'twitter': forms.TextInput(),
-            'iva': forms.TextInput(),
-            'tasa': forms.TextInput(),
-            'indice': forms.TextInput(),
-            'telefono': forms.TextInput()
-        }
+        model = Alimentacion
+        fields = ['fecha', 'alimento', 'cantidad']
+        labels = {'fecha': 'Fecha', 'alimento': 'Alimento', 'cantidad': 'Cantidad'}
+        widgets = {'fecha': forms.TextInput(), 'cantidad': forms.TextInput()}

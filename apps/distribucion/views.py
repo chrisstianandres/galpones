@@ -1,10 +1,12 @@
 import json
 
+from django.db.models import Sum
 from django.http import JsonResponse, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
+from apps.alimentacion.forms import AlimentacionForm
 from apps.backEnd import nombre_empresa
 from apps.causa_muerte.forms import Causa_muerteForm
 from apps.distribucion.forms import DistribucionForm
@@ -13,6 +15,7 @@ from apps.galpon.forms import GalponForm
 from apps.galpon.models import Galpon
 from apps.gasto.forms import GastoForm
 from apps.medicacion.forms import MedicacionForm
+from apps.medicacion.models import Medicacion
 from apps.mixins import ValidatePermissionRequiredMixin
 from apps.mortalidad.forms import MortalidadForm
 from apps.peso.forms import PesoForm
@@ -63,10 +66,14 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                     gastos_data.append(g.toJSON())
                 for m in query.mortalidad_set.all():
                     mortalidad_data.append(m.toJSON())
-                for a in query.alimentacion_set.all():
-                    alimento_data.append(a.toJSON())
-                for med in query.medicacion_set.all():
-                    medicina_data.append(med.toJSON())
+                for a in query.alimentacion_set.all().values('fecha', 'alimento__insumo__nombre',
+                                                             'alimento__presentacion__nombre')\
+                        .annotate(total=Sum('cantidad')).order_by('total'):
+                    alimento_data.append(a)
+                for med in query.medicacion_set.all().values('fecha', 'medicina__insumo__nombre',
+                                                             'medicina__tipo_medicina__nombre')\
+                        .annotate(total=Sum('dosis')).order_by('total'):
+                    medicina_data.append(med)
                 data.append({
                     'peso': peso_data,
                     'lote_data': lote_data,
@@ -104,6 +111,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['form_gasto'] = GastoForm
         data['form_tipo_gasto'] = TipogastoForm
         data['form_medicacion'] = MedicacionForm
+        data['form_alimentacion'] = AlimentacionForm
         return data
 
 
