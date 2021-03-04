@@ -13,7 +13,7 @@ class GastoForm(forms.ModelForm):
                 'class': 'form-control'
             })
             self.fields['fecha_pago'].widget.attrs = {
-                'readonly': True,
+                'disabled': True,
                 'class': 'form-control'
             }
             self.fields['tipo_gasto'].widget.attrs = {

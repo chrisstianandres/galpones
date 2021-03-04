@@ -70,7 +70,6 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         data = {}
         action = request.POST['action']
-
         datos = request.POST
         try:
             if action == 'add':

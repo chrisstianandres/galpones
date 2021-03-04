@@ -42,6 +42,7 @@ urlpatterns = [
     path('causa_muerte/', include('apps.causa_muerte.urls', namespace='causa_muerte')),
     path('mortalidad/', include('apps.mortalidad.urls', namespace='mortalidad')),
     path('gasto/', include('apps.gasto.urls', namespace='gasto')),
+    path('medicacion/', include('apps.medicacion.urls', namespace='medicacion')),
     path('tipo_gasto/', include('apps.tipo_gasto.urls', namespace='tipo_gasto')),
     path('produccion/', include('apps.distribucion.urls', namespace='distribucion')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)\

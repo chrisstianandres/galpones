@@ -61,6 +61,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
 
 class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     form_class = GastoForm
+    model = Gasto
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -69,16 +70,18 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         data = {}
         action = request.POST['action']
-        pk = request.POST['id']
+        datos = request.POST
         try:
             if action == 'add':
-                f = GastoForm(request.POST)
-                data = self.save_data(f)
+                f = self.form_class(request.POST)
+                data = self.save_data(f, int(datos['distribucion_id']))
             elif action == 'edit':
+                pk = request.POST['id']
                 tpg = Gasto.objects.get(pk=int(pk))
                 f = GastoForm(request.POST, instance=tpg)
-                data = self.save_data(f)
+                data = self.save_data(f, int(datos['distribucion_id']))
             elif action == 'delete':
+                pk = request.POST['id']
                 cat = Gasto.objects.get(pk=pk)
                 cat.delete()
                 data['resp'] = True
@@ -88,10 +91,13 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
             data['error'] = str(e)
         return HttpResponse(json.dumps(data), content_type='application/json')
 
-    def save_data(self, f):
+    def save_data(self, f, dist):
         data = {}
         if f.is_valid():
-            f.save()
+            var = f.save()
+            g = self.model.objects.get(id=var.id)
+            g.distribucion_id = dist
+            g.save()
             data['resp'] = True
         else:
             data['error'] = f.errors

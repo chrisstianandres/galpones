@@ -12,11 +12,10 @@ from apps.distribucion.models import Distribucion
 from apps.galpon.forms import GalponForm
 from apps.galpon.models import Galpon
 from apps.gasto.forms import GastoForm
-from apps.medicina.models import Medicina
+from apps.medicacion.forms import MedicacionForm
 from apps.mixins import ValidatePermissionRequiredMixin
 from apps.mortalidad.forms import MortalidadForm
 from apps.peso.forms import PesoForm
-from apps.peso.models import Peso
 from apps.tipo_gasto.forms import TipogastoForm
 
 opc_icono = 'fas fa-crow'
@@ -104,6 +103,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['form_causa_muerte'] = Causa_muerteForm
         data['form_gasto'] = GastoForm
         data['form_tipo_gasto'] = TipogastoForm
+        data['form_medicacion'] = MedicacionForm
         return data
 
 
