@@ -269,102 +269,6 @@ var produccion = {
 };
 $(function () {
     produccion.list();
-    //seccion Medcicinas
-    $('#datatable_detalle tbody')
-        .on('click', 'a[rel="remove"]', function () {
-            var tr = dt_detalle.cell($(this).closest('td, li')).index();
-            borrar_todo_alert('Alerta de Eliminación',
-                'Esta seguro que desea eliminar esta medicina de tu detalle?', function () {
-                    var p = compras.items.medicinas[tr.row];
-                    compras.items.medicinas.splice(tr.row, 1);
-                    menssaje_ok('Confirmacion!', 'Medicina eliminado', 'far fa-smile-wink', function () {
-                        compras.list();
-                    });
-                })
-        })
-        .on('change', 'input[name="cantidad"]', function () {
-            var cantidad = parseInt($(this).val());
-            var tr = dt_detalle.cell($(this).closest('td, li')).index();
-            compras.items.medicinas[tr.row].cantidad = cantidad;
-            compras.calculate();
-            $('td:eq(5)', dt_detalle.row(tr.row).node()).html('$' + compras.items.medicinas[tr.row].subtotal.toFixed(2));
-        })
-        .on('change', 'input[name="precio"]', function () {
-            var precio = parseFloat($(this).val()).toFixed(2);
-            var tr = dt_detalle.cell($(this).closest('td, li')).index();
-            compras.items.medicinas[tr.row].precio = precio;
-            compras.calculate();
-            $('td:eq(5)', dt_detalle.row(tr.row).node()).html('$' + compras.items.medicinas[tr.row].subtotal.toFixed(2));
-        });
-
-
-    //seccion alimentos
-    $('#datatable_alimento tbody')
-        .on('click', 'a[rel="remove"]', function () {
-            var tr = dt_detalle_alimentos.cell($(this).closest('td, li')).index();
-            borrar_todo_alert('Alerta de Eliminación',
-                'Esta seguro que desea eliminar este alimento de tu detalle?', function () {
-                    compras.items.alimentos.splice(tr.row, 1);
-                    menssaje_ok('Confirmacion!', 'Alimento eliminado', 'far fa-smile-wink', function () {
-                        compras.list_alimentos();
-                    });
-                })
-        })
-        .on('change', 'input[name="cantidad"]', function () {
-            var cantidad = parseInt($(this).val());
-            var tr = dt_detalle_alimentos.cell($(this).closest('td, li')).index();
-            compras.items.alimentos[tr.row].cantidad = cantidad;
-            compras.calculate();
-            $('td:eq(5)', dt_detalle_alimentos.row(tr.row).node()).html('$' + compras.items.alimentos[tr.row].subtotal.toFixed(2));
-        })
-        .on('change', 'input[name="precio"]', function () {
-            var precio = parseFloat($(this).val()).toFixed(2);
-            var tr = dt_detalle_alimentos.cell($(this).closest('td, li')).index();
-            compras.items.alimentos[tr.row].precio = precio;
-            compras.calculate();
-            $('td:eq(5)', dt_detalle_alimentos.row(tr.row).node()).html('$' + compras.items.alimentos[tr.row].subtotal.toFixed(2));
-        });
-
-    $('#id_search_alimentos')
-        .on('click', function () {
-            $('#modal_search_alimento').modal('show');
-            tblalimentos_seacrh = $("#datatable_search_alimento").DataTable({
-                destroy: true,
-                autoWidth: false,
-                dataSrc: "",
-                responsive: true,
-                ajax: {
-                    url: '/alimento/lista',
-                    type: 'POST',
-                    data: {'action': 'list_list', 'ids': JSON.stringify(compras.get_ids_alimento())},
-                    dataSrc: ""
-                },
-                language: {
-                    "url": '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json'
-                },
-                columns: [
-                    {data: "insumo.nombre"},
-                    {data: "insumo.categoria.nombre"},
-                    {data: "presentacion.nombre"},
-                    {data: "id"}
-                ],
-                columnDefs: [
-                    {
-                        targets: [-1],
-                        class: 'text-center',
-                        width: '10%',
-                        orderable: false,
-                        render: function (data, type, row) {
-                            return '<a style="color: white" type="button" class="btn btn-success btn-xs" rel="take" ' +
-                                'data-toggle="tooltip" title="Seleccionar Insumo"><i class="fa fa-check"></i></a>' + ' '
-
-                        }
-                    },
-                ]
-            });
-        });
-
-
     id_galpon.select2({
         theme: "classic",
         language: {
@@ -415,6 +319,7 @@ $(function () {
 
     $('#id_search_galpon')
         .on('click', function () {
+            $('.tooltip').remove();
             $('#modal_search_galpon').modal('show');
             tbl_galpon_seacrh = $("#datatable_search_galpon").DataTable({
                 destroy: true,
@@ -458,35 +363,6 @@ $(function () {
             var newOption = new Option('Galpon N°: ' + data.galpon['id'], data['id'], false, true);
             id_galpon.append(newOption).trigger('change');
             $('#modal_search_galpon').modal('hide');
-        });
-
-
-    $('#save')
-        .on('click', function () {
-            if ($('select[name="proveedor"]').val() === "") {
-                menssaje_error('Error!', "Debe seleccionar un proveedor", 'far fa-times-circle');
-                return false
-            } else if (compras.items.medicinas.length === 0 || compras.items.alimentos.length === 0) {
-                menssaje_error('Error!', "Debe seleccionar al menos una Medicina o un Alimento", 'far fa-times-circle');
-                return false
-            } else {
-                var parametros;
-                compras.items.fecha_compra = $('input[name="fecha_compra"]').val();
-                compras.items.proveedor = $('#id_proveedor option:selected').val();
-                compras.items.tasa_iva = $('#id_tasa_iva').val();
-                compras.items.comprobante = $('#id_comprobante').val();
-                parametros = {'compras': JSON.stringify(compras.items)};
-                parametros['action'] = 'add';
-                save_with_ajax('Alerta',
-                    '/compra/nuevo', 'Esta seguro que desea guardar esta compra?', parametros, function (response) {
-                        listado.fadeIn();
-                        formulario.fadeOut();
-                        $('#id_proveedor').val(null).trigger('change');
-                        compras.items.medicinas = [];
-                        compras.items.alimentos = [];
-                        datatable.ajax.reload(null, false);
-                    });
-            }
         });
 
 

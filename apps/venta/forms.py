@@ -4,6 +4,7 @@ from django import forms
 
 from .models import Detalle_venta, Venta
 from apps.inventario.models import Inventario
+from ..lote.models import Lote
 
 
 class VentaForm(forms.ModelForm):
@@ -21,11 +22,6 @@ class VentaForm(forms.ModelForm):
             self.fields['cliente'].widget.attrs = {
                 'class': 'form-control select2',
                 'style': "width: 93%"
-            }
-            self.fields['tipo_pago'].widget.attrs = {
-                'class': 'form-control select2',
-                'style': "width: 100%",
-                'data-toggle': "tooltip",
             }
             self.fields['subtotal'].widget.attrs = {
                 'value': '0.00',
@@ -50,7 +46,6 @@ class VentaForm(forms.ModelForm):
         fields = [
             'fecha',
             'cliente',
-            'tipo_pago',
             'subtotal',
             'iva',
             'total'
@@ -58,7 +53,6 @@ class VentaForm(forms.ModelForm):
         labels = {
             'fecha': 'Fecha de Venta',
             'cliente': 'Cliente',
-            'tipo_pago': 'Forma de pago',
             'subtotal': 'Subtotal',
             'iva': 'I.V.A.',
             'total': 'TOTAL'
@@ -81,14 +75,14 @@ class Detalle_VentaForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
-            self.fields['inventario'].widget.attrs = {
+            self.fields['lote'].widget.attrs = {
                 'class': 'form-control select2'
             }
-            self.fields["inventario"].queryset = Inventario.objects.none()
+            self.fields["lote"].queryset = Lote.objects.none()
         # habilitar, desabilitar, y mas
 
     class Meta:
         model = Detalle_venta
         fields = [
-            'inventario',
+            'lote',
         ]

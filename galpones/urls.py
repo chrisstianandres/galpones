@@ -46,6 +46,8 @@ urlpatterns = [
     path('alimentacion/', include('apps.alimentacion.urls', namespace='alimentacion')),
     path('tipo_gasto/', include('apps.tipo_gasto.urls', namespace='tipo_gasto')),
     path('produccion/', include('apps.distribucion.urls', namespace='distribucion')),
+    path('presentacion/', include('apps.presentacion.urls', namespace='presentacion')),
+    path('venta/', include('apps.venta.urls', namespace='venta')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)\
                   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -1,0 +1,289 @@
+{% extends 'front-end/list.html' %}
+{% load static %}
+{% block formulario %}
+    <div class="card col-xl-12">
+        <div class="card-body">
+            <div class="col-xl-12 col-lg-12" id="div_form">
+                <form class="form-horizontal" id="form" method="POST" action="{{ crud }}">
+                    <div class="panel panel-primary">
+                        <!-- Card Header -->
+                        <div class="panel-heading py-3">
+                            <div class="container">
+                                <h4 class="m-0 font-weight-bold"><i
+                                        class="far fa-edit"></i> Formulario de Registro</h4>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="panel-body">
+                            {% csrf_token %}
+                            {{ form.media }}
+                            <input type="hidden" id="action" name="action" value="{{ action }}">
+                            <input type="hidden" id="indice" name="indice" value="{{ empresa.indice }}">
+                            <input type="hidden" id="iva" name="iva" value="{{ empresa.iva }}">
+                            <input type="hidden" name="option" value="{{ option }}">
+                            {% for hidden in form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <label class="control-label">{{ form.fecha.label_tag }}</label>
+                                    <label class="badge bg-important">{{ form.fecha.errors }}</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="far fa-calendar-alt"></i>
+                                        </span>
+                                        {{ form.fecha }}
+
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">{{ form.cantidad.label_tag }}</label>
+                                    {{ form.cantidad }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <label class="control-label">{{ form.valor_pollito.label_tag }}</label>
+                                    <label class="badge bg-important">{{ form.valor_pollito.errors }}</label>
+                                    {{ form.valor_pollito }}
+                                </div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">{{ form.raza.label_tag }}</label>
+                                    <label class="badge bg-important">{{ form.raza.errors }}</label>
+                                    <div class="input-group">
+                                        {{ form.raza }}
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-primary btn-sm" id="id_search_raza" type="button"
+                                                    data-toggle="tooltip" data-placement="top"
+                                                    title="Buscar tipo de ave">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </span>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-success btn-sm" id="id_new_raza" type="button"
+                                                    data-toggle="tooltip" data-placement="bottom"
+                                                    title="Agregar un tipo de Ave">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    <p id="tipo_error" class="help-block"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <button class="btn btn-success btn-sm" type="button"
+                                            onclick="location.reload();"><i
+                                            class="fa fa-plus"></i> Nuevo
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" type="button" id="guardar"><i
+                                            class="fa fa-save"></i> {{ boton }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block tablas %}
+    <div class="container-fluid">
+        <div class="col-xl-12 col-sm-12">
+            <!-- Tabla Listado -->
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <div class="container">
+                        <h4 class="m-0 font-weight-bold"><i class="fas fa-users"></i> Asignacion Empleados
+                        </h4>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <table id="datatable_empleado_list"
+                                   class="table table-bordered table-condensed table-hover table-striped"
+                                   style="width: 100%">
+                                <thead>
+                                <tr>
+                                    <th>Empleado</th>
+                                    <th>Cedula</th>
+                                    <th><i class="fas fa-user-check"></i></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <div class="col-lg-1">
+                            <a type="button" class="btn btn-danger" id="quitar_todo_empleado">
+                                <i class="far fa-trash-undo fa-2x"></i></a>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="datatable_empleado_select"
+                                   class="table table-bordered table-condensed table-hover table-striped"
+                                   style="width: 100%">
+                                <thead>
+                                <tr>
+                                    <th><i class="far fa-trash-undo"></i></th>
+                                    <th>Empleado</th>
+                                    <th>Cedula</th>
+                                    <th>Salario</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+    <div class="container-fluid">
+        <div class="col-xl-12 col-sm-12">
+            <!-- Tabla Listado -->
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <div class="container">
+                        <h4 class="m-0 font-weight-bold"><i class="fas fa-farm"></i> Asignacion Galpones
+                        </h4>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <table id="datatable_galpon_list"
+                                   class="table table-bordered table-condensed table-hover table-striped"
+                                   style="width: 100%">
+                                <thead>
+                                <tr>
+                                    <th>N° Galpon</th>
+                                    <th>Capacidad</th>
+                                    <th>Elegir</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-1">
+                            <a type="button" class="btn btn-danger" id="quitar_todo_galpon"><i class="far fa-trash-undo fa-2x"></i></a>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="datatable_galpon_select"
+                                   class="table table-bordered table-condensed table-hover table-striped"
+                                   style="width: 100%">
+                                <thead>
+                                <tr>
+                                    <th><i class="far fa-trash-undo"></i></th>
+                                    <th>N° Galpon</th>
+                                    <th>Capacidad</th>
+                                    <th>Cantidad</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+
+
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+{% endblock %}
+{% block modal %}
+    <div class="modal fade" id="modal_tipo" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><i
+                            class="fas fa-search"></i>&nbsp;Tipo de Ave</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table id="datatable_tipo_ave"
+                                       class="table table-bordered table-condensed table-hover table-striped"
+                                       style="width: 100%">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 85%">Ave</th>
+                                        <th style="width: 15%"><i class="far fa-check"></i></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="far fa-window-close"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal_form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <form method="post" id="form_tipo" enctype="multipart/form-data" action=".">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><i
+                                class="fas fa-plus"></i>&nbsp;Agregar tipo de Ave</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                {{ formp.as_p }}
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" value="{{ action }}">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <i class="far fa-window-close"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary"><i class="far fa-save"></i>&nbsp;Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block extra %}
+    <script src="{% static 'apps/lote/list.js' %}"></script>
+{% endblock %}

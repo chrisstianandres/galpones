@@ -1,0 +1,173 @@
+{% extends 'front-end/list.html' %}
+{% load static %}
+{% block formulario %}
+    <div class="card col-xl-12">
+        <div class="card-body">
+            <div class="col-xl-12 col-lg-12" id="div_form">
+                <form class="form-horizontal" id="form" method="POST" action="{{ crud }}">
+                    <div class="panel panel-primary">
+                        <!-- Card Header -->
+                        <div class="panel-heading py-3">
+                            <div class="container">
+                                <h4 class="m-0 font-weight-bold"><i
+                                        class="far fa-edit"></i> Formulario de Registro</h4>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="panel-body">
+                            {% csrf_token %}
+                            {{ form.media }}
+                            <input type="hidden" id="action" name="action" value="{{ action }}">
+                            <input type="hidden" id="indice" name="indice" value="{{ empresa.indice }}">
+                            <input type="hidden" id="iva" name="iva" value="{{ empresa.iva }}">
+                            <input type="hidden" name="option" value="{{ option }}">
+                            {% for hidden in form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <label class="control-label">{{ formi.nombre.label_tag }}</label>
+                                    <label class="badge bg-important">{{ formi.nombre.errors }}</label>
+                                    {{ formi.nombre }}
+                                </div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">{{ form.presentacion.label_tag }}</label>
+                                    <div class="input-group">
+                                        {{ form.presentacion }}
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-success btn-sm" id="id_new_presentacion" type="button">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    <p id="presentacion_error" class="help-block"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <label class="control-label">{{ formi.descripcion.label_tag }}</label>
+                                    <label class="badge bg-important">{{ formi.descripcion.errors }}</label>
+                                    {{ formi.descripcion }}
+                                </div>
+                                <div class="col-lg-5">
+                                    <label class="control-label">{{ formi.categoria.label_tag }}</label>
+                                    <div class="input-group">
+                                        {{ formi.categoria }}
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-success btn-sm" id="id_new_categoria" type="button">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    <p id="tipo_error_cat" class="help-block"></p>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="panel-footer">
+                                <div class="row">
+                                    <div class="col-lg-5">
+                                        <button class="btn btn-success btn-sm" type="button"
+                                                onclick="location.reload();"><i
+                                                class="fa fa-plus"></i> Nuevo
+                                        </button>
+                                        <button class="btn btn-primary btn-sm" type="submit"><i
+                                                class="fa fa-save"></i> {{ boton }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block table %}
+    <thead>
+    <tr>
+        <th style="width: 18%">Nombre</th>
+        <th style="width: 10%">Presentacion</th>
+        <th style="width: 10%;">Descripcion</th>
+        <th style="width: 10%" class="text-center">Opciones</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+{% endblock %}
+{% block modal %}
+    <div class="modal fade" id="modal_presentacion" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <form method="post" id="form_presentacion" enctype="multipart/form-data" action=".">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><i
+                                class="fas fa-plus"></i>&nbsp;{{ titulo_modal_tipo }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                {{ formp.as_p }}
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" value="{{ action }}">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <i class="far fa-window-close"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary"><i class="far fa-save"></i>&nbsp;Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal fade" id="modal_cat" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <form method="post" id="form_cat" enctype="multipart/form-data" action=".">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><i
+                                class="fas fa-plus"></i>&nbsp;Nueva Categoria</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                {{ formc.as_p }}
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" value="{{ action }}">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <i class="far fa-window-close"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary"><i class="far fa-save"></i>&nbsp;Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+{% block extra %}
+    <script src="{% static 'apps/alimento/list.js' %}"></script>
+    <script src="{% static 'apps/alimento/form.js' %}"></script>
+{% endblock %}

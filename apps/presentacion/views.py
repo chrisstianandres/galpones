@@ -103,10 +103,11 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
         if f.is_valid():
             var = f.save()
             data['resp'] = True
-            data['presentacion'] = var.toJSON()
+            data = var.toJSON()
             data['resp'] = True
         else:
             data['error'] = f.errors
+            print(f.errors)
         return data
 
 

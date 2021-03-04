@@ -34,25 +34,25 @@ class lista(ValidatePermissionRequiredMixin, ListView):
             action = request.POST['action']
             if action == 'list':
                 data = []
-                for c in Medicina.objects.all():
+                for c in self.model.objects.all():
                     data.append(c.toJSON())
             elif action == 'list_list':
                 data = []
                 ids = json.loads(request.POST['ids'])
-                query = Medicina.objects.all()
+                query = self.model.objects.all()
                 for c in query.exclude(id__in=ids):
                     data.append(c.toJSON())
             elif action == 'search':
                 data = []
                 ids = json.loads(request.POST['ids'])
                 term = request.POST['term']
-                query = Medicina.objects.filter(insumo__nombre__icontains=term, insumo__tipo_insumo=1)
+                query = self.model.objects.filter(insumo__nombre__icontains=term, insumo__tipo_insumo=1)
                 for c in query.exclude(id__in=ids)[0:10]:
                     data.append({'id': c.id, 'text': str(c.insumo.nombre + ' / ' + c.insumo.descripcion)})
             elif action == 'get':
                 data = []
                 id = request.POST['id']
-                for c in Medicina.objects.filter(id=id):
+                for c in self.model.objects.filter(id=id):
                     data.append(c.toJSON())
             else:
                 data['error'] = 'No ha seleccionado una opcion'

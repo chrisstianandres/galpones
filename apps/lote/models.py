@@ -14,6 +14,8 @@ ESTADO = (
 class Lote(models.Model):
     raza = models.ForeignKey(Raza, on_delete=models.PROTECT)
     cantidad = models.IntegerField(default=0)
+    stock_produccion = models.IntegerField(default=0)
+    stock_actual = models.IntegerField(default=0)
     estado = models.IntegerField(choices=ESTADO, default=0)
     fecha = models.DateField(default=datetime.now)
     valor_pollito = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
@@ -26,6 +28,7 @@ class Lote(models.Model):
         item['raza'] = self.raza.toJSON()
         item['fecha'] = self.fecha.strftime('%d/%m/%Y')
         item['valor_pollito'] = format(self.valor_pollito, '.2f')
+        item['estado_text'] = self.get_estado_display()
         return item
 
     class Meta:

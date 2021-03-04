@@ -5088,12 +5088,12 @@ a.badge:hover, a.badge:focus {
 
 .badge-primary {
     color: #fff;
-    background-color: #fed136;
+    background-color: #337ab7;
 }
 
 a.badge-primary:hover, a.badge-primary:focus {
     color: #fff;
-    background-color: #fec503;
+    background-color: #337ab7;
 }
 
 a.badge-primary:focus, a.badge-primary.focus {

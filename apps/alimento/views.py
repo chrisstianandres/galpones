@@ -5,22 +5,26 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
+from apps.alimento.forms import AlimentoForm
 from apps.alimento.models import Alimento
 from apps.backEnd import nombre_empresa
 from apps.categoria.forms import CategoriaForm
 from apps.categoria.models import Categoria
+from apps.insumo.forms import InsumoForm
+from apps.insumo.models import Insumo
 from apps.mixins import ValidatePermissionRequiredMixin
+from apps.presentacion.forms import PresentacionForm
 
-opc_icono = 'fas fa-boxes'
-opc_entidad = 'Categoria'
+opc_icono = 'fas fa-utensils'
+opc_entidad = 'Alimentos'
 crud = '/categoria/crear'
 empresa = nombre_empresa()
 
 
 class lista(ValidatePermissionRequiredMixin, ListView):
     model = Alimento
-    template_name = 'front-end/categoria/list.html'
-    permission_required = 'categoria.view_categoria'
+    template_name = 'front-end/alimento/list.html'
+    permission_required = 'alimento.view_alimento'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
@@ -63,17 +67,28 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['icono'] = opc_icono
         data['entidad'] = opc_entidad
         data['boton'] = 'Guardar'
-        data['titulo'] = 'Listado de Categorias'
-        data['nuevo'] = '/categoria/nuevo'
-        data['titulo_lista'] = 'Listado de Categorias'
+        data['titulo'] = 'Alimentos'
+        data['nuevo'] = '/alimento/nuevo'
+        data['titulo_lista'] = 'Listado de Alimentos'
         data['titulo_formulario'] = 'Formulario de Registro'
         data['empresa'] = empresa
-        data['form'] = CategoriaForm
+        if 'form' not in data:
+            data['form'] = AlimentoForm
+        if 'formi' not in data:
+            data['formi'] = InsumoForm
+        if 'formp' not in data:
+            data['formp'] = PresentacionForm
+        if 'formc' not in data:
+            data['formc'] = CategoriaForm
+        data['titulo_modal_tipo'] = 'Agregar una Presentacion'
         return data
 
 
 class CrudView(ValidatePermissionRequiredMixin, TemplateView):
-    form_class = CategoriaForm
+    form_class = AlimentoForm
+    model = Alimento
+    second_model = Insumo
+    second_form_class = InsumoForm
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -81,18 +96,22 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         data = {}
-        action = request.POST['action']
-        pk = request.POST['id']
         try:
+            action = request.POST['action']
             if action == 'add':
-                f = CategoriaForm(request.POST)
-                data = self.save_data(f)
+                f = self.form_class(request.POST)
+                f2 = self.second_form_class(request.POST)
+                data = self.save_data(f, f2)
             elif action == 'edit':
-                cat = Categoria.objects.get(pk=int(pk))
-                f = CategoriaForm(request.POST, instance=cat)
-                data = self.save_data(f)
+                pk = request.POST['id']
+                alt = self.model.objects.get(pk=int(pk))
+                ins = self.second_model.objects.get(pk=int(alt.insumo_id))
+                f = self.form_class(request.POST, instance=alt)
+                f2 = self.second_form_class(request.POST, instance=ins)
+                data = self.save_data(f, f2)
             elif action == 'delete':
-                cat = Categoria.objects.get(pk=pk)
+                pk = request.POST['id']
+                cat = self.model.objects.get(pk=pk)
                 cat.delete()
                 data['resp'] = True
             else:
@@ -101,11 +120,13 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
             data['error'] = str(e)
         return HttpResponse(json.dumps(data), content_type='application/json')
 
-    def save_data(self, f):
+    def save_data(self, f, f2):
         data = {}
-        if f.is_valid():
-            var = f.save()
-            data['categoria'] = var.toJSON()
+        if f.is_valid() and f2.is_valid():
+            alimento = f.save(commit=False)
+            alimento.insumo = f2.save()
+            alimento.save()
+            data['alimento'] = alimento.toJSON()
             data['resp'] = True
         else:
             data['error'] = f.errors

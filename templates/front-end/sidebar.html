@@ -42,7 +42,7 @@
                         <i class="fa fa-angle-right"></i>&nbsp; Compras </a>
                 </li>
                 <li>
-                    <a href="{% url 'lote:lista' %}">
+                    <a href="{% url 'lote:nuevo' %}">
                         <i class="fa fa-angle-right"></i>&nbsp; Lotes </a>
                 </li>
                 <li>
@@ -57,53 +57,66 @@
                     <a href="{% url 'medicina:lista' %}">
                         <i class="fa fa-angle-right"></i>&nbsp; Medicinas </a>
                 </li>
+                <li>
+                    <a href="{% url 'alimento:lista' %}">
+                        <i class="fa fa-angle-right"></i>&nbsp; Alimentos </a>
+                </li>
             </ul>
-        </li>
-        <li>
-            <a href="{% url 'distribucion:lista' %}">
-                <i class="fas fa-crow"></i>
-                <span class="link-title">Produccion</span>
-            </a>
         </li>
         <li class="">
             <a href="javascript:;">
-                <i class="fas fa-business-time"></i>
-                <span class="link-title">baa</span>
+                 <i class="fas fa-crow"></i>
+                <span class="link-title">Produccion</span>
+                <span class="fa arrow"></span>
+            </a>
+            <ul class="collapse">
+                <li>
+                    <a href="{% url 'distribucion:lista' %}">
+                        <i class="fa fa-angle-right"></i>&nbsp; Control de Produccion </a>
+                </li>
+                <li>
+                    <a href="{% url 'lote:lista' %}">
+                        <i class="fa fa-angle-right"></i>&nbsp; Control de Lotes </a>
+                </li>
+            </ul>
+        </li>
+        <li class="">
+            <a href="javascript:;">
+                <i class="fas fa-file-signature"></i>
+                <span class="link-title">Reportes</span>
                 <span class="fa arrow"></span>
             </a>
             <ul class="collapse">
                 <li>
                     <a href="bgcolor.html">
-                        <i class="fa fa-angle-right"></i>&nbsp; Bg Color </a>
+                        <i class="fa fa-angle-right"></i>&nbsp; Produccion por Lote </a>
                 </li>
                 <li>
                     <a href="bgimage.html">
-                        <i class="fa fa-angle-right"></i>&nbsp; Bg Image </a>
+                        <i class="fa fa-angle-right"></i>&nbsp; Producion por Galpon </a>
                 </li>
                 <li>
                     <a href="button.html">
-                        <i class="fa fa-angle-right"></i>&nbsp; Buttons </a>
+                        <i class="fa fa-angle-right"></i>&nbsp; Compras </a>
                 </li>
                 <li>
                     <a href="icon.html">
-                        <i class="fa fa-angle-right"></i>&nbsp; Icon </a>
+                        <i class="fa fa-angle-right"></i>&nbsp; Ventas </a>
                 </li>
                 <li>
                     <a href="pricing.html">
-                        <i class="fa fa-angle-right"></i>&nbsp; Pricing Table </a>
+                        <i class="fa fa-angle-right"></i>&nbsp; Empleados </a>
                 </li>
                 <li>
                     <a href="progress.html">
-                        <i class="fa fa-angle-right"></i>&nbsp; Progress </a>
+                        <i class="fa fa-angle-right"></i>&nbsp; Clientes </a>
                 </li>
             </ul>
         </li>
         <li class="">
             <a href="javascript:;">
-                <i class="fa fa-pencil"></i>
-                <span class="link-title">
-                                    Forms
-                        	  </span>
+                <i class="fas fa-piggy-bank"></i>
+                <span class="link-title"> Ventas</span>
                 <span class="fa arrow"></span>
             </a>
             <ul class="collapse">

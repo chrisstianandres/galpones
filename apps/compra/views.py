@@ -51,6 +51,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data = {}
         try:
             action = request.POST['action']
+            print(action)
             if action == 'list':
                 data = []
                 start = request.POST['start_date']
@@ -73,7 +74,6 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                         item['subtotal'] = float(p.subtotal)
                         data.append(item)
                 else:
-
                     data['error'] = 'Ha ocurrido un error'
             elif action == 'detalle_alimentos':
                 id = request.POST['id']
@@ -155,8 +155,8 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                                 dv.compra_id = c.id
                                 dv.insumo_id = int(a['insumo']['id'])
                                 dv.cantidad = int(a['cantidad'])
-                                dv.stock_inicial = int(m['cantidad'])
-                                dv.stock_actual = int(m['cantidad'])
+                                dv.stock_inicial = int(a['cantidad'])
+                                dv.stock_actual = int(a['cantidad'])
                                 dv.subtotal = float(a['subtotal'])
                                 dv.p_compra = float(a['precio'])
                                 dv.save()

@@ -1,14 +1,12 @@
 import locale
 
-from dateutil.relativedelta import relativedelta
+
 from django.utils.decorators import method_decorator
 
 from apps.cliente.forms import ClienteForm
 from apps.cliente.models import Cliente
 from apps.compra.models import Compra
-from apps.cta_x_cbr.forms import Cta_cobrarForm
-from apps.cta_x_cbr.models import Cta_x_cobrar
-from apps.delvoluciones_venta.models import Devolucion
+
 from apps.inventario.models import Inventario
 from apps.mixins import ValidatePermissionRequiredMixin
 import json
@@ -25,14 +23,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
 from apps.backEnd import nombre_empresa
-from apps.pago_cta_x_cbr.models import Pago_cta_x_cobrar
 
-from apps.producto_base.models import Producto_base
+
+
 from apps.user.forms import UserForm
 from apps.venta.forms import Detalle_VentaForm, VentaForm
 from apps.venta.models import Venta, Detalle_venta
 from apps.empresa.models import Empresa
-from apps.producto.models import Producto
 
 import os
 from django.conf import settings
@@ -206,15 +203,15 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                                     else:
                                         let.fecha = fech
                                     if x == int(datos['nro_cuotas']):
-                                        let.valor = float(datos['letra'])-float(calculo)
-                                        let.saldo = float(datos['letra'])-float(calculo)
+                                        let.valor = float(datos['letra']) - float(calculo)
+                                        let.saldo = float(datos['letra']) - float(calculo)
                                         print('valor ultimo')
                                         print(let.valor)
                                     else:
                                         let.valor = float(datos['letra'])
                                         let.saldo = float(datos['letra'])
                                     let.save()
-                                    x = x+1
+                                    x = x + 1
                             else:
                                 data['error'] = 'Este cliente tiene mas de dos creditos activos, Por favor intenta ' \
                                                 'con otro cliente'
@@ -657,7 +654,7 @@ class report_total(ValidatePermissionRequiredMixin, ListView):
                 else:
                     query = Venta.objects.values('fecha', 'cliente__nombres', 'tipo_venta',
                                                  'cliente__apellidos').filter(fecha__range=[start_date, end_date],
-                                                                              estado=1)\
+                                                                              estado=1) \
                         .annotate(Sum('subtotal')).annotate(Sum('iva')).annotate(Sum('total'))
                 for p in query:
                     if p['tipo_venta'] == 0:
@@ -712,11 +709,11 @@ class report_total_reserva(ValidatePermissionRequiredMixin, ListView):
                 data = []
                 if start_date == '' and end_date == '':
                     query = Venta.objects.values('fecha', 'cliente__nombres',
-                                                 'cliente__apellidos')\
+                                                 'cliente__apellidos') \
                         .annotate(Sum('subtotal')). \
                         annotate(Sum('iva')).annotate(Sum('total')).filter(estado=2)
                 else:
-                    query = Venta.objects.values('fecha', 'cliente__nombres','cliente__apellidos').filter(
+                    query = Venta.objects.values('fecha', 'cliente__nombres', 'cliente__apellidos').filter(
                         fecha__range=[start_date, end_date], estado=2).annotate(Sum('subtotal')). \
                         annotate(Sum('iva')).annotate(Sum('total'))
                 for p in query:

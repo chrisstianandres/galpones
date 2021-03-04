@@ -2,7 +2,7 @@ from django.db import models
 from django.forms import model_to_dict
 
 ESTADO = (
-    (1, 'LABORANDO'),
+    (1, 'EN PRODUCCION'),
     (0, 'DISPONIBLE'),
 )
 

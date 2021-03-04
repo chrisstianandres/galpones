@@ -90,13 +90,13 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                 cantidad = int(datos['cantidad'])
                 for a in Detalle_compra.objects.filter(insumo_id=tkmed.insumo_id, stock_actual__gt=0):
                     if cantidad <= a.stock_actual:
-                        med.dosis = cantidad
+                        med.cantidad = cantidad
                         a.stock_actual -= cantidad
                         a.save()
                         break
                     else:
                         cal = cantidad - a.stock_actual
-                        med.dosis = cal
+                        med.cantidad = cal
                         a.stock_actual -= cantidad
                         a.save()
                 med.save()

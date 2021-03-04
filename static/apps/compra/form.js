@@ -578,7 +578,7 @@ $(function () {
             if ($('select[name="proveedor"]').val() === "") {
                 menssaje_error('Error!', "Debe seleccionar un proveedor", 'far fa-times-circle');
                 return false
-            } else if (compras.items.medicinas.length === 0 || compras.items.alimentos.length === 0) {
+            } else if (compras.items.medicinas.length === 0 && compras.items.alimentos.length === 0) {
                 menssaje_error('Error!', "Debe seleccionar al menos una Medicina o un Alimento", 'far fa-times-circle');
                 return false
             } else {
