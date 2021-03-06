@@ -17,8 +17,10 @@ class VentaForm(forms.ModelForm):
             })
             self.fields['fecha'].widget.attrs = {
                 'readonly': True,
-                'class': 'form-control'
+                'class': 'form-control',
+                'id': 'id_fecha_venta',
             }
+            self.fields['fecha'].initial = datetime.now().strftime('%Y-%m-%d')
             self.fields['cliente'].widget.attrs = {
                 'class': 'form-control select2',
                 'style': "width: 93%"
@@ -76,7 +78,8 @@ class Detalle_VentaForm(forms.ModelForm):
                 'class': 'form-control'
             })
             self.fields['lote'].widget.attrs = {
-                'class': 'form-control select2'
+                'class': 'form-control select2',
+                'style': 'width:100%'
             }
             self.fields["lote"].queryset = Lote.objects.none()
         # habilitar, desabilitar, y mas

@@ -14,9 +14,6 @@ class Empresa(models.Model):
     iva = models.IntegerField(default=12, blank=True, null=True)
     tasa = models.IntegerField(default=16, blank=True, null=True)
     indice = models.IntegerField(default=12, blank=True, null=True)
-    facebook = models.CharField(max_length=25, blank=True, null=True)
-    instagram = models.CharField(max_length=25, blank=True, null=True)
-    twitter = models.CharField(max_length=25, blank=True, null=True)
     ubicacion = models.ForeignKey(Parroquia, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):

@@ -82,8 +82,6 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                     'alimentacion': alimento_data,
                     'medicacion': medicina_data
                 })
-
-
             elif action == 'list_list':
                 data = []
                 query = Distribucion.objects.filter(lote__estado=0)

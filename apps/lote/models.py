@@ -19,9 +19,15 @@ class Lote(models.Model):
     estado = models.IntegerField(choices=ESTADO, default=0)
     fecha = models.DateField(default=datetime.now)
     valor_pollito = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    total_gastos = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
 
     def __str__(self):
         return '{}'.format(self.fecha.strftime('%d/%m/%Y'))
+
+    def get_costo_ave(self):
+        cal = (float(self.total_gastos) / int(self.stock_produccion))
+        return cal
+
 
     def toJSON(self):
         item = model_to_dict(self)

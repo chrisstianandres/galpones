@@ -8,6 +8,7 @@ from apps.cliente.models import Cliente
 from apps.compra.models import Compra
 
 from apps.inventario.models import Inventario
+from apps.lote.models import Lote
 from apps.mixins import ValidatePermissionRequiredMixin
 import json
 from datetime import datetime
@@ -125,15 +126,16 @@ class lista(ValidatePermissionRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data['icono'] = opc_icono
-        if self.request.user.tipo == 0:
-            data['entidad'] = 'Compras'
-            data['boton'] = 'Nueva Compra'
-            data['titulo'] = 'Listado de Compras realizadas'
-        else:
-            data['entidad'] = opc_entidad
-            data['boton'] = 'Nueva Venta'
-            data['titulo'] = 'Listado de Ventas'
+        data['entidad'] = opc_entidad
+        data['boton'] = 'Guardar'
+        data['titulo'] = 'Ventas'
+        data['titulo_lista'] = 'Listado de Ventas'
+        data['titulo_modal_person'] = 'Agregar Cliente'
         data['empresa'] = empresa
+        data['form'] = VentaForm
+        data['form2'] = Detalle_VentaForm()
+        # data['detalle'] = []
+        data['formp'] = ClienteForm()
         return data
 
 
@@ -155,100 +157,24 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                 if datos:
                     with transaction.atomic():
                         c = Venta()
-                        c.fecha = datos['fecha_venta']
+                        c.fecha = datos['fecha']
                         c.cliente_id = datos['cliente']
                         c.subtotal = float(datos['subtotal'])
                         c.iva = float(datos['iva'])
                         c.total = float(datos['total'])
                         c.save()
-                        if datos['productos']:
-                            for i in datos['productos']:
-                                for in_pr in Inventario.objects.filter(producto_id=i['id'], estado=1)[:i['cantidad']]:
-                                    dv = Detalle_venta()
-                                    dv.venta_id = c.id
-                                    dv.inventario_id = in_pr.id
-                                    dv.cantidad = int(i['cantidad'])
-                                    dv.pvp_actual = float(in_pr.producto.pvp)
-                                    dv.subtotal = float(i['subtotal'])
-                                    in_pr.estado = 0
-                                    in_pr.save()
-                                    dv.save()
-                                stock = Producto.objects.get(id=i['id'])
-                                stock.stock = int(Inventario.objects.filter(producto_id=i['id'], estado=1).count())
-                                stock.save()
-                        if int(datos['forma_pago']) == 1:
-                            verf = Cta_x_cobrar.objects.filter(venta__cliente_id=c.cliente_id, estado=0).count()
-                            if verf <= 2:
-                                cta = Cta_x_cobrar()
-                                cta.venta_id = c.id
-                                cta.valor = float(datos['total'])
-                                cta.interes = float(datos['interes'])
-                                cta.tolal_deuda = float(datos['total_deuda'])
-                                cta.saldo = float(datos['total_deuda'])
-                                cta.nro_cuotas = int(datos['nro_cuotas'])
-                                cta.save()
-                                x = 1
-                                ahora = datetime.now()
-                                debito = (float(datos['letra']) * float(datos['nro_cuotas']))
-                                calculo = (float(debito) - float(datos['total_deuda']))
-                                print(calculo)
-                                for n in range(0, int(datos['nro_cuotas'])):
-                                    fech = ahora + relativedelta(months=x)
-                                    let = Pago_cta_x_cobrar()
-                                    let.cta_cobrar_id = cta.id
-                                    if fech.weekday() == 5:
-                                        let.fecha = fech + dt.timedelta(days=2)
-                                    elif fech.weekday() == 6:
-                                        let.fecha = fech + dt.timedelta(days=1)
-                                    else:
-                                        let.fecha = fech
-                                    if x == int(datos['nro_cuotas']):
-                                        let.valor = float(datos['letra']) - float(calculo)
-                                        let.saldo = float(datos['letra']) - float(calculo)
-                                        print('valor ultimo')
-                                        print(let.valor)
-                                    else:
-                                        let.valor = float(datos['letra'])
-                                        let.saldo = float(datos['letra'])
-                                    let.save()
-                                    x = x + 1
-                            else:
-                                data['error'] = 'Este cliente tiene mas de dos creditos activos, Por favor intenta ' \
-                                                'con otro cliente'
-                        data['id'] = c.id
-                        data['resp'] = True
-                else:
-                    data['resp'] = False
-                    data['error'] = "Datos Incompletos"
-            elif action == 'reserva':
-                datos = json.loads(request.POST['ventas'])
-                if datos:
-                    with transaction.atomic():
-                        c = Venta()
-                        c.fecha = datos['fecha_venta']
-                        c.cliente_id = datos['cliente']
-                        c.subtotal = float(datos['subtotal'])
-                        c.iva = float(datos['iva'])
-                        c.total = float(datos['total'])
-                        c.estado = 2
-                        c.save()
-                        if datos['productos']:
-                            for i in datos['productos']:
-                                for in_pr in Inventario.objects.filter(producto_id=i['id'], estado=1)[
-                                             :i['cantidad']]:
-                                    dv = Detalle_venta()
-                                    dv.venta_id = c.id
-                                    dv.inventario_id = in_pr.id
-                                    dv.cantidad = int(i['cantidad'])
-                                    dv.pvp_actual = float(in_pr.producto.pvp)
-                                    dv.subtotal = float(i['subtotal'])
-                                    in_pr.estado = 0
-                                    in_pr.save()
-                                    dv.save()
-                                stock = Producto_base.objects.get(id=i['producto_base']['id'])
-                                stock.stock = int(
-                                    Inventario.objects.filter(producto_id=i['id'], estado=1).count())
-                                stock.save()
+                        if datos['lotes']:
+                            for i in datos['lotes']:
+                                dv = Detalle_venta()
+                                dv.venta_id = c.id
+                                dv.lote_id = int(i['lote']['id'])
+                                dv.cantidad = int(i['cantidad'])
+                                dv.pvp_actual = float(i['valor_ave'])
+                                dv.subtotal = float(i['subtotal'])
+                                dv.save()
+                                lot = Lote.objects.get(id=int(i['lote']['id']))
+                                lot.stock_actual -= int(i['cantidad'])
+                                # lot.save()
                         data['id'] = c.id
                         data['resp'] = True
                 else:
@@ -272,7 +198,6 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
         data['form2'] = Detalle_VentaForm()
         data['detalle'] = []
         data['formc'] = UserForm()
-        data['formcredito'] = Cta_cobrarForm()
         data['formp'] = ClienteForm()
         data['titulo_modal_person'] = 'Registro de un nuevo Cliente'
         data['boton_fac'] = 'Facturar Venta'

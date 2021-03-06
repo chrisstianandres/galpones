@@ -126,7 +126,7 @@ var produccion = {
                     class: 'text-center',
                     width: "15%",
                     render: function (data, type, row) {
-                        return data + ' ' + 'KG'
+                        return data + ' ' + 'lbs'
                     }
                 },
                 {
@@ -884,7 +884,7 @@ $(function () {
             boostat: 5,
             maxboostedstep: 10,
             prefix: '<i class="fas fa-weight"></i>',
-            postfix: 'KG'
+            postfix: 'lbs'
         })
     }
 

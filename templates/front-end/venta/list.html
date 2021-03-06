@@ -1,11 +1,188 @@
 {% extends 'front-end/list.html' %}
+
 {% load static %}
+{% block formulario %}
+    <input type="hidden" value="{{ empresa.iva }}" id="iva_emp">
+    <div class="card col-xl-12">
+        <div class="card-body">
+            <div class="col-xl-12 col-lg-12" id="div_form">
+                <form class="form-horizontal" id="form" method="POST" action="{{ crud }}">
+                    <div class="panel panel-primary">
+                        <!-- Card Header -->
+                        <div class="panel-heading">
+                            <div class="container">
+                                <h4 class="m-0 font-weight-bold"><i
+                                        class="far fa-edit"></i> Formulario de Venta</h4>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="panel-body">
+                            <style>
+                                #errmsg {
+                                    color: red;
+                                }
+                            </style>
+                            <div class="col-lg-5">
+                                <div class="row">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4>
+                                                <i class="fas fa-book-open"></i> Datos de la Venta
+                                            </h4>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="col-lg-10">
+                                                <label class="control-label">{{ form.fecha.label_tag }}</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    {{ form.fecha }}
+
+                                                </div>
+
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label class="control-label">{{ form.cliente.label_tag }}</label>
+
+                                                <div class="input-group">
+                                                    {{ form.cliente }}
+                                                    <span class="input-group-btn">
+                                            <button class="btn btn-primary btn-sm" id="id_new_cliente"
+                                                    data-toggle="tooltip" title="Agregar Cliente" type="button">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-lg-1"></div>
+                            <div class="col-lg-5">
+                                <div class="row">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4>
+                                                <i class="fas fa-dollar-sign"></i> Totales de la Venta
+                                            </h4>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="col-lg-10">
+                                                <label class="control-label">{{ form.subtotal.label_tag }}</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-dollar"></i>
+                                                    </div>
+                                                    {{ form.subtotal }}
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label class="control-label">{{ form.iva.label_tag }}</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-dollar"></i>
+                                                    </div>
+                                                    {{ form.iva }}
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label class="control-label">{{ form.total.label_tag }}</label>
+                                               <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-dollar"></i>
+                                                    </div>
+                                                    {{ form.total }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <button class="btn btn-primary btn-sm" type="button" id="save"><i class="fa fa-save"></i>
+                                {{ boton }}
+                            </button>
+                            <a type="button" class="btn btn-danger btn-sm" style="color:white;"
+                               id="cancal_shop">
+                                <i class="fas fa-ban"></i> Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block transaccion %}
+    <div class="col-xl-12 col-sm-12">
+        <!-- Tabla Listado -->
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="container">
+                    <h4 class="m-0 font-weight-bold"><i class="fas fa-list-ol"></i> Detalle de Venta
+                    </h4>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <label for="id_insumo">Buscar Tipo de Ave:</label>
+                        <br>
+                        <div class="input-group">
+                            {{ form2.lote }}
+                            <span class="input-group-btn">
+                                            <button class="btn btn-primary btn-sm" id="id_search_tipo_ave"
+                                                    data-toggle="tooltip" title="Buscar tipo de Ave" type="button">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </span>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <p></p>
+                        <a type="button" class="btn btn-danger btn-lg" id="vaciar_detalle">
+                            <i class="fas fa-trash-restore-alt"></i> Vaciar Detalle</a>
+                    </div>
+                </div>
+                <br>
+                <table id="datatable_detalle"
+                       class="table table-bordered table-condensed table-hover table-striped"
+                       style="width: 100%">
+                    <thead>
+                    <tr>
+                        <th>Tipo Ave</th>
+                        <th>Peso</th>
+                        <th>Valor/Libra</th>
+                        <th>Cant/Aves</th>
+                        <th>Lote</th>
+                        <th>Galpon</th>
+                        <th>Valor</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th style="width: 5%">Quitar</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+    {% block botones %}
+
+    {% endblock %}
+    <!-- /.container-fluid -->
+{% endblock %}
 {% block elements %}
     <br>
-    <input type="hidden" name="user_tipo" value="{{ request.user.tipo }}">
     <div class="row">
         <div class="col-lg-4">
-            <label for="fecha"><strong>Rango de Fechas:</strong></label>
+            <label for="fecha"><strong>Filtrar por fecha:</strong></label>
             <input type="text" name="fecha" id="fecha" class="form-control form-control-sm input-sm">
         </div>
     </div>
@@ -16,21 +193,105 @@
     <tr>
         <th>Fecha</th>
         <th>Cliente</th>
-        <th>Subtotal</th>
-        <th>Iva</th>
         <th>Total</th>
-        <th>N° Factura</th>
+        <th>N° Comprobante</th>
         <th>Estado</th>
         <th class="text-center" scope="col" style="width: 10%"><em class="fa fa-cog"></em></th>
     </tr>
     </thead>
     <tbody>
-
-
     </tbody>
 {% endblock %}
+{% block table_footer %}
+    <a type="button" class="btn btn-warning btn-sm" id="nuevo">
+        <i class="fas fa-store"></i> Nueva Venta
+    </a>
+    <a type="button" class="btn btn-default btn-sm" id="reload"
+       onclick=" location.reload();">
+        <i class="fas fa-sync-alt"></i> Actualizar
+    </a>
+{% endblock %}
 {% block modal %}
-   <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    <div class="modal fade" id="Modal_person" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <form method="post" id="form_person" enctype="multipart/form-data" action=".">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><i
+                                class="fas fa-user-plus"></i>&nbsp;{{ titulo_modal_person }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                {{ formp.as_p }}
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" value="{{ action }}">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i
+                                class="fas fa-user-times"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary"><i class="far fa-save"></i>&nbsp;Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal fade" id="modal_search_tipo_ave" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-search"></i>&nbsp;Buscar Tipos de Aves</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table id="datatable_search_tipo_ave"
+                                       class="table table-bordered table-condensed table-hover table-striped"
+                                       style="width: 100%">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 18%">Tipo de Ave</th>
+                                        <th style="width: 18%">Peso Ave</th>
+                                        <th style="width: 18%">Valor/Lba</th>
+                                        <th style="width: 18%">Cantidad</th>
+                                        <th style="width: 10%">Lote N°</th>
+                                        <th style="width: 10%">Galpon N°</th>
+                                        <th style="width: 8%"><i class="far fa-check"></i></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="far fa-window-close"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
@@ -42,20 +303,21 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <table class="table" id="tbldetalle_productos">
+                    <h3><i class="fas fa-pills"></i> Detalle de venta</h3>
+                    <table class="table" id="tbldetalle_venta">
                         <thead>
                         <tr>
-                            <th>Producto</th>
-                            <th>Categoria</th>
-                            <th>Presentacion</th>
+                            <th>Tipo de Ave</th>
+                            <th>Peso Promedio</th>
+                            <th>Precio</th>
                             <th>Cantidad</th>
-                            <th>P.V.P.</th>
                             <th>Subtotal</th>
                         </tr>
                         </thead>
                         <tbody>
                         </tbody>
                     </table>
+
                 </div>
             </div>
         </div>
@@ -63,7 +325,11 @@
 {% endblock %}
 
 {% block extra %}
-    <script src="{% static "apps/venta/list.js" %}"></script>
+    <script src="{% static 'apps/venta/list.js' %}"></script>
+    <script src="{% static 'apps/venta/form.js' %}"></script>
+    <script src="{% static 'apps/cliente/form.js' %}"></script>
+    <script src="{% static 'apps/funtions.js' %}"></script>
+    <script></script>
 {% endblock %}
 {% block javascript %}
 

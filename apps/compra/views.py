@@ -51,7 +51,6 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data = {}
         try:
             action = request.POST['action']
-            print(action)
             if action == 'list':
                 data = []
                 start = request.POST['start_date']

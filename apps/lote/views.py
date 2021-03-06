@@ -2,18 +2,23 @@ import json
 from datetime import datetime
 
 from django.db import transaction
+from django.db.models import Sum
 from django.http import JsonResponse, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
 from apps.backEnd import nombre_empresa
+from apps.compra.models import Detalle_compra
 from apps.distribucion.models import Distribucion
 from apps.empleado.models import Empleado
 from apps.galpon.models import Galpon
+from apps.gasto.models import Gasto
 from apps.lote.forms import LoteForm
 from apps.lote.models import Lote
+from apps.medicacion.models import Medicacion
 from apps.mixins import ValidatePermissionRequiredMixin
+from apps.peso.models import Peso
 from apps.produccion.models import Produccion
 from apps.raza.forms import RazaForm
 
@@ -46,31 +51,91 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                     query = Lote.objects.all()
                 for c in query:
                     data.append(c.toJSON())
-
             elif action == 'close':
                 data = []
+                x = []
                 id = request.POST['id']
                 dist = Distribucion.objects.filter(lote_id=id)
                 prod = Produccion.objects.filter(lote_id=id)
                 total = 0
+                gastos_lote = 0
+                sueldo_lote = 0
+                for e in prod:
+                    emp = Empleado.objects.get(id=e.empleado.id)
+                    emp.estado = 0
+                    sueldo_lote += e.sueldo
+                    emp.save()
                 for g in dist:
                     galpon = Galpon.objects.get(id=g.galpon.id)
                     galpon.estado = 0
                     galpon.save()
+                    p = Peso.objects.filter(distribucion_id=g.id).last()
+                    g.peso_promedio = p.peso_promedio
                     total += g.cantidad_pollos
+                    for gst in Gasto.objects.filter(distribucion_id=g.id):
+                        g.total_gastos += gst.valor
+                    for med in g.medicacion_set.all():
+                        x = med.medicina.insumo.detalle_compra_set.all().values('insumo_id') \
+                            .annotate(total=Sum('p_compra')).order_by('total')
+                        for xt in x:
+                            g.total_gastos += xt['total']
+                    for alt in g.alimentacion_set.all():
+                        a = alt.alimento.insumo.detalle_compra_set.all().values('insumo_id') \
+                            .annotate(total=Sum('p_compra')).order_by('total')
+                        for alt_tot in a:
+                            g.total_gastos += alt_tot['total']
+                    g.total_gastos += sueldo_lote / dist.count()
+                    gastos_lote += g.total_gastos
                     g.save()
-                for e in prod:
-                    emp = Empleado.objects.get(id=e.empleado.id)
-                    emp.estado = 0
-                    emp.save()
                 lot = self.model.objects.get(id=id)
                 lot.estado = 1
                 lot.stock_produccion = int(total)
                 lot.stock_actual = int(total)
+                lot.total_gastos = float(gastos_lote)
                 lot.save()
+            elif action == 'search_ave':
+                data = []
+                term = request.POST['term']
+                ids = json.loads(request.POST['ids'])
+                query = Lote.objects.filter(raza__nombre__icontains=term, estado=1)
+                for a in query.exclude(id__in=ids):
+                    for ad in a.distribucion_set.all():
+                        data.append({'id': a.id, 'text': str('Ave: ' + a.raza.nombre + ' /' +
+                                                             '  Cantidad: ' + str(ad.cantidad_pollos) + ' /' +
+                                                             '  Lote N°: ' + str(a.id) + ' /' +
+                                                             '  Galpon N°: ' + str(ad.galpon.id))})
+            elif action == 'search_ave_list':
+                data = []
+                ids = json.loads(request.POST['ids'])
+                query = Lote.objects.filter(estado=1)
+                for a in query.exclude(id__in=ids):
+                    for ad in a.distribucion_set.all():
+                        item = ad.toJSON()
+                        item['valor_libra'] = float(ad.get_costo_libra()) * float(1 + (empresa.indice / 100))
+                        item['valor_ave'] = float(ad.peso_promedio) * float(ad.get_costo_libra()) * float(1 + (empresa.indice / 100))
+                        item['cantidad'] = 1
+                        item['subtotal'] = 0.00
+                        item['iva'] = 0.00
+                        item['total'] = 0.00
+                        data.append(item)
+            elif action == 'get':
+                data = []
+                id = request.POST['id']
+                query = Lote.objects.filter(id=id)
+                for a in query:
+                    for ad in a.distribucion_set.all():
+                        item = ad.toJSON()
+                        item['valor_libra'] = float(ad.get_costo_libra()) * float(1 + (empresa.indice/100))
+                        item['valor_ave'] = float(ad.peso_promedio) * float(ad.get_costo_libra()) * float(1 + (empresa.indice / 100))
+                        item['cantidad'] = 1
+                        item['subtotal'] = 0.00
+                        item['iva'] = 0.00
+                        item['total'] = 0.00
+                        data.append(item)
             else:
                 data['error'] = 'No ha seleccionado una opcion'
         except Exception as e:
+            print(e)
             data['error'] = str(e)
         return JsonResponse(data, safe=False)
 
@@ -157,6 +222,7 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
         else:
             data['error'] = f.errors
         return data
+
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data['icono'] = opc_icono

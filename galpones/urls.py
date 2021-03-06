@@ -31,6 +31,7 @@ urlpatterns = [
     path('medicina/', include('apps.medicina.urls', namespace='medicina')),
     path('galpon/', include('apps.galpon.urls', namespace='galpon')),
     path('empleado/', include('apps.empleado.urls', namespace='empleado')),
+    path('cliente/', include('apps.cliente.urls', namespace='cliente')),
     path('lote/', include('apps.lote.urls', namespace='lote')),
     path('tipo_ave/', include('apps.raza.urls', namespace='raza')),
     path('categoria/', include('apps.categoria.urls', namespace='categoria')),
