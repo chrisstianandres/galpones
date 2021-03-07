@@ -71,16 +71,17 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         data = {}
         action = request.POST['action']
-        pk = request.POST['id']
         try:
             if action == 'add':
                 f = self.form_class(request.POST)
                 data = self.save_data(f)
             elif action == 'edit':
+                pk = request.POST['id']
                 cat = self.model_class.objects.get(pk=int(pk))
                 f = self.form_class(request.POST, instance=cat)
                 data = self.save_data(f)
             elif action == 'delete':
+                pk = request.POST['id']
                 cat = self.model_class.objects.get(pk=pk)
                 cat.delete()
                 data['resp'] = True

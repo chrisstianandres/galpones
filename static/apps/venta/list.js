@@ -1,4 +1,5 @@
 // var datatable;
+// var datatable;
 // var user_tipo = $('input[name="user_tipo"]').val();
 // var logotipo;
 //
@@ -435,7 +436,9 @@ function datatable_fun() {
         },
         columns: [
             {"data": "fecha"},
-            {"data": "cliente.nombre"},
+            {"data": "cliente.full_name_list"},
+            {"data": "subtotal"},
+            {"data": "iva"},
             {"data": "total"},
             {"data": "id"},
             {"data": "estado"},
@@ -487,11 +490,13 @@ function datatable_fun() {
             {
                 targets: [-1],
                 class: 'text-center',
-                width: "15%",
                 render: function (data, type, row) {
                     var detalle = '<a type="button" rel="detalle" class="btn btn-success btn-xs btn-round" style="color: white" data-toggle="tooltip" title="Detalle de Venta" ><i class="fa fa-search"></i></a>' + ' ';
                     var devolver = '<a type="button" rel="devolver" class="btn btn-danger btn-xs btn-round" style="color: white" data-toggle="tooltip" title="Anular"><i class="fa fa-times"></i></a>' + ' ';
-                    return detalle + devolver;
+                     var pdf = '<a type="button" href= "/venta/printpdf/' + data + '" rel="pdf" ' +
+                        'class="btn btn-primary btn-xs btn-round" style="color: white" data-toggle="tooltip" ' +
+                        'title="Reporte PDF"><i class="fa fa-file-pdf"></i></a>';
+                    return detalle + devolver + pdf;
                 }
             },
             {
@@ -501,7 +506,13 @@ function datatable_fun() {
                 }
             },
             {
-                targets: [-4],
+                targets: [-3],
+                render: function (data, type, row) {
+                    return pad(data, 10);
+                }
+            },
+            {
+                targets: [2, 3, 4],
                 render: function (data, type, row) {
                     return '$ ' + data;
                 }
@@ -509,10 +520,11 @@ function datatable_fun() {
         ],
         createdRow: function (row, data, dataIndex) {
             if (data.estado === 1) {
-                $('td', row).eq(5).html('<span class = "badge badge-success" style="color: white ">'+data.estado_text+' </span>');
-            } else if (data[5] === 'DEVUELTA') {
-                $('td', row).eq(5).html('<span class = "badge badge-danger" style="color: white "> '+data.estado_text+' </span>');
-                $('td', row).eq(6).find('a[rel="devolver"]').hide();
+                $('td', row).eq(6).html('<span class = "badge badge-success" style="color: white ">' + data.estado_text + ' </span>');
+            } else {
+                $('td', row).eq(6).html('<span class = "badge badge-danger" style="color: white "> ' + data.estado_text + ' </span>');
+                $('td', row).eq(7).find('a[rel="devolver"]').hide();
+                $('td', row).eq(7).find('a[rel="pdf"]').hide();
             }
 
         }
@@ -540,6 +552,10 @@ function daterange() {
 
 }
 
+function pad(str, max) {
+    str = str.toString();
+    return str.length < max ? pad("0" + str, max) : str;
+}
 
 $(function () {
     formulario.prop('style', 'display:none');
@@ -547,25 +563,25 @@ $(function () {
     datatable_fun();
     $('#datatable tbody')
         .on('click', 'a[rel="devolver"]', function () {
-        $('.tooltip').remove();
-        var tr = datatable.cell($(this).closest('td, li')).index();
-        var data = datatable.row(tr.row).data();
-        var parametros = {'id': data['4']};
-        save_estado('Alerta',
-            '/compra/estado', 'Esta seguro que desea devolver esta compra?', parametros,
-            function () {
-                menssaje_ok('Exito!', 'Exito al devolver la compra', 'far fa-smile-wink', function () {
-                    location.reload();
-                })
-            });
+            $('.tooltip').remove();
+            var tr = datatable.cell($(this).closest('td, li')).index();
+            var data = datatable.row(tr.row).data();
+            var parametros = {'id': data.id, 'action': 'estado'};
+            save_estado('Alerta',
+                '/venta/lista', 'Esta seguro que desea anular esta venta?', parametros,
+                function () {
+                    menssaje_ok('Exito!', 'Exito al anular la Venta', 'far fa-smile-wink', function () {
+                        datatable.ajax.reload(null, false);
+                    })
+                });
 
-    })
+        })
         .on('click', 'a[rel="detalle"]', function () {
             $('.tooltip').remove();
             var tr = datatable.cell($(this).closest('td, li')).index();
             var data = datatable.row(tr.row).data();
             $('#Modal').modal('show');
-            $("#tbldetalle_insumos").DataTable({
+            $("#tbldetalle_venta").DataTable({
                 responsive: true,
                 autoWidth: false,
                 language: {
@@ -576,19 +592,18 @@ $(function () {
                     url: window.location.pathname,
                     type: 'POST',
                     data: {
-                        'action': 'detalle_medicina',
+                        'action': 'detalle',
                         'id': data.id
                     },
                     dataSrc: ""
                 },
                 columns: [
-                    {data: 'insumo.insumo.nombre'},
-                    {data: 'insumo.insumo.categoria.nombre'},
-                    {data: 'insumo.tipo_medicina.nombre'},
-                    {data: 'insumo.insumo.descripcion'},
-                    {data: 'cantidad'},
-                    {data: 'p_compra'},
-                    {data: 'subtotal'}
+                    {data: 'lote.raza.nombre'},
+                    {data: 'peso_promedio'},
+                    {data: 'costo_libra'},
+                    {data: 'valores.pvp_actual'},
+                    {data: 'valores.cantidad'},
+                    {data: 'valores.subtotal'}
                 ],
                 columnDefs: [
                     {
@@ -596,11 +611,19 @@ $(function () {
                         class: 'text-center'
                     },
                     {
-                        targets: [-1, -2],
+                        targets: [-1, -2, -3, -4],
                         class: 'text-center',
                         orderable: false,
                         render: function (data, type, row) {
                             return '$' + parseFloat(data).toFixed(2);
+                        }
+                    },
+                    {
+                        targets: [1],
+                        class: 'text-center',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            return parseFloat(data).toFixed(2)+' Lbs';
                         }
                     },
                 ],
@@ -610,6 +633,8 @@ $(function () {
     $('#nuevo').on('click', function () {
         listado.fadeOut();
         formulario.fadeIn();
+        $('#id_cliente').val(null).trigger('change');
+        ventas.items.lotes = [];
         ventas.list();
     });
     $('#cancal_shop').on('click', function () {

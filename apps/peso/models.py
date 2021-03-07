@@ -17,7 +17,6 @@ class Peso(models.Model):
     def toJSON(self):
         item = model_to_dict(self)
         item['distribucion'] = self.distribucion.toJSON()
-        item['fecha'] = self.fecha.strftime('%Y/%m/%d')
         item['peso_promedio'] = format(self.peso_promedio, '.2f')
         return item
 

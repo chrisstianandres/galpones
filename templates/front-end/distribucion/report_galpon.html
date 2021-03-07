@@ -1,0 +1,290 @@
+{% extends 'front-end/list.html' %}
+{% load static %}
+{% block formulario %}
+    <div class="card col-xl-12">
+        <div class="card-body">
+            <div class="col-xl-12 col-lg-12" id="div_form">
+                <div class="panel panel-primary">
+                    <!-- Card Header -->
+                    <div class="panel-heading py-3">
+                        <div class="container">
+                            <h4 class="m-0 font-weight-bold"><i
+                                    class="far fa-search"></i> Buscar Galpon</h4>
+                        </div>
+                    </div>
+                    <!-- Card Body -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <label class="control-label">{{ form.galpon.label_tag }}</label>
+                                <div class="input-group">
+                                    {{ form.galpon }}
+                                    <span class="input-group-btn">
+                                    <button class="btn btn-primary btn-sm" id="id_search_galpon"
+                                            data-toggle="tooltip" title="Buscar Galpon" type="button">
+                                        <i class="fab fa-searchengin"></i>
+                                    </button>
+                                        </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <label class="control-label" for="id_capacidad">Capacidad Galpon: </label>
+                                <input type="text" class="form-control" readonly="readonly" name="capacidad"
+                                       id="id_capacidad">
+                            </div>
+                            <div class="col-lg-3">
+                                <label class="control-label" for="id_cantidad_in_galpon">Pollos en Galpon: </label>
+                                <input type="text" class="form-control" readonly="readonly" name="cantidad_in_galpon"
+                                       id="id_cantidad_in_galpon">
+                            </div>
+                            <div class="col-lg-3">
+                                <label class="control-label" for="id_total_bajas">Bajas de Galpon: </label>
+                                <input type="text" class="form-control" readonly="readonly"
+                                       id="id_total_bajas">
+                            </div>
+
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <label class="control-label" for="id_lote">Lote N°: </label>
+                                <input type="text" class="form-control" readonly="readonly" name="lote" id="id_lote">
+                            </div>
+                            <div class="col-lg-3">
+                                <label class="control-label" for="id_lote_cantidad">Cantidad Aves Lote:</label>
+                                <input type="text" class="form-control" readonly="readonly" name="lote_cantidad"
+                                       id="id_lote_cantidad">
+                            </div>
+                            <div class="col-lg-3">
+                                <label class="control-label" for="id_lote_fecha">Fecha Lote:</label>
+                                <input type="text" class="form-control" readonly="readonly" name="lote_fecha"
+                                       id="id_lote_fecha">
+                            </div>
+                            <div class="col-lg-3">
+                                <label class="control-label" for="id_tipo_ave">Tipo de Ave:</label>
+                                <input type="text" class="form-control" readonly="readonly" name="tipo_ave"
+                                       id="id_tipo_ave">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <label class="control-label">{{ form.fecha.label_tag }}</label>
+                                {{ form.fecha }}
+                            </div>
+                            <div class="col-lg-5">
+                                <label class="control-label">{{ form2.raza.label_tag }}</label>
+                                {{ form2.raza }}
+                            </div>
+                        </div>
+                        <h4><strong>Gatos Totales</strong></h4>
+                        <br>
+                        <div class="row">
+                             <div class="col-lg-3">
+                                <label for="id_gastos_medicina" class="control-label">Medicinas:</label>
+                                 <div class="input-group">
+                                     <div class="input-group-addon">
+                                         $
+                                     </div>
+                                     <input type="text" class="form-control" readonly="readonly"
+                                       id="id_gastos_medicina">
+                                 </div>
+                            </div>
+                             <div class="col-lg-3">
+                                <label for="id_gastos_alimentos" class="control-label">Alimentos:</label>
+                                 <div class="input-group">
+                                     <div class="input-group-addon">
+                                         $
+                                     </div>
+                                     <input type="text" class="form-control" readonly="readonly"
+                                       id="id_gastos_alimentos">
+                                 </div>
+                            </div>
+                             <div class="col-lg-3">
+                                <label for="id_gastos_varios" class="control-label">Gastos Varios:</label>
+                                 <div class="input-group">
+                                     <div class="input-group-addon">
+                                         $
+                                     </div>
+                                     <input type="text" class="form-control" readonly="readonly"
+                                       id="id_gastos_varios">
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <br>
+                        <a class="btn btn-danger" id="report_pdf"><i class="fa fa-file-pdf-o" ></i>
+                            Generar PDF
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block transaccion %}
+    <div class="col-xl-12 col-sm-12">
+        <!-- Tabla Listado -->
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <div class="container">
+                    <h4 class="m-0 font-weight-bold"><i class="fab fa-algolia"></i> Reporte de Produccion por Galpon
+                    </h4>
+                </div>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-pills nav-justified">
+                    <li class="active"><a data-toggle="tab" href="#medicina"><i class="fas fa-capsules"></i>
+                        Medicinas</a></li>
+                    <li><a data-toggle="tab" href="#alimento"><i class="fas fa-utensils"></i> Alimento</a></li>
+                    <li><a data-toggle="tab" href="#mortalidad"><i class="fas fa-skull-crossbones"></i> Mortalidad</a>
+                    </li>
+                    <li><a data-toggle="tab" href="#peso"><i class="fas fa-balance-scale-right"></i> Pesos</a></li>
+                    <li><a data-toggle="tab" href="#gastos"><i class="fas fa-hand-holding-usd"></i> Gastos</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <br>
+                    <div id="medicina" class="tab-pane fade in active">
+                        <br><br>
+                        <table id="datatable_medicacion"
+                               class="table table-bordered table-condensed table-hover table-striped"
+                               style="width: 100%">
+                            <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Cantidad</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <div id="alimento" class="tab-pane fade">
+                        <br><br>
+                        <table id="datatable_alimentacion"
+                               class="table table-bordered table-condensed table-hover table-striped"
+                               style="width: 100%">
+                            <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Nombre</th>
+                                <th>Presentacion</th>
+                                <th>Cantidad</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="mortalidad" class="tab-pane fade">
+                        <br><br>
+                        <table id="datatable_mortalidad"
+                               class="table table-bordered table-condensed table-hover table-striped"
+                               style="width: 100%">
+                            <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Causa</th>
+                                <th>Cantidad</th>
+                                <th>Descripcion</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <div id="peso" class="tab-pane fade">
+                        <br><br>
+                        <table id="datatable_peso"
+                               class="table table-bordered table-condensed table-hover table-striped"
+                               style="width: 100%">
+                            <thead>
+                            <tr>
+                                <th style="width: 10%">Fecha</th>
+                                <th style="width: 80%">Peso Promedio</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="gastos" class="tab-pane fade">
+                        <br><br>
+                        <table id="datatable_gasto"
+                               class="table table-bordered table-condensed table-hover table-striped"
+                               style="width: 100%">
+                            <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo de gasto</th>
+                                <th>Valor</th>
+                                <th>Detalle</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block tablas %}
+
+{% endblock %}
+{% block modal %}
+    <div class="modal fade" id="modal_search_galpon" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-search"></i>&nbsp;Buscar Galpon</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table id="datatable_search_galpon"
+                                       class="table table-bordered table-condensed table-hover table-striped"
+                                       style="width: 100%">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 30%">Galpon N°</th>
+                                        <th style="width: 30%">Estado</th>
+                                        <th style="width: 10%"><i class="far fa-check"></i></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="far fa-window-close"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra %}
+    <script src="{% static 'apps/distribucion/report.js' %}"></script>
+    <script src="{% static 'apps/distribucion/validacion_form.js' %}"></script>
+{% endblock %}

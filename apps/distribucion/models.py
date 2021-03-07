@@ -9,6 +9,7 @@ class Distribucion(models.Model):
     lote = models.ForeignKey(Lote, on_delete=models.PROTECT, null=True, blank=True)
     galpon = models.ForeignKey(Galpon, on_delete=models.PROTECT, null=True, blank=True)
     cantidad_pollos = models.IntegerField(default=1, blank=True, null=True)
+    stock_actual = models.IntegerField(default=1)
     total_gastos = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     peso_promedio = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
 

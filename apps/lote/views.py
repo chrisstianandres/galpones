@@ -53,13 +53,15 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                     data.append(c.toJSON())
             elif action == 'close':
                 data = []
-                x = []
                 id = request.POST['id']
                 dist = Distribucion.objects.filter(lote_id=id)
                 prod = Produccion.objects.filter(lote_id=id)
                 total = 0
+                total_muertes = 0
                 gastos_lote = 0
                 sueldo_lote = 0
+                lot = self.model.objects.get(id=id)
+                lot.estado = 1
                 for e in prod:
                     emp = Empleado.objects.get(id=e.empleado.id)
                     emp.estado = 0
@@ -84,11 +86,13 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                             .annotate(total=Sum('p_compra')).order_by('total')
                         for alt_tot in a:
                             g.total_gastos += alt_tot['total']
+                    for mort in g.mortalidad_set.all():
+                        total_muertes += mort.cantidad_muertes
+                    g.total_gastos += lot.valor_pollito * (total+total_muertes)
                     g.total_gastos += sueldo_lote / dist.count()
+                    g.stock_actual += g.cantidad_pollos
                     gastos_lote += g.total_gastos
                     g.save()
-                lot = self.model.objects.get(id=id)
-                lot.estado = 1
                 lot.stock_produccion = int(total)
                 lot.stock_actual = int(total)
                 lot.total_gastos = float(gastos_lote)
@@ -146,6 +150,54 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['boton'] = 'Guardar'
         data['titulo'] = 'Control de Lotes'
         data['titulo_lista'] = 'Listado de Lotes'
+        data['titulo_formulario'] = 'Formulario de Registro'
+        data['empresa'] = empresa
+        data['form'] = LoteForm
+        data['formp'] = RazaForm
+        return data
+
+
+class report(ValidatePermissionRequiredMixin, ListView):
+    model = Lote
+    template_name = 'front-end/lote/report.html'
+    permission_required = 'lote.view_lote'
+
+    @csrf_exempt
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            if action == 'list':
+                data = []
+                start = request.POST['start_date']
+                end = request.POST['end_date']
+                if start and end:
+                    query = Lote.objects.filter(fecha__range=[start, end])
+                else:
+                    query = Lote.objects.all()
+                for c in query:
+                    for d in c.distribucion_set.all():
+                        for g in d.mortalidad_set.all().values('cantidad_muertes').annotate(total=Sum('cantidad_muertes')):
+                            item = c.toJSON()
+                            item['bajas'] = g['total']
+                            data.append(item)
+            else:
+                data['error'] = 'No ha seleccionado una opcion'
+        except Exception as e:
+            print(e)
+            data['error'] = str(e)
+        return JsonResponse(data, safe=False)
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['icono'] = opc_icono
+        data['entidad'] = 'Reporte Produccion por Lote'
+        data['boton'] = 'Guardar'
+        data['titulo'] = 'Reporte Produccion por Lote'
+        data['titulo_lista'] = 'Lista de Lotes'
         data['titulo_formulario'] = 'Formulario de Registro'
         data['empresa'] = empresa
         data['form'] = LoteForm

@@ -35,6 +35,8 @@ class Lote(models.Model):
         item['fecha'] = self.fecha.strftime('%d/%m/%Y')
         item['valor_pollito'] = format(self.valor_pollito, '.2f')
         item['estado_text'] = self.get_estado_display()
+        item['costo_ave'] = format(self.get_costo_ave(), '.2f')
+        item['costo_libra'] = format((self.get_costo_ave()/self.stock_produccion), '.2f')
         return item
 
     class Meta:

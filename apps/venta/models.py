@@ -9,7 +9,7 @@ from apps.empresa.models import Empresa
 from apps.lote.models import Lote
 
 estado = (
-    (0, 'DEVUELTA'),
+    (0, 'ANULADA'),
     (1, 'FINALIZADA'),
     (2, 'RESERVADA')
 )
@@ -28,7 +28,7 @@ class Venta(models.Model):
 
     def toJSON(self):
         item = model_to_dict(self)
-        item['estado'] = self.get_estado_display()
+        item['estado_text'] = self.get_estado_display()
         item['cliente'] = self.cliente.toJSON()
         return item
 
@@ -53,7 +53,6 @@ class Detalle_venta(models.Model):
         empresa = Empresa.objects.first()
         item = model_to_dict(self)
         item['venta'] = self.venta.toJSON()
-        item['lole'] = self.lote.toJSON()
         return item
 
     class Meta:

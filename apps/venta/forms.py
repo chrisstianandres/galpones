@@ -23,7 +23,7 @@ class VentaForm(forms.ModelForm):
             self.fields['fecha'].initial = datetime.now().strftime('%Y-%m-%d')
             self.fields['cliente'].widget.attrs = {
                 'class': 'form-control select2',
-                'style': "width: 93%"
+                'style': "width: 100%"
             }
             self.fields['subtotal'].widget.attrs = {
                 'value': '0.00',

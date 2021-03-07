@@ -1,18 +1,18 @@
 import locale
 
-
 from django.utils.decorators import method_decorator
 
 from apps.cliente.forms import ClienteForm
 from apps.cliente.models import Cliente
 from apps.compra.models import Compra
+from apps.distribucion.models import Distribucion
 
 from apps.inventario.models import Inventario
 from apps.lote.models import Lote
 from apps.mixins import ValidatePermissionRequiredMixin
 import json
 from datetime import datetime
-import datetime as dt
+from datetime import timedelta
 
 from django.db import transaction
 from django.db.models import Sum, Count
@@ -24,8 +24,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
 from apps.backEnd import nombre_empresa
-
-
 
 from apps.user.forms import UserForm
 from apps.venta.forms import Detalle_VentaForm, VentaForm
@@ -78,34 +76,33 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 id = request.POST['id']
                 if id:
                     data = []
-                    result = Detalle_venta.objects.filter(venta_id=id).values('inventario__producto_id',
-                                                                              'cantidad', 'pvp_actual', 'subtotal'). \
-                        annotate(Count('inventario__producto_id'))
+                    result = Detalle_venta.objects.filter(venta_id=id)
                     for p in result:
-                        pb = Producto.objects.get(id=int(p['inventario__producto_id']))
-                        data.append({
-                            'producto': pb.producto_base.nombre,
-                            'categoria': pb.producto_base.categoria.nombre,
-                            'presentacion': pb.presentacion.nombre,
-                            'cantidad': p['cantidad'],
-                            'pvp': p['pvp_actual'],
-                            'subtotal': p['subtotal']
-                        })
+                        for dist in p.lote.distribucion_set.all():
+                            item = dist.toJSON()
+                            item['valores'] = p.toJSON()
+                            item['costo_libra'] = dist.get_costo_libra()
+                            data.append(item)
             elif action == 'estado':
                 id = request.POST['id']
                 if id:
+                    ahora = datetime.now()
                     with transaction.atomic():
                         es = Venta.objects.get(id=id)
-                        es.estado = 0
-                        dev = Devolucion()
-                        dev.venta_id = id
-                        dev.fecha = datetime.now()
-                        dev.save()
-                        for i in Detalle_venta.objects.filter(venta_id=id):
-                            for a in Inventario.objects.filter(id=i.inventario.id):
-                                a.estado = 1
-                                a.save()
-                        es.save()
+                        fechaCadena = str(es.fecha) + " 00:00:00"
+                        fecha = datetime.strptime(fechaCadena, '%Y-%m-%d %H:%M:%S')
+                        if ahora > (fecha + timedelta(days=3)):
+                            data['error'] = 'Solo puede abular las ventas maximo 3 dias despues de la transaccion'
+                        else:
+                            es.estado = 0
+                            es.save()
+                            for i in Detalle_venta.objects.filter(venta_id=id):
+                                for dist in i.lote.distribucion_set.all():
+                                    dist.stock_actual += i.cantidad
+                                    dist.save()
+                                lot = Lote.objects.get(id= i.lote_id)
+                                lot.stock_actual += i.cantidad
+                                lot.save()
                 else:
                     data['error'] = 'Ha ocurrido un error'
             elif action == 'pagar':
@@ -172,9 +169,12 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                                 dv.pvp_actual = float(i['valor_ave'])
                                 dv.subtotal = float(i['subtotal'])
                                 dv.save()
+                                dist = Distribucion.objects.get(id=int(i['id']))
+                                dist.stock_actual -= int(i['cantidad'])
+                                dist.save()
                                 lot = Lote.objects.get(id=int(i['lote']['id']))
                                 lot.stock_actual -= int(i['cantidad'])
-                                # lot.save()
+                                lot.save()
                         data['id'] = c.id
                         data['resp'] = True
                 else:
@@ -365,17 +365,13 @@ class printpdf(View):
     def pvp_cal(self, *args, **kwargs):
         data = []
         try:
-            result = Detalle_venta.objects.filter(venta_id=self.kwargs['pk']).values(
-                'inventario__producto_id',
-                'cantidad', 'pvp_actual', 'subtotal'). \
-                annotate(Count('inventario__producto_id'))
-            for i in result:
-                pb = Producto.objects.get(id=int(i['inventario__producto_id']))
-                item = {'producto': {'producto': pb.toJSON()}}
-                item['pvp'] = format(i['pvp_actual'], '.2f')
-                item['cantidad'] = i['cantidad']
-                item['subtotal'] = i['subtotal']
-                data.append(item)
+            result = Detalle_venta.objects.filter(venta_id=self.kwargs['pk'])
+            for p in result:
+                for dist in p.lote.distribucion_set.all():
+                    item = dist.toJSON()
+                    item['valores'] = p.toJSON()
+                    item['costo_libra'] = format(dist.get_costo_libra(), '.2f')
+                    data.append(item)
         except:
             pass
         return data
@@ -387,11 +383,10 @@ class printpdf(View):
                        'sale': Venta.objects.get(pk=self.kwargs['pk']),
                        'empresa': Empresa.objects.first(),
                        'det_sale': self.pvp_cal(),
-                       'icon': 'media/imagen.PNG',
                        }
             html = template.render(context)
             response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+            response['Content-Disposition'] = 'attachment; filename="Comprobante de Venta.pdf"'
             pisa_status = pisa.CreatePDF(html, dest=response, link_callback=self.link_callback)
             return response
         except:

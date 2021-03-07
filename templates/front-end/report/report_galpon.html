@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<title>{{ title }}</title>
+<meta http-equiv="Content-Type" content="multipart/mixed; charset=UTF-8"/>
+<style>
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+        font-size: large;
+    }
+
+    .head2 {
+        text-align: center;
+        text-transform: uppercase;
+        font-size: xx-large
+    }
+
+    .tit_emp {
+        text-transform: uppercase;
+        font-size: xx-large;
+    }
+        .table_det thead tr th {
+        text-align: center;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    .table_det thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .table_det tbody tr {
+        padding: 0;
+    }
+
+
+    .table_det th {
+        color: #fff;
+        background-color: #9ab487;
+    }
+
+</style>
+<body>
+<i class="fas fa-crow fa-5x"></i>
+<p class="head2">
+    <b class="tit_emp">{{ empresa.nombre|upper }}</b><br>
+    <b>Reporte de Produccion por Galpon</b><br>
+</p>
+{% for l in data %}
+    <table>
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        {% for lo in l.lote_data %}
+            <tr>
+                <th style="width: 30%;" class="head"> GALPON N°</th>
+                <th style="width: 20%;" class="head"> CAPACIDAD GALPON</th>
+                <th style="width: 20%;" class="head"> POLLOS GALPON</th>
+                <th style="width: 20%;" class="head"> BAJAS GALPON</th>
+            </tr>
+            <tr>
+                <td class="head">{{ lo.galpon.id }}</td>
+                <td class="head">{{ lo.galpon.capacidad }}</td>
+                <td class="head">{{ lo.cantidad_pollos }}</td>
+                <td class="head">{{ l.total_bajas }}</td>
+            </tr>
+            <tr></tr>
+            <tr>
+                <th style="width: 30%;" class="head"> LOTE N°</th>
+                <th style="width: 20%;" class="head"> CANTIDAD AVES LOTE</th>
+                <th style="width: 20%;" class="head"> FECHA LOTE</th>
+                <th style="width: 20%;" class="head"> TIPO DE AVE</th>
+            </tr>
+            <tr>
+                <td class="head">{{ lo.lote.id }}</td>
+                <td class="head">{{ lo.lote.cantidad }}</td>
+                <td class="head">{{ lo.lote.fecha }}</td>
+                <td class="head">{{ lo.lote.raza.nombre }}</td>
+            </tr>
+            <tr></tr>
+            <tr>
+                <td></td>
+                <th colspan="2" class="head">GASTOS TOTALES:</th>
+                <td></td>
+            </tr>
+            <tr></tr>
+            <tr>
+                <th style="width: 30%;" class="head"> MEDICINAS</th>
+                <th style="width: 20%;" class="head"> ALIMENTOS</th>
+                <th style="width: 20%;" class="head"> GASTOS VARIOS</th>
+                <th></th>
+            </tr>
+            <tr>
+                <td class="head">$ {{ l.gastos_medicina }}</td>
+                <td class="head">$ {{ l.gastos_alimentos }}</td>
+                <td class="head">$ {{ l.gastos_varios }}</td>
+                <td></td>
+            </tr>
+            </tbody>
+            </table>
+        {% endfor %}
+    <br>
+    <h1>DETALLE DE MEDICINAS</h1>
+    <table  class="table_det">
+        <thead>
+        <tr style="background-color:#9ab487;color:white;">
+            <th class="head">FECHA</th>
+            <th class="head">NOMBRE</th>
+            <th class="head">TIPO</th>
+            <th class="head">CANTIDAD</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for m in l.medicacion %}
+             <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
+                <td class="head">{{ m.fecha }}</td>
+                <td class="head">{{ m.medicina__insumo__nombre }}</td>
+                <td class="head">{{ m.medicina__tipo_medicina__nombre }}</td>
+                <td class="head">{{ m.total }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <h1>DETALLE DE ALIMENTOS</h1>
+    <table class="table_det">
+        <thead>
+        <tr>
+            <th class="head">FECHA</th>
+            <th class="head">NOMBRE</th>
+            <th class="head">PRESENTACION</th>
+            <th class="head">CANTIDAD</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for m in l.alimentacion %}
+             <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
+                <td class="head">{{ m.fecha }}</td>
+                <td class="head">{{ m.alimento__insumo__nombre }}</td>
+                <td class="head">{{ m.alimento__presentacion__nombre }}</td>
+                <td class="head">{{ m.total }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table >
+    <br>
+    <h1>DETALLE DE MORTALIDAD</h1>
+    <table class="table_det">
+        <thead>
+        <tr>
+            <th class="head">FECHA</th>
+            <th class="head">CAUSA</th>
+            <th class="head">CANTIDAD</th>
+            <th class="head">DESCRIPCION</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for m in l.mortalidad %}
+             <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
+                <td class="head">{{ m.fecha }}</td>
+                <td class="head">{{ m.causa.nombre }}</td>
+                <td class="head">{{ m.cantidad_muertes }}</td>
+                <td class="head">{{ m.descrpcion }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <h1>DETALLE DE PESOS</h1>
+    <table class="table_det">
+        <thead>
+        <tr>
+            <th class="head">FECHA</th>
+            <th class="head"></th>
+            <th class="head"></th>
+            <th class="head">PESO PROMEDIO</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for m in l.peso %}
+             <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
+                <td class="head">{{ m.fecha }}</td>
+                <td class="head"></td>
+                <td class="head"></td>
+                <td class="head">{{ m.peso_promedio }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <h1>DETALLE DE GASTOS</h1>
+    <table class="table_det">
+        <thead>
+        <tr>
+            <th class="head">FECHA</th>
+            <th class="head">TIPO DE GASTO</th>
+            <th class="head">VALOR</th>
+            <th class="head">DETALLE</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for m in l.gastos %}
+             <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
+                <td class="head">{{ m.fecha_pago }}</td>
+                <td class="head">{{ m.tipo_gasto.nombre }}</td>
+                <td class="head">{{ m.valor }}</td>
+                <td class="head">{{ m.detalle }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+</body>
+</html>
+

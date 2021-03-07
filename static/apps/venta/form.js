@@ -486,7 +486,6 @@ var ventas = {
     add: function (data) {
         this.items.lotes.push(data);
         this.list();
-
     },
     list: function () {
         this.calculate();
@@ -500,7 +499,7 @@ var ventas = {
                 {data: "lote.raza.nombre"},
                 {data: "peso_promedio"},
                 {data: "valor_libra"},
-                {data: "cantidad_pollos"},
+                {data: "stock_actual"},
                 {data: "lote.id"},
                 {data: "galpon.id"},
                 {data: "valor_ave"},
@@ -562,7 +561,7 @@ var ventas = {
             createdRow: function (row, data, dataIndex) {
                 $(row).find('input[name="cantidad"]').TouchSpin({
                     min: 1,
-                    max: data.cantidad_pollos,
+                    max: data.stock_actual,
                     step: 1
                 });
                 $(row).find('input[name="precio"]').TouchSpin({
@@ -638,7 +637,7 @@ $(function () {
                     {data: "lote.raza.nombre"},
                     {data: "peso_promedio"},
                     {data: "valor_libra"},
-                    {data: "cantidad_pollos"},
+                    {data: "stock_actual"},
                     {data: "lote.id"},
                     {data: "galpon.id"},
                     {data: "id"},
@@ -649,7 +648,6 @@ $(function () {
                         class: 'text-center',
                         render: function (data, type, row) {
                             return data + ' Lbs'
-
                         }
                     },
                     {
@@ -823,7 +821,6 @@ $(function () {
                 var parametros;
                 ventas.items.fecha = $('#id_fecha_venta').val();
                 ventas.items.cliente = $('#id_cliente option:selected').val();
-                console.log(ventas.items);
                 parametros = {'ventas': JSON.stringify(ventas.items)};
                 parametros['action'] = 'add';
                 save_with_ajax('Alerta',
