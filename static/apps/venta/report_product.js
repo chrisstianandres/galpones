@@ -69,17 +69,12 @@ $(function () {
                 pageSize: 'A4', //A3 , A5 , A6 , legal , letter
                 download: 'open',
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6],
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8],
                     search: 'applied',
                     order: 'applied'
                 },
-                customize: customize
+                customize: customize_report
             },
-            {
-                text: '<i class="far fa-file-excel"></i> Excel</i>', className: "btn btn-success my_class",
-                extend: 'excel',
-                footer: true
-            }
         ]
          },
         columnDefs: [
@@ -89,7 +84,15 @@ $(function () {
 
             },
             {
-                targets: [-2, -3, -4],
+                targets: [2],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    return parseFloat(data).toFixed(2)+' Lbs';
+                }
+            },
+            {
+                targets: [-2, -3, -4, -6, -7],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
@@ -114,56 +117,40 @@ $(function () {
                         i : 0;
             };
             // Total over this page
-            pageTotalsiniva = api
-                .column(4, {page: 'current'})
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-            totaliva = api.column( 4 ).data().reduce( function (a, b) {
-                         return intVal(a) + intVal(b);
-                         }, 0 );
-            pageTotaliva = api
-                .column(5, {page: 'current'})
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-            totalconiva = api.column( 6 ).data().reduce( function (a, b) {
-                         return intVal(a) + intVal(b);
-                         }, 0 );
-            pageTotalconiva = api
-                .column(6, {page: 'current'})
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-            totalconiva = api.column( 6 ).data().reduce( function (a, b) {
-                         return intVal(a) + intVal(b);
-                         }, 0 );
+            cantidad = api.column(4, {page: 'current'}).data().reduce(function (a, b) {return intVal(a) + intVal(b);}, 0);
+            cantidad_full = api.column( 4 ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
 
-            cantTotal = api
-                .column(2, {page: 'current'})
-                .data()
-                .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
+
+            precio = api.column(5, {page: 'current'}).data().reduce(function (a, b) {return intVal(a) + intVal(b);}, 0);
+
+            precio_full = api.column( 5 ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
+
+
+            sin_iva = api.column(6, {page: 'current'}).data().reduce(function (a, b) {return intVal(a) + intVal(b);}, 0);
+            siniva_full = api.column( 6 ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
+
+
+            iva = api.column(7, {page: 'current'}).data().reduce(function (a, b) {return intVal(a) + intVal(b);}, 0);
+            iva_full = api.column( 7 ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
+
+            con_iva = api.column(8, {page: 'current'}).data().reduce(function (a, b) {return intVal(a) + intVal(b);}, 0);
+            con_iva_full = api.column( 8 ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
 
             // Update footer
-            $(api.column(4).footer()).html(
-                '$' + parseFloat(pageTotalsiniva).toFixed(2) + '( $ ' + parseFloat(pageTotalsiniva).toFixed(2) + ')'
-                // parseFloat(data).toFixed(2)
-            );
+            $(api.column(4).footer()).html(parseInt(cantidad) + '( ' + parseInt(cantidad_full)+ ')');
             $(api.column(5).footer()).html(
-                '$' + parseFloat(pageTotaliva).toFixed(2) + '( $ ' + parseFloat(pageTotaliva).toFixed(2) + ')'
-                // parseFloat(data).toFixed(2)
+                '$' + parseFloat(precio).toFixed(2) + '(     $ ' + parseFloat(precio_full).toFixed(2) + ')'
             );
             $(api.column(6).footer()).html(
-                '$' + parseFloat(pageTotalconiva).toFixed(2) + '( $ ' + parseFloat(pageTotalconiva).toFixed(2) + ')'
+                '$' + parseFloat(sin_iva).toFixed(2) + '(    $ ' + parseFloat(siniva_full).toFixed(2) + ')'
                 // parseFloat(data).toFixed(2)
             );
-            $(api.column(2).footer()).html(
-                cantTotal
+            $(api.column(7).footer()).html(
+                '$' + parseFloat(iva).toFixed(2) + '(    $ ' + parseFloat(iva_full).toFixed(2) + ')'
+                // parseFloat(data).toFixed(2)
+            );
+             $(api.column(8).footer()).html(
+                '$' + parseFloat(con_iva).toFixed(2) + '(    $ ' + parseFloat(con_iva_full).toFixed(2) + ')'
                 // parseFloat(data).toFixed(2)
             );
         },

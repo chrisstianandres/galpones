@@ -213,10 +213,10 @@ class reporte(ValidatePermissionRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data['icono'] = opc_icono
-        data['entidad'] = 'Reporte de Produccion'
+        data['entidad'] = 'Reporte de Produccion por Galpon'
         data['boton'] = 'Guardar'
-        data['titulo'] = 'Reporte de Produccion'
-        data['titulo_lista'] = 'Reporte de Produccion'
+        data['titulo'] = 'Reporte de Produccion por Galpon'
+        data['titulo_lista'] = 'Detalles de Galpon'
         data['titulo_formulario'] = 'Formulario de Registro'
         data['empresa'] = empresa
         data['form'] = DistribucionForm

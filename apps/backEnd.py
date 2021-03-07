@@ -42,8 +42,8 @@ def logeo(request):
         data['title'] = 'Inicio de Sesion'
         data['nomb'] = nombre_empresa()
     else:
-        return HttpResponseRedirect("/")
-    return render(request, 'front-end/login.html', data)
+        return HttpResponseRedirect("/menu")
+    return render(request, 'front-end/login2.html', data)
 
 
 # class signin(TemplateView):

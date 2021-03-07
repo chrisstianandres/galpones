@@ -1,5 +1,8 @@
 {% extends 'front-end/list.html' %}
 {% load static %}
+{% block formulario %}
+
+{% endblock %}
 {% block elements %}
     <br>
     <div class="row">
@@ -31,11 +34,7 @@
     </tfoot>
 {% endblock %}
 {% block botones %}
-    <a type="button" class="btn btn-success btn-sm" id="reload" style="color:white;"
-       onclick=" location.reload();">
-        <i class="fas fa-sync-alt"></i> Actualizar
-    </a>
-    <br><br>
+
 {% endblock %}
 {% block extra %}
     <script src="{% static 'apps/compra/compra_report_total.js' %}"></script>

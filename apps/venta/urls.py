@@ -13,8 +13,8 @@ urlpatterns = [
     # path('online', views.CrudView_online, name='online'),
     # path('chart', login_required(views.grap), name='chart'),
     path('printpdf/<int:pk>', login_required(printpdf.as_view()), name='printpdf'),
-    # path('report_by_product', login_required(report.as_view()), name='report_by_product'),
-    # path('report_total', login_required(report_total.as_view()), name='report_total'),
+    path('report_by_product', login_required(report.as_view()), name='report_by_product'),
+    path('report_total', login_required(report_total.as_view()), name='report_total'),
     # path('report_total_pedidos', login_required(report_total_reserva.as_view()), name='report_total_pedidos'),
     # path('data_tarjets', login_required(views.data_tarjets), name='data_tarjets'),
 ]

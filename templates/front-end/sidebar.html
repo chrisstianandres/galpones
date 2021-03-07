@@ -65,7 +65,7 @@
         </li>
         <li class="">
             <a href="javascript:;">
-                 <i class="fas fa-crow"></i>
+                <i class="fas fa-crow"></i>
                 <span class="link-title">Produccion</span>
                 <span class="fa arrow"></span>
             </a>
@@ -80,7 +80,7 @@
                 </li>
             </ul>
         </li>
-         <li>
+        <li>
             <a href="{% url 'venta:lista' %}">
                 <i class="fas fa-piggy-bank"></i>
                 <span class="link-title"> Ventas</span> </a>
@@ -93,27 +93,32 @@
             </a>
             <ul class="collapse">
                 <li>
-                    <a href="bgcolor.html">
-                        <i class="fa fa-angle-right"></i>&nbsp; Produccion por Lote </a>
+                    <a href="javascript:;">Produccion <span class="fa arrow"></span> </a>
+                    <ul class="collapse">
+                        <li><a href="{% url 'lote:report' %}"><i class="fa fa-angle-right"></i>&nbsp; Produccion por Lote </a></li>
+                        <li><a href="{% url 'distribucion:reporte' %}"><i class="fa fa-angle-right"></i>&nbsp; Producion por Galpon </a></li>
+                    </ul>
                 </li>
                 <li>
-                    <a href="{% url 'distribucion:reporte' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Producion por Galpon </a>
+                    <a href="javascript:;">Compras <span class="fa arrow"></span> </a>
+                    <ul class="collapse">
+                        <li><a href="{% url 'compra:report_total' %}"><i class="fa fa-angle-right"></i> Totales</a></li>
+                        <li><a href="{% url 'compra:report_by_product' %}"><i class="fa fa-angle-right"></i> Por Producto</a></li>
+                    </ul>
                 </li>
                 <li>
-                    <a href="button.html">
-                        <i class="fa fa-angle-right"></i>&nbsp; Compras </a>
+                    <a href="javascript:;">Ventas <span class="fa arrow"></span> </a>
+                    <ul class="collapse">
+                        <li><a href="{% url 'venta:report_total' %}"><i class="fa fa-angle-right"></i> Totales</a></li>
+                        <li><a href="{% url 'venta:report_by_product' %}"><i class="fa fa-angle-right"></i> Por Producto</a></li>
+                    </ul>
                 </li>
                 <li>
-                    <a href="icon.html">
-                        <i class="fa fa-angle-right"></i>&nbsp; Ventas </a>
-                </li>
-                <li>
-                    <a href="pricing.html">
+                    <a href="{% url 'empleado:report' %}">
                         <i class="fa fa-angle-right"></i>&nbsp; Empleados </a>
                 </li>
                 <li>
-                    <a href="progress.html">
+                    <a href="{% url 'cliente:report' %}">
                         <i class="fa fa-angle-right"></i>&nbsp; Clientes </a>
                 </li>
             </ul>

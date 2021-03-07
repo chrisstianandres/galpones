@@ -1,16 +1,4 @@
-var datatable;
-var logotipo;
-const toDataURL = url => fetch(url).then(response => response.blob())
-    .then(blob => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob)
-    }));
 
-toDataURL('/media/logo_don_chuta.png').then(dataUrl => {
-    logotipo = dataUrl;
-});
 var datos = {
     fechas: {
         'start_date': '',
@@ -72,7 +60,7 @@ $(function () {
             },
             buttons: [
                 {
-                    text: '<i class="far fa-file-pdf"></i> Reporte PDF</i>',
+                    text: '<i class="far fa-file-pdf"></i> PDF</i>',
                     className: 'btn btn-danger',
                     extend: 'pdfHtml5',
                     footer: true,
@@ -81,94 +69,12 @@ $(function () {
                     pageSize: 'A4', //A3 , A5 , A6 , legal , letter
                     download: 'open',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4],
+                        columns: [0, 1, 2, 3, 4,5],
                         search: 'applied',
                         order: 'applied'
                     },
-                    customize: function (doc) {
-                        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
-                            "Noviembre", "Diciembre"
-                        ];
-                        var date = new Date();
-
-                        function formatDateToString(date) {
-                            // 01, 02, 03, ... 29, 30, 31
-                            var dd = (date.getDate() < 10 ? '0' : '') + date.getDate();
-                            // 01, 02, 03, ... 10, 11, 12
-                            // month < 10 ? '0' + month : '' + month; // ('' + month) for string result
-                            var MM = monthNames[date.getMonth()]; //monthNames[d.getMonth()])
-                            // 1970, 1971, ... 2015, 2016, ...
-                            var yyyy = date.getFullYear();
-                            // create the format you want
-                            return (dd + " de " + MM + " de " + yyyy);
-                        }
-
-                        var jsDate = formatDateToString(date);
-
-                        //[izquierda, arriba, derecha, abajo]
-                        doc.pageMargins = [25, 120, 25, 50];
-                        doc.defaultStyle.fontSize = 12;
-                        doc.styles.tableHeader.fontSize = 14;
-                        doc['header'] = (function () {
-                            return {
-                                columns: [{alignment: 'center', image: logotipo, width: 300}],
-                                margin: [280, 10, 0, 0] //[izquierda, arriba, derecha, abajo]
-                            }
-                        });
-                        doc['footer'] = (function (page, pages) {
-                            return {
-                                columns: [
-                                    {
-                                        alignment: 'left',
-                                        text: ['Reporte creado el: ', {text: jsDate.toString()}]
-                                    },
-                                    {
-                                        alignment: 'right',
-                                        text: ['Pagina ', {text: page.toString()}, ' de ', {text: pages.toString()}]
-                                    }
-                                ],
-                                margin: 20
-                            }
-                        });
-                        var objLayout = {};
-                        objLayout['hLineWidth'] = function (i) {
-                            return .5;
-                        };
-                        objLayout['vLineWidth'] = function (i) {
-                            return .5;
-                        };
-                        objLayout['hLineColor'] = function (i) {
-                            return '#000000';
-                        };
-                        objLayout['vLineColor'] = function (i) {
-                            return '#000000';
-                        };
-                        objLayout['paddingLeft'] = function (i) {
-                            return 4;
-                        };
-                        objLayout['paddingRight'] = function (i) {
-                            return 4;
-                        };
-                        doc.content[0].layout = objLayout;
-                        doc.content[1].table.widths = ["*", "*", "*", "*", "*"];
-                        doc.styles.tableBodyEven.alignment = 'center';
-                        doc.styles.tableBodyOdd.alignment = 'center';
-                        doc.styles.tableFooter.alignment = 'center';
-                    }
-                },
-                {
-                    text: '<i class="far fa-file-excel"></i> Reporte Excel</i>',
-                    className: "btn btn-success my_class",
-                    extend: 'excel',
-                    footer: true
-                },
-                {
-                    text: '<i class="fas fa-funnel-dollar"></i> Reporte por Totales</i>',
-                    className: 'btn btn-primary',
-                    action: function (e, dt, node, config) {
-                        window.location.href = '/compra/report_total'
-                    }
-                },
+                    customize:customize_report
+                }
             ]
         },
         columnDefs: [
@@ -205,31 +111,31 @@ $(function () {
             };
             // Total over this page
             pageTotal = api
-                .column(4, {page: 'current'})
+                .column(5, {page: 'current'})
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
-            total = api.column(4).data().reduce(function (a, b) {
+            total = api.column(5).data().reduce(function (a, b) {
                 return intVal(a) + intVal(b);
             }, 0);
 
             cantTotal = api
-                .column(2, {page: 'current'})
+                .column(3, {page: 'current'})
                 .data()
                 .reduce(function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0);
+            cantotal = api.column(3).data().reduce(function (a, b) {
+                return intVal(a) + intVal(b);
+            }, 0);
 
             // Update footer
-            $(api.column(4).footer()).html(
+            $(api.column(5).footer()).html(
                 '$' + parseFloat(pageTotal).toFixed(2) + '( $ ' + parseFloat(total).toFixed(2) + ')'
                 // parseFloat(data).toFixed(2)
             );
-            $(api.column(2).footer()).html(
-                cantTotal
-                // parseFloat(data).toFixed(2)
-            );
+            $(api.column(3).footer()).html(cantTotal+ '('+cantotal+')');
         },
 
     });

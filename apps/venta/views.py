@@ -6,6 +6,7 @@ from apps.cliente.forms import ClienteForm
 from apps.cliente.models import Cliente
 from apps.compra.models import Compra
 from apps.distribucion.models import Distribucion
+from apps.gasto.models import Gasto
 
 from apps.inventario.models import Inventario
 from apps.lote.models import Lote
@@ -24,6 +25,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 
 from apps.backEnd import nombre_empresa
+from apps.peso.models import Peso
 
 from apps.user.forms import UserForm
 from apps.venta.forms import Detalle_VentaForm, VentaForm
@@ -511,20 +513,23 @@ class report(ValidatePermissionRequiredMixin, ListView):
             if action == 'report':
                 data = []
                 if start_date == '' and end_date == '':
-                    query = Detalle_venta.objects.values('venta__fecha', 'inventario__producto__producto_base_id',
+                    query = Detalle_venta.objects.values('venta__fecha', 'lote__raza__nombre', 'lote_id',
                                                          'pvp_actual').order_by().annotate(
                         Sum('cantidad')).filter(venta__estado=1)
                 else:
-                    query = Detalle_venta.objects.values('venta__fecha', 'inventario__producto__producto_base_id',
+                    query = Detalle_venta.objects.values('venta__fecha', 'lote__raza__nombre', 'lote_id',
                                                          'pvp_actual') \
                         .filter(venta__fecha__range=[start_date, end_date], venta__estado=1).order_by().annotate(
                         Sum('cantidad'))
                 for p in query:
                     total = p['pvp_actual'] * p['cantidad__sum']
-                    pr = Producto_base.objects.get(id=int(p['inventario__producto__producto_base_id']))
+                    pes = Peso.objects.filter(distribucion__lote_id=p['lote_id']).last() #peso promedio
+                    lot = pes.distribucion.lote.get_costo_ave() #valor ave sin indice
                     data.append([
                         p['venta__fecha'].strftime("%d/%m/%Y"),
-                        pr.nombre,
+                        p['lote__raza__nombre'],
+                        format(pes.peso_promedio, '.2f'),
+                        format(pes.distribucion.get_costo_libra() * float(1 + (empresa.indice / 100)), '.2f'),
                         int(p['cantidad__sum']),
                         format(p['pvp_actual'], '.2f'),
                         format(total, '.2f'),
@@ -568,23 +573,18 @@ class report_total(ValidatePermissionRequiredMixin, ListView):
             if action == 'report':
                 data = []
                 if start_date == '' and end_date == '':
-                    query = Venta.objects.values('fecha', 'cliente__nombres', 'tipo_venta',
+                    query = Venta.objects.values('fecha', 'cliente__nombres',
                                                  'cliente__apellidos').annotate(Sum('subtotal')). \
                         annotate(Sum('iva')).annotate(Sum('total')).filter(estado=1)
                 else:
-                    query = Venta.objects.values('fecha', 'cliente__nombres', 'tipo_venta',
+                    query = Venta.objects.values('fecha', 'cliente__nombres',
                                                  'cliente__apellidos').filter(fecha__range=[start_date, end_date],
                                                                               estado=1) \
                         .annotate(Sum('subtotal')).annotate(Sum('iva')).annotate(Sum('total'))
                 for p in query:
-                    if p['tipo_venta'] == 0:
-                        tipo = 'Fisica'
-                    else:
-                        tipo = 'OnLine'
                     data.append([
                         p['fecha'].strftime("%d/%m/%Y"),
                         p['cliente__nombres'] + " " + p['cliente__apellidos'],
-                        tipo,
                         format(p['subtotal__sum'], '.2f'),
                         format((p['iva__sum']), '.2f'),
                         format(p['total__sum'], '.2f')
@@ -598,11 +598,11 @@ class report_total(ValidatePermissionRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data['icono'] = opc_icono
-        data['entidad'] = 'Ventas Finalizadas (Fisicas)'
-        data['titulo'] = 'Reporte de Ventas (Fisicas)'
+        data['entidad'] = 'Reporte de Ventas'
+        data['titulo'] = 'Reporte de Ventas'
         data['empresa'] = empresa
         data['filter_prod'] = '/venta/lista'
-        data['titulo_lista'] = 'Lista de Ventas finalizadas (Fisicas)'
+        data['titulo_lista'] = 'Listado de Ventas'
         return data
 
 

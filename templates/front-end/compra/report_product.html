@@ -1,5 +1,8 @@
 {% extends 'front-end/list.html' %}
 {% load static %}
+{% block formulario %}
+
+{% endblock %}
 {% block elements %}
     <br>
     <div class="row">
@@ -13,7 +16,8 @@
     <thead>
     <tr>
         <th>Fecha</th>
-        <th>Material</th>
+        <th>Insumo</th>
+        <th>Tipo</th>
         <th>Cantidad</th>
         <th>p. Compra</th>
         <th>Total</th>
@@ -23,7 +27,7 @@
     </tbody>
     <tfoot>
     <tr>
-        {#        <th></th>#}
+        <th></th>
         <th style="text-align:center"><strong>Totales:</strong></th>
         <th style="text-align:center"><strong>Cantidad:</strong></th>
         <th style="text-align:center"></th>

@@ -23,7 +23,10 @@ from galpones import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', login_required(backEnd.menu)),
     path('menu', login_required(backEnd.menu), name='menu'),
+    path('login', backEnd.logeo, name='login'),
+    path('connect/', backEnd.connect, name='connect'),
     path('verificar/', backEnd.check_ced, name='verificar'),
     path('logout', login_required(backEnd.disconnect), name='logout'),
     path('user/', include('apps.user.urls', namespace='user')),

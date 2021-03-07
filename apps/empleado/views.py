@@ -155,8 +155,8 @@ class report(ValidatePermissionRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data['icono'] = opc_icono
-        data['entidad'] = opc_entidad
-        data['titulo'] = 'Reporte de Clientes'
+        data['entidad'] = 'Reporte de Empleados'
+        data['titulo'] = 'Reporte de Empleados'
         data['empresa'] = empresa
         return data
 
