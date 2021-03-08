@@ -127,9 +127,11 @@ def connect(request):
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 
+@csrf_exempt
 def disconnect(request):
+    data = []
     logout(request)
-    return HttpResponseRedirect('/login')
+    return HttpResponse(json.dumps(data))
 
 
 @csrf_exempt

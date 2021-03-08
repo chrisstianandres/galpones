@@ -41,11 +41,6 @@ function datatable_fun() {
             },
             buttons: [
                 {
-                    text: '<i class="fa fa-file-excel"></i> Excel',
-                    className: "btn btn-success btn-space float-right",
-                    extend: 'excel'
-                },
-                {
                     text: '<i class="fa fa-file-pdf"></i> PDF',
                     className: 'btn btn-danger btn-space float-right',
                     extend: 'pdfHtml5',
@@ -177,6 +172,9 @@ $(function () {
                 })
         })
         .on('click', 'a[rel="edit"]', function () {
+
+            $(this).attr('href', '#');
+            $('#form').validate().resetForm();
             var tr = datatable.cell($(this).closest('td, li')).index();
             var data = datatable.row(tr.row).data();
             var sexo = '1';
@@ -191,9 +189,9 @@ $(function () {
             $('input[name="telefono"]').val(data.telefono);
             $('input[name="celular"]').val(data.celular);
             $('input[name="direccion"]').val(data.direccion);
-            mostrar();
             action = 'edit';
             pk = data.id;
+
         });
     //boton agregar cliente
     $('#nuevo').on('click', function () {
@@ -201,7 +199,6 @@ $(function () {
         pk = '';
         reset('#form');
         $('input[name="cedula"]').attr('readonly', false);
-        mostrar();
     });
 
     //enviar formulario de nuevo cliente
@@ -216,7 +213,7 @@ $(function () {
                 '/cliente/nuevo', 'Esta seguro que desea guardar este cliente?', parametros,
                 function (response) {
                     menssaje_ok('Exito!', 'Exito al guardar este cliente!', 'far fa-smile-wink', function () {
-                    ocultar('#form');
+                        window.location.reload();
                     });
                 });
         }

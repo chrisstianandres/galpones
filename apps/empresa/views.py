@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
@@ -37,9 +37,6 @@ def editar(request):
                 config.ruc = dato['ruc']
                 config.correo = dato['correo']
                 config.telefono = dato['telefono']
-                config.facebook = dato['facebook']
-                config.twitter = dato['twitter']
-                config.instagram = dato['instagram']
                 config.iva = dato['iva']
                 config.indice = dato['indice']
                 config.tasa = dato['tasa']
@@ -47,4 +44,6 @@ def editar(request):
                 data['resp'] = True
                 return JsonResponse(data, safe=False)
         except Exception as e:
+            print(e)
             data['error'] = str(e)
+    return HttpResponseRedirect('/empresa/configuracion')

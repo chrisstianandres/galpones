@@ -77,12 +77,17 @@
                             {% block elements %}
 
                             {% endblock %}
-                            <table id="datatable" class="table table-bordered table-condensed table-hover table-striped"
-                                   style="width: 100%">
-                                {% block table %}
+                            {% block table_report %}
 
-                                {% endblock %}
-                            </table>
+
+                                <table id="datatable"
+                                       class="table table-bordered table-condensed table-hover table-striped"
+                                       style="width: 100%">
+                                    {% block table %}
+
+                                    {% endblock %}
+                                </table>
+                            {% endblock %}
                         </div>
                         <div class="panel-footer">
                             <br>

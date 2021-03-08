@@ -46,6 +46,10 @@
                         <i class="fa fa-angle-right"></i>&nbsp; Lotes </a>
                 </li>
                 <li>
+                    <a href="{% url 'cliente:lista' %}">
+                        <i class="fa fa-angle-right"></i>&nbsp; Clientes </a>
+                </li>
+                <li>
                     <a href="{% url 'empleado:lista' %}">
                         <i class="fa fa-angle-right"></i>&nbsp; Empleados </a>
                 </li>
@@ -95,23 +99,31 @@
                 <li>
                     <a href="javascript:;">Produccion <span class="fa arrow"></span> </a>
                     <ul class="collapse">
-                        <li><a href="{% url 'lote:report' %}"><i class="fa fa-angle-right"></i>&nbsp; Produccion por Lote </a></li>
-                        <li><a href="{% url 'distribucion:reporte' %}"><i class="fa fa-angle-right"></i>&nbsp; Producion por Galpon </a></li>
+                        <li><a href="{% url 'lote:report' %}"><i class="fa fa-angle-right"></i>&nbsp; Produccion por
+                            Lote </a></li>
+                        <li><a href="{% url 'distribucion:reporte' %}"><i class="fa fa-angle-right"></i>&nbsp; Producion
+                            por Galpon </a></li>
                     </ul>
                 </li>
                 <li>
                     <a href="javascript:;">Compras <span class="fa arrow"></span> </a>
                     <ul class="collapse">
                         <li><a href="{% url 'compra:report_total' %}"><i class="fa fa-angle-right"></i> Totales</a></li>
-                        <li><a href="{% url 'compra:report_by_product' %}"><i class="fa fa-angle-right"></i> Por Producto</a></li>
+                        <li><a href="{% url 'compra:report_by_product' %}"><i class="fa fa-angle-right"></i> Por
+                            Producto</a></li>
                     </ul>
                 </li>
                 <li>
                     <a href="javascript:;">Ventas <span class="fa arrow"></span> </a>
                     <ul class="collapse">
                         <li><a href="{% url 'venta:report_total' %}"><i class="fa fa-angle-right"></i> Totales</a></li>
-                        <li><a href="{% url 'venta:report_by_product' %}"><i class="fa fa-angle-right"></i> Por Producto</a></li>
+                        <li><a href="{% url 'venta:report_by_product' %}"><i class="fa fa-angle-right"></i> Por Producto</a>
+                        </li>
                     </ul>
+                </li>
+                <li>
+                    <a href="{% url 'insumo:reporte' %}">
+                        <i class="fa fa-angle-right"></i>&nbsp; Stock Insumos </a>
                 </li>
                 <li>
                     <a href="{% url 'empleado:report' %}">
@@ -125,258 +137,15 @@
         </li>
         <li class="nav-divider"></li>
         <li>
-            <a href="login.html">
-                <i class="fa fa-sign-in"></i>
-                <span class="link-title">
-                            Login Page
-                            </span>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:;">
-                <i class="fa fa-code"></i>
-                <span class="link-title">
-                            	Unlimited Level Menu
-                            	</span>
-                <span class="fa arrow"></span>
-            </a>
+            <a><i class="fas fa-lock-open"></i> <span class="link-title">Seguridad</span> <span class="fa arrow"></span> </a>
             <ul class="collapse">
-                <li>
-                    <a href="javascript:;">Level 1 <span class="fa arrow"></span> </a>
-                    <ul class="collapse">
-                        <li><a href="javascript:;">Level 2</a></li>
-                        <li><a href="javascript:;">Level 2</a></li>
-                        <li>
-                            <a href="javascript:;">Level 2 <span class="fa arrow"></span> </a>
-                            <ul class="collapse">
-                                <li><a href="javascript:;">Level 3</a></li>
-                                <li><a href="javascript:;">Level 3</a></li>
-                                <li>
-                                    <a href="javascript:;">Level 3 <span class="fa arrow"></span> </a>
-                                    <ul class="collapse">
-                                        <li><a href="javascript:;">Level 4</a></li>
-                                        <li><a href="javascript:;">Level 4</a></li>
-                                        <li>
-                                            <a href="javascript:;">Level 4 <span class="fa arrow"></span> </a>
-                                            <ul class="collapse">
-                                                <li><a href="javascript:;">Level 5</a></li>
-                                                <li><a href="javascript:;">Level 5</a></li>
-                                                <li><a href="javascript:;">Level 5</a></li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li><a href="javascript:;">Level 4</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="javascript:;">Level 2</a></li>
-                    </ul>
-                </li>
-                <li><a href="javascript:;">Level 1</a></li>
-                <li>
-                    <a href="javascript:;">Level 1 <span class="fa arrow"></span> </a>
-                    <ul class="collapse">
-                        <li><a href="javascript:;">Level 2</a></li>
-                        <li><a href="javascript:;">Level 2</a></li>
-                        <li><a href="javascript:;">Level 2</a></li>
-                    </ul>
+                <li><a href="{% url 'user:lista' %}"><i class="fa fa-angle-right"></i> Usuarios</a></li>
+                <li><a href="{% url 'user:groups' %}"><i class="fa fa-angle-right"></i> Grupos</a>
+                <li><a href="{% url 'empresa:editar' %}"><i class="fa fa-angle-right"></i> Configurar Empresa</a>
                 </li>
             </ul>
         </li>
     </ul>
     <!-- /#menu -->
 </div>
-{#<!-- Sidebar -->#}
-{#<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">#}
-{##}
-{#    <!-- Sidebar - Brand -->#}
-{#    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">#}
-{#        <div class="sidebar-brand-icon rotate-n-15">#}
-{#            <i class="fas fa-tools"></i>#}
-{#        </div>#}
-{#        <div class="sidebar-brand-text mx-3" id="nombre_empresa">{{ empresa.nombre }}</div>#}
-{#    </a>#}
-{#    <!-- Divider -->#}
-{#    <hr class="sidebar-divider d-none d-md-block">#}
-{##}
-{#    <!-- Sidebar Toggler (Sidebar) -->#}
-{#    <div class="text-center d-none d-md-inline">#}
-{#        <button class="rounded-circle border-0" id="sidebarToggle"></button>#}
-{#    </div>#}
-{#    <!-- Divider -->#}
-{#    <hr class="sidebar-divider my-0">#}
-{##}
-{#    <!-- Nav Item - Dashboard -->#}
-{#    <li class="nav-item active">#}
-{#        <a class="nav-link" href="{% url 'menu' %}">#}
-{#            <i class="fas fa-fw fa-tachometer-alt"></i>#}
-{#            <span>Menu Principal</span></a>#}
-{#    </li>#}
-{##}
-{#    <!-- Divider -->#}
-{#    <hr class="sidebar-divider">#}
-{##}
-{#    <!-- Heading -->#}
-{#    <div class="sidebar-heading">#}
-{#        Gestión#}
-{#    </div>#}
-{##}
-{#    <!-- Nav Item - Pages Collapse Menu -->#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'cliente:lista' %}">#}
-{#            <i class="fa fa-users"></i>#}
-{#            <span>Clientes</span></a>#}
-{#    </li>#}
-{##}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'proveedor:lista' %}">#}
-{#            <i class="fas fa-toolbox"></i>#}
-{#            <span>Proveedores</span></a>#}
-{#    </li>#}
-{##}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'producto:lista' %}">#}
-{#            <i class="fas fa-fw fa-wrench"></i>#}
-{#            <span>Productos</span></a>#}
-{#    </li>#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'categoria:lista' %}">#}
-{#            <i class="fab fa-buffer"></i>#}
-{#            <span>Categoria</span></a>#}
-{#    </li>#}
-{##}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'presentacion:lista' %}">#}
-{#            <i class="fas fa-truck-loading"></i>#}
-{#            <span>Presentacion</span></a>#}
-{#    </li>#}
-{##}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'gasto:lista' %}">#}
-{#            <i class="fas fa-dollar-sign"></i>#}
-{#            <span>Gastos</span></a>#}
-{#    </li>#}
-{#    <!-- Nav Item - Utilities Collapse Menu -->#}
-{##}
-{##}
-{#    <!-- Divider -->#}
-{#    <hr class="sidebar-divider">#}
-{##}
-{#    <!-- Heading -->#}
-{#    <div class="sidebar-heading">#}
-{#        Comercial#}
-{#    </div>#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'venta:lista' %}">#}
-{#            <i class="fas fa-hand-holding-usd"></i>#}
-{#            <span>Ventas</span></a>#}
-{#    </li>#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'compra:lista' %}">#}
-{#            <i class="fas fa-shopping-bag"></i>#}
-{#            <span>Compras</span></a>#}
-{#    </li>#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'ctas_cobrar:lista' %}">#}
-{#            <i class="fas fa-search-dollar"></i>#}
-{#            <span>Cuentas por Cobrar</span></a>#}
-{#    </li>#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"#}
-{#           aria-expanded="true" aria-controls="collapseUtilities">#}
-{#            <i class="fas fa-fw fa-wrench"></i>#}
-{#            <span>Utilities</span>#}
-{#        </a>#}
-{#        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"#}
-{#             data-parent="#accordionSidebar">#}
-{#            <div class="bg-white py-2 collapse-inner rounded">#}
-{#                <h6 class="collapse-header">Custom Utilities:</h6>#}
-{#                <a class="collapse-item" href="{% static 'sistema/utilities-color.html' %}">Colors</a>#}
-{#                <a class="collapse-item" href="{% static 'sistema/utilities-border.html' %}">Borders</a>#}
-{#                <a class="collapse-item" href="{% static 'sistema/utilities-animation.html' %}">Animations</a>#}
-{#                <a class="collapse-item" href="{% static 'sistema/utilities-other.html' %}">Other</a>#}
-{#            </div>#}
-{#        </div>#}
-{#    </li>#}
-{#    <!-- Nav Item - Pages Collapse Menu -->#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"#}
-{#           aria-expanded="true" aria-controls="collapsePages">#}
-{#            <i class="fas fa-fw fa-folder"></i>#}
-{#            <span>Pages</span>#}
-{#        </a>#}
-{#        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">#}
-{#            <div class="bg-white py-2 collapse-inner rounded">#}
-{#                <h6 class="collapse-header">Login Screens:</h6>#}
-{#                <a class="collapse-item" href="login.html">Login</a>#}
-{#                <a class="collapse-item" href="register.html">Register</a>#}
-{#                <a class="collapse-item" href="{% static 'sistema/forgot-password.html' %}">Forgot Password</a>#}
-{#                <div class="collapse-divider"></div>#}
-{#                <h6 class="collapse-header">Other Pages:</h6>#}
-{#                <a class="collapse-item" href="{% static 'sistema/404.html' %}">404 Page</a>#}
-{#                <a class="collapse-item" href="{% static 'sistema/blank.html' %}">Blank Page</a>#}
-{#            </div>#}
-{#        </div>#}
-{#    </li>#}
-{##}
-{#    <!-- Nav Item - Charts -->#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% static 'sistema/charts.html' %}">#}
-{#            <i class="fas fa-fw fa-chart-area"></i>#}
-{#            <span>Charts</span></a>#}
-{#    </li>#}
-{##}
-{#    <!-- Nav Item - Tables -->#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% static 'sistema/tables.html' %}">#}
-{#            <i class="fas fa-fw fa-table"></i>#}
-{#            <span>Tables</span></a>#}
-{#    </li>#}
-{#    <hr class="sidebar-divider">#}
-{##}
-{#    <!-- Heading -->#}
-{#    <div class="sidebar-heading">#}
-{#        Reportes#}
-{#    </div>#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#venta_reportes"#}
-{#           aria-expanded="true" aria-controls="venta_reportes">#}
-{#            <i class="fas fa-fw fa-folder"></i>#}
-{#            <span>Ventas</span>#}
-{#        </a>#}
-{#        <div id="venta_reportes" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">#}
-{#            <div class="bg-white py-2 collapse-inner rounded">#}
-{#                <a class="collapse-item" href="{% url 'venta:report_total' %}">Ventas totales</a>#}
-{#                <a class="collapse-item" href="{% url 'venta:report_by_product' %}">Ventas por productos</a>#}
-{#                <a class="collapse-item" href="{% url 'venta:report_total_pedidos' %}">Pedidos (reservados)</a>#}
-{#            </div>#}
-{#        </div>#}
-{#    </li>#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'compra:lista' %}">#}
-{#            <i class="fas fa-shopping-bag"></i>#}
-{#            <span>Compras</span></a>#}
-{#    </li>#}
-{#<hr class="sidebar-divider">#}
-{##}
-{#    <!-- Heading -->#}
-{#    <div class="sidebar-heading">#}
-{#        Seguridad#}
-{#    </div>#}
-{#        <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'user:lista' %}">#}
-{#            <i class="fas fa-user-shield"></i>#}
-{#            <span>Usuarios</span></a>#}
-{#    </li>#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'compra:lista' %}">#}
-{#            <i class="fas fa-users-cog"></i>#}
-{#            <span>Grupos</span></a>#}
-{#    </li>#}
-{#    <li class="nav-item">#}
-{#        <a class="nav-link" href="{% url 'compra:lista' %}">#}
-{#            <i class="fas fa-server"></i>#}
-{#            <span>Respaldos</span></a>#}
-{#    </li>#}
-{#</ul>#}
 {#<!-- End of Sidebar -->#}

@@ -69,7 +69,6 @@
             rootpath: "/assets/"
         };
     </script>
-    <link rel="stylesheet" href="{% static 'sistema/assets/css/style-switcher.css' %}">
     <link rel="stylesheet/less" type="text/css" href="{% static 'sistema/assets/less/theme.less' %}">
     <link rel="stylesheet/less" type="text/css" href="{% static 'sistema/assets/css/theme.css' %}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/2.7.1/less.js"></script>
@@ -178,14 +177,20 @@
 <!-- Metis demo scripts -->
 <script src="{% static 'sistema/assets/js/app.js' %}"></script>
 
-
-<script src="{% static 'sistema/assets/js/style-switcher.js' %}"></script>
 <script src="{% static 'apps/funtions.js' %}"></script>
 <script> year_footer(); </script>
 {% block script %}
 {% endblock %}
 {% block extra %}
+    <script>
+    $('#salir').on('click', function () {
+        var parametros = {'data': ''};
+        save_estado('Cerrando Sesion', '/logout', 'Esta Seguro que quieres cerrar sesion?', parametros ,function () {
+            window.location.href = '/login';
+        })
 
+    })
+    </script>
 {% endblock %}
 </body>
 

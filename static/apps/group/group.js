@@ -4,46 +4,29 @@ $(document).ready(function () {
         languaje: 'es',
         placeholder: 'Buscar...',
     });
-    $.validator.setDefaults({
-        errorClass: 'invalid-feedback',
-
-        highlight: function (element, errorClass, validClass) {
-            $(element)
-                .addClass("is-invalid")
-                .removeClass("is-valid");
+    validador();
+$("#form").validate({
+    rules: {
+        name: {
+            required: true,
+            maxlength: 25,
+            minlength: 3,
+            lettersonly: true
         },
-        unhighlight: function (element, errorClass, validClass) {
-            $(element)
-                .addClass("is-valid")
-                .removeClass("is-invalid");
+        permissions: {
+            required: true
         }
-    });
-    $("#form").validate({
-        rules: {
-            tipo_gasto: {
-                required: true
-            },
-            detalle: {
-                required: true,
-                minlength: 3,
-                maxlength: 50
-            }
+    },
+    messages: {
+        name: {
+            required: "Este campo es requerido",
+            maxlength: "Maximo 25 caracteres",
+            minlength: "Minimi 3 caracteres",
         },
-        messages: {
-            tipo_gasto: {
-                required: "Porfavor selecciona un tipo de gasto",
-            },
-            detalle: {
-                required: "Porfavor ingresa un detalle",
-                minlength: "Debe ingresar al menos 3 letras",
-                lettersonly: "Debe ingresar unicamente letras y espacios"
-            },
+        permissions: {
+            required: "Elige al menos un permiso"
         },
-    });
-    $('#id_detalle').keyup(function () {
-        var pal = $(this).val();
-        var changue = pal.substr(0, 1).toUpperCase() + pal.substr(1);
-        $(this).val(changue);
-    });
+    },
+});
 
 });

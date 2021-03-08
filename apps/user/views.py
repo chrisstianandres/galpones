@@ -10,10 +10,11 @@ from django.views.generic import ListView, UpdateView, TemplateView
 from apps.backEnd import nombre_empresa
 # from apps.cliente.models import Cliente
 from apps.mixins import ValidatePermissionRequiredMixin
-# from apps.producto.forms import GroupForm
+from apps.user.forms import GroupForm
 # from apps.user.forms import UserForm, UserForm_online
 from apps.user.forms import UserForm
 from apps.user.models import User
+
 # from apps.proveedor.models import Proveedor
 
 opc_icono = 'fas fa-user-shield'
@@ -152,7 +153,8 @@ class Updateview(ValidatePermissionRequiredMixin, UpdateView):
             pk = self.kwargs.get('pk', 0)
             user = self.model.objects.get(id=pk)
             data = {
-                'icono': opc_icono, 'crud': '/user/editar/' + str(self.kwargs['pk']), 'entidad': opc_entidad, 'empresa': empresa,
+                'icono': opc_icono, 'crud': '/user/editar/' + str(self.kwargs['pk']), 'entidad': opc_entidad,
+                'empresa': empresa,
                 'boton': 'Guardar Edicion', 'titulo': 'Edicion del Registro de un Usuario',
                 'action': 'edit'
             }
@@ -218,7 +220,7 @@ class Listgroupsview(ValidatePermissionRequiredMixin, ListView):
                 try:
                     id = request.POST['id']
                     if id:
-                        ps = User.objects.get(pk=id)
+                        ps = Group.objects.get(pk=id)
                         ps.delete()
                         data['resp'] = True
                     else:
@@ -259,15 +261,15 @@ class CrudViewGroup(ValidatePermissionRequiredMixin, TemplateView):
                 f = GroupForm(request.POST)
                 if f.is_valid():
                     f.save()
-                    return HttpResponseRedirect('user/groups')
+                    return HttpResponseRedirect('/user/groups')
                 else:
                     data['form'] = f
                 return render(request, 'front-end/group/group_form.html', data)
             elif action == 'delete':
-               pk = request.POST['id']
-               cli = Group.objects.get(pk=pk)
-               cli.delete()
-               data['resp'] = True
+                pk = request.POST['id']
+                cli = Group.objects.get(pk=pk)
+                cli.delete()
+                data['resp'] = True
             else:
                 data['error'] = 'No ha seleccionado ninguna opción'
         except Exception as e:
@@ -277,12 +279,62 @@ class CrudViewGroup(ValidatePermissionRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         data['icono'] = opc_icono
-        data['entidad'] = opc_entidad
+        data['entidad'] = 'Grupos'
         data['boton'] = 'Guardar Grupo'
         data['titulo'] = 'Nuevo Grupos'
         data['nuevo'] = '/usuario/newgroup'
         data['form'] = GroupForm
         data['action'] = 'add'
+        data['empresa'] = empresa
+        return data
+
+
+class UpdateGroup(ValidatePermissionRequiredMixin, UpdateView):
+    model = Group
+    form_class = GroupForm
+    template_name = 'front-end/group/group_form.html'
+    success_url = 'user:groups'
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        action = request.POST['action']
+        try:
+            pk = self.kwargs.get('pk', 0)
+            group = self.model.objects.get(id=pk)
+            if action == 'edit':
+                f = self.form_class(request.POST, request.FILES, instance=group)
+                if f.is_valid():
+                    f.save()
+                    return HttpResponseRedirect('/user/groups')
+                else:
+                    data = self.get_context_data()
+                    data['form'] = f
+                return render(request, 'front-end/group/group_form.html', data)
+            elif action == 'delete':
+                pk = request.POST['id']
+                cli = Group.objects.get(pk=pk)
+                cli.delete()
+                data['resp'] = True
+            else:
+                data['error'] = 'No ha seleccionado ninguna opción'
+        except Exception as e:
+            data['error'] = str(e)
+        return HttpResponse(json.dumps(data), content_type='application/json')
+
+    def get_context_data(self, **kwargs):
+        grupo = self.model.objects.get(id=self.kwargs['pk'])
+        data = super().get_context_data(**kwargs)
+        data['icono'] = opc_icono
+        data['entidad'] = 'Grupos'
+        data['boton'] = 'Guardar Grupo'
+        data['titulo'] = 'Editar Grupos'
+        data['nuevo'] = '/usuario/newgroup'
+        data['form'] = GroupForm(instance=grupo)
+        data['action'] = 'edit'
         data['empresa'] = empresa
         return data
 
@@ -326,7 +378,7 @@ def profile(request):
         else:
             data['form'] = form
     return render(request, 'front-end/profile.html', data)
-        # return render(request, 'front-end/profile.html', data)
+    # return render(request, 'front-end/profile.html', data)
 
 
 def verificar(nro):

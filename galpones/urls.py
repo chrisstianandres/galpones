@@ -42,6 +42,7 @@ urlpatterns = [
     path('tipo_medicine/', include('apps.tipo_medicina.urls', namespace='tipo_medicine')),
     path('alimento/', include('apps.alimento.urls', namespace='alimento')),
     path('proveedor/', include('apps.proveedor.urls', namespace='proveedor')),
+    path('cliente/', include('apps.cliente.urls', namespace='cliente')),
     path('peso/', include('apps.peso.urls', namespace='peso')),
     path('causa_muerte/', include('apps.causa_muerte.urls', namespace='causa_muerte')),
     path('mortalidad/', include('apps.mortalidad.urls', namespace='mortalidad')),
@@ -52,6 +53,7 @@ urlpatterns = [
     path('produccion/', include('apps.distribucion.urls', namespace='distribucion')),
     path('presentacion/', include('apps.presentacion.urls', namespace='presentacion')),
     path('venta/', include('apps.venta.urls', namespace='venta')),
+    path('insumo/', include('apps.insumo.urls', namespace='insumo')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)\
                   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
