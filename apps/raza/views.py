@@ -37,7 +37,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 data = []
                 for c in Raza.objects.all().exclude(id=ids):
                     data.append(c.toJSON())
-            if action == 'list_table':
+            elif action == 'list_table':
                 data = []
                 for c in Raza.objects.all():
                     data.append(c.toJSON())

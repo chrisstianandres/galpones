@@ -260,7 +260,7 @@ function save_with_ajax2(title, url, content, parametros, callback) {
                     }, 1000);
                     return false;
                 }
-                menssaje_error('Error', data.error, 'fas fa-exclamation-circle');
+                menssaje_error_form('Error', data.error, 'fas fa-exclamation-circle');
 
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 alert(textStatus + ': ' + errorThrown);
@@ -629,29 +629,4 @@ function year_footer() {
 
 }
 
-// function reloj() {
-//     var fecha_js = new Date;
-//     var segundos = fecha_js.getSeconds();
-//     var hora = fecha_js.getHours();
-//     var minutos = fecha_js.getMinutes();
-//
-//     segundos++;
-//
-//     if (segundos === 60) {
-//         segundos = 0;
-//         minutos++;
-//         if (minutos === 60) {
-//             minutos = 0;
-//             hora++;
-//             if (hora === 24) {
-//                 hora = 0;
-//             }
-//         }
-//     }
-//     document.getElementById("reloj").innerHTML = " " + hora + ":" + minutos + ":" + segundos;
-// }
-//
-// $(document).ready(function() {
-//     setInterval(reloj, 1000);
-// });
 

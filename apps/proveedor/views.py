@@ -54,7 +54,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data = super().get_context_data(**kwargs)
         data['icono'] = opc_icono
         data['entidad'] = opc_entidad
-        data['boton'] = 'Nuevo Porveedor'
+        data['boton'] = 'Guardar Porveedor'
         data['titulo'] = 'Listado de Porveedores'
         data['titulo_lista'] = 'Listado de Porveedores'
         data['form'] = ProveedorForm
@@ -74,16 +74,19 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         data = {}
         action = request.POST['action']
-        pk = request.POST['id']
+
         try:
+
             if action == 'add':
                 f = ProveedorForm(request.POST)
                 data = self.save_data(f)
             elif action == 'edit':
+                pk = request.POST['id']
                 proveedor = Proveedor.objects.get(pk=int(pk))
                 f = ProveedorForm(request.POST, instance=proveedor)
                 data = self.save_data(f)
             elif action == 'delete':
+               pk = request.POST['id']
                pro = Proveedor.objects.get(pk=pk)
                pro.delete()
                data['resp'] = True

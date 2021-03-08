@@ -25,8 +25,18 @@ class Lote(models.Model):
         return '{}'.format(self.fecha.strftime('%d/%m/%Y'))
 
     def get_costo_ave(self):
-        cal = (float(self.total_gastos) / int(self.stock_produccion))
+        if self.estado == 0:
+            cal = 0
+        else:
+            cal = (float(self.total_gastos) / int(self.stock_produccion))
         return cal
+
+    def costo_libra(self):
+        if self.estado == 0:
+            data = 1
+        else:
+            data = (self.get_costo_ave() / self.stock_produccion)
+        return data
 
 
     def toJSON(self):
@@ -36,7 +46,7 @@ class Lote(models.Model):
         item['valor_pollito'] = format(self.valor_pollito, '.2f')
         item['estado_text'] = self.get_estado_display()
         item['costo_ave'] = format(self.get_costo_ave(), '.2f')
-        item['costo_libra'] = format((self.get_costo_ave()/self.stock_produccion), '.2f')
+        item['costo_libra'] = format(self.costo_libra(), '.2f')
         return item
 
     class Meta:

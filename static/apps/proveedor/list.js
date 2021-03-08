@@ -1,6 +1,7 @@
 var logotipo;
 var datatable;
 
+
 function datatable_fun() {
     datatable = $("#datatable").DataTable({
         responsive: true,
@@ -31,44 +32,45 @@ function datatable_fun() {
         buttons: {
             dom: {
                 button: {
-                    className: '',
+                    className: 'btn',
 
                 },
                 container: {
-                    className: 'float-md-right'
+                    className: 'buttons-container'
                 }
             },
             buttons: [
                 {
                     text: '<i class="fa fa-file-pdf"></i> PDF',
-                    className: 'btn btn-danger btn-space',
+                    className: 'btn btn-danger btn-space float-right',
                     extend: 'pdfHtml5',
                     //filename: 'dt_custom_pdf',
                     orientation: 'landscape', //portrait
                     pageSize: 'A4', //A3 , A5 , A6 , legal , letter
-                    download: 'open',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6],
-                        search: 'applied',
-                        order: 'applied'
-                    },
-                    customize,
+                    // download: 'open',
+                    exportOptions:
+                        {
+                            columns: [0, 1, 2, 3, 4, 5],
+                            search: 'applied',
+                            order: 'applied'
+                        },
+                    customize: customize
                 },
-                {
-                    text: '<i class="fa fa-file-excel"></i> Excel',
-                    className: "btn btn-success btn-space float-right",
-                    extend: 'excel'
-                }
+
             ]
         },
         columnDefs: [
+            {
+                targets: '_all',
+                class: 'text-center',
+            },
             {
                 targets: [-1],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
                     var edit = '<a style="color: white" type="button" class="btn btn-primary btn-xs" rel="edit" ' +
-                        'data-toggle="tooltip" title="Editar Datos"><i class="fas fa-edit"></i></a>' + ' ';
+                        'data-toggle="tooltip" title="Editar Datos"><i class="fa fa-user-edit"></i></a>' + ' ';
                     var del = '<a type="button" class="btn btn-danger btn-xs"  style="color: white" rel="del" ' +
                         'data-toggle="tooltip" title="Eliminar"><i class="fa fa-trash"></i></a>' + ' ';
                     return edit + del
@@ -81,9 +83,9 @@ function datatable_fun() {
 }
 
 $(function () {
-    datatable_fun();
-    var action = '';
+    var action = 'add';
     var pk = '';
+    datatable_fun();
     $('#datatable tbody')
         .on('click', 'a[rel="del"]', function () {
             action = 'delete';
@@ -100,34 +102,37 @@ $(function () {
                 })
         })
         .on('click', 'a[rel="edit"]', function () {
+
+            $(this).attr('href', '#');
+            $('#form').validate().resetForm();
             var tr = datatable.cell($(this).closest('td, li')).index();
             var data = datatable.row(tr.row).data();
+            var sexo = '1';
+            if (data.sexo==='Femenino'){
+                sexo = '0';
+            }
             $('input[name="nombre"]').val(data.nombre);
             $('select[name="tipo"]').val(data.tipo_val).prop('disabled', true);
             $('input[name="num_doc"]').val(data.num_doc).attr('readonly', true);
             $('input[name="correo"]').val(data.correo);
             $('input[name="telefono"]').val(data.telefono);
             $('input[name="direccion"]').val(data.direccion);
-            mostrar();
             action = 'edit';
             pk = data.id;
+
         });
-
-
-    //boton agregar proveedor
+    //boton agregar cliente
     $('#nuevo').on('click', function () {
-        $('input[name="num_doc"]').attr('readonly', false);
-        $('select[name="tipo"]').attr('disabled', false);
-        reset('#form');
-        mostrar();
         action = 'add';
         pk = '';
+        reset('#form');
+        $('input[name="cedula"]').attr('readonly', false);
     });
 
     //enviar formulario de nuevo cliente
     $('#form').on('submit', function (e) {
         e.preventDefault();
-        $('select[name="tipo"]').attr('disabled', false);
+        $('select[name="tipo"]').prop('disabled', false);
         var parametros = new FormData(this);
         parametros.append('action', action);
         parametros.append('id', pk);
@@ -137,9 +142,11 @@ $(function () {
                 '/proveedor/nuevo', 'Esta seguro que desea guardar este proveedor?', parametros,
                 function (response) {
                     menssaje_ok('Exito!', 'Exito al guardar este proveedor!', 'far fa-smile-wink', function () {
-                        ocultar('#form');
+                        window.location.reload();
                     });
                 });
         }
     });
+
+
 });
