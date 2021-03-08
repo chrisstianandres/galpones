@@ -1,32 +1,26 @@
 import json
+import os
 from datetime import datetime, timedelta
 
+from django.conf import settings
+from django.contrib.staticfiles import finders
 from django.db import transaction
 from django.db.models import Sum
-from django.db.models.functions import Coalesce
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
+from xhtml2pdf import pisa
 
 from apps.alimento.models import Alimento
 from apps.backEnd import nombre_empresa
 from apps.compra.forms import CompraForm, Detalle_CompraForm
 from apps.compra.models import Compra, Detalle_compra
 from apps.empresa.models import Empresa
-from apps.inventario.models import Inventario
 from apps.medicina.models import Medicina
 from apps.mixins import ValidatePermissionRequiredMixin
-from apps.insumo.models import Insumo
-from datetime import date
-import os
-from django.conf import settings
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-from django.contrib.staticfiles import finders
-
 from apps.proveedor.forms import ProveedorForm
 
 opc_icono = 'fa fa-shopping-bag'

@@ -4,7 +4,6 @@ from django.db import models
 from django.forms import model_to_dict
 
 from apps.cliente.models import Cliente
-from apps.inventario.models import Inventario
 from apps.empresa.models import Empresa
 from apps.lote.models import Lote
 

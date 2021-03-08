@@ -1,10 +1,10 @@
 var check = 0;
 var user_tipo = parseInt($('input[name="user_tipo"]').val());
-var myPieChart, chart, graph, myLineChart;
-var ctx = document.getElementById("myAreaChart");
-
-// Pie Chart Example
-ctx2 = document.getElementById("myPieChart");
+// var myPieChart, chart, graph, myLineChart;
+// var ctx = document.getElementById("myAreaChart");
+//
+// // Pie Chart Example
+// ctx2 = document.getElementById("myPieChart");
 
 function graficos() {
     // myLineChart = new Chart(ctx, {
@@ -370,8 +370,55 @@ function check_ctas() {
     }
 }
 
+var barChartData = [];
+var ctx = document.getElementById('myChart').getContext('2d');
+
+
 $(function () {
-    Metis.dashboard();
+    $.ajax({
+        url: '/venta/chart',
+        type: 'POST',
+        data: {'action': 'chart'},
+        dataSrc: "",
+    }).done(function (data) {
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre',
+                    'Noviembre', 'Diciembre'],
+                datasets: [{
+                    label: 'Compras',
+                    data: data['datos'].compras,
+                    borderColor: [
+                        'rgb(176,0,12)'
+                    ],
+                    borderWidth: 1
+
+                },
+                    {
+                        label: 'Ventas',
+                        data: data['datos'].ventas,
+                        borderColor: [
+                            'rgb(76,108,255)'
+                        ],
+                        borderWidth: 1
+
+                    },
+                ],
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Compras y ventas del año ' + data['year']+ ' en Dolares Americanos'
+                }
+            }
+        });
+        $('#lote_tar').html(data['tarjets'].lotes);
+        $('#galpon_tar').html(data['tarjets'].galpones);
+        $('#ave_tar').html(data['tarjets'].aves);
+        $('#empleado_tar').html(data['tarjets'].empleados);
+
+    });
     if (user_tipo === 1) {
         // datatbles();
         graficos();
@@ -379,3 +426,10 @@ $(function () {
 
 
 });
+//[{
+//             label: '# of Votes',
+//             data: [12, 19, 3, 5, 2, 3],
+//             backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+//             borderColor: ['rgba(255, 99, 132, 1)'],
+//             borderWidth: 1
+//         }]

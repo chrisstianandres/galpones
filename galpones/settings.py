@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'apps.apps.AppsConfig',
     #apps creadas
     'apps.empresa',
-    'apps.DatabaseBackups',
     'apps.user',
     'apps.ubicacion',
     'apps.alimentacion',

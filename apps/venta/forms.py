@@ -3,7 +3,7 @@ from datetime import datetime
 from django import forms
 
 from .models import Detalle_venta, Venta
-from apps.inventario.models import Inventario
+
 from ..lote.models import Lote
 
 

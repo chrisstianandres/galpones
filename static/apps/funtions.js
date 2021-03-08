@@ -184,22 +184,14 @@ function menssaje_error(title, content, icon, callback) {
 }
 
 function error_login(title, content, icon, callback) {
-    $.confirm({
-        theme: 'modern',
-        icon: icon,
-        title: title,
-        type: 'red',
-        content: content,
-        draggable: true,
-        buttons: {
-            info: {
-                text: '<i class="fas fa-check"></i> Ok',
-                btnClass: 'btn-blue',
-                action: function () {
-                    callback();
-                }
-
-            },
+     Swal.fire({
+            title: title,
+            text: content,
+            icon: 'error',
+        }
+    ).then((result) => {
+        if (result.isConfirmed) {
+            callback();
         }
     });
 }
@@ -229,7 +221,7 @@ function login(url, parametros, callback, callback2) {
             callback();
             return false;
         }
-        error_login('Error', data.error, 'fas fa-exclamation-circle', callback2);
+         menssaje_error('Error!', data.error, 'far fa-times-circle');
     }).fail(function (jqXHR, textStatus, errorThrown) {
         alert(textStatus + ': ' + errorThrown);
     })

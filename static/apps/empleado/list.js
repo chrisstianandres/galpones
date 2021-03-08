@@ -135,6 +135,7 @@ $(function () {
             $('input[name="direccion"]').val(data.direccion);
             action = 'edit';
             pk = data.id;
+            $(this).attr('href', '#');
         });
     //boton agregar cliente
     $('#nuevo').on('click', function () {

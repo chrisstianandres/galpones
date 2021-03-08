@@ -42,7 +42,6 @@ urlpatterns = [
     path('tipo_medicine/', include('apps.tipo_medicina.urls', namespace='tipo_medicine')),
     path('alimento/', include('apps.alimento.urls', namespace='alimento')),
     path('proveedor/', include('apps.proveedor.urls', namespace='proveedor')),
-    path('cliente/', include('apps.cliente.urls', namespace='cliente')),
     path('peso/', include('apps.peso.urls', namespace='peso')),
     path('causa_muerte/', include('apps.causa_muerte.urls', namespace='causa_muerte')),
     path('mortalidad/', include('apps.mortalidad.urls', namespace='mortalidad')),

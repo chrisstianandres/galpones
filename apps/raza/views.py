@@ -11,7 +11,7 @@ from apps.mixins import ValidatePermissionRequiredMixin
 from apps.raza.forms import RazaForm
 from apps.raza.models import Raza
 
-opc_icono = 'fas fa-capsules'
+opc_icono = 'fas fa-dove'
 opc_entidad = 'Tipos de Aves'
 crud = '/tipo_ave/crear'
 empresa = nombre_empresa()
@@ -37,6 +37,10 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 data = []
                 for c in Raza.objects.all().exclude(id=ids):
                     data.append(c.toJSON())
+            if action == 'list_table':
+                data = []
+                for c in Raza.objects.all():
+                    data.append(c.toJSON())
             elif action == 'search':
                 data = []
                 term = request.POST['term']
@@ -58,14 +62,14 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['icono'] = opc_icono
         data['entidad'] = opc_entidad
         data['boton'] = 'Guardar'
-        data['titulo'] = 'Medicinas'
-        data['nuevo'] = '/medicina/nuevo'
-        data['titulo_lista'] = 'Listado de medicinas'
+        data['titulo'] = 'Aves'
+        data['nuevo'] = '/tipo_ave/nuevo'
+        data['titulo_lista'] = 'Listado de Aves'
         data['titulo_formulario'] = 'Formulario de Registro'
         data['empresa'] = empresa
-        # data['form'] = MedicinaForm
+        data['form'] = RazaForm
         # data['formp'] = TipomedicinaForm
-        data['titulo_modal_tipo'] = 'Agregar un tipo de medicina'
+        data['titulo_modal_tipo'] = 'Agregar un tipo de Ave'
         return data
 
 

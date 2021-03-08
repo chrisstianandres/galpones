@@ -1,4 +1,34 @@
 $(function () {
+    validador();
+    $("#formlogin").validate({
+        rules: {
+            username: {
+                required: true,
+                minlength: 2,
+                maxlength: 150,
+            },
+            password: {
+                required: true,
+                minlength: 2,
+                maxlength: 128,
+            }
+        },
+        messages: {
+            username: {
+                 required: '',
+                minlength: "Ingrese al menos 2 caracteres",
+                maxlength: "Ingrese maximo 150 caracteres"
+
+            },
+            password: {
+                 required: '',
+                minlength: "Ingrese al menos 2 caracteres",
+                maxlength: "Ingrese maximo 128 caracteres"
+
+            }
+        }
+    });
+
     $('#formlogin').on('submit', function (e) {
         e.preventDefault();
         if ($('input[name="username"]').val() === "") {
@@ -13,6 +43,8 @@ $(function () {
             'username': $('input[name="username"]').val(),
             'password': $('input[name="password"]').val()
         };
+        var isvalid = $(this).valid();
+        if (isvalid) {
         login('/connect/', parametros, function () {
             $.isLoading({
                 text: "<strong>" + 'Iniciando Sesion...' + "</strong>",
@@ -25,6 +57,7 @@ $(function () {
             return false;
 
         });
+        }
     });
 });
 
