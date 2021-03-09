@@ -76,30 +76,7 @@ $(document).ready(function () {
             minimumInputLength: 1,
         })
         .on('select2:select', function (e) {
-            $.ajax({
-                type: "POST",
-                url: '/ubicacion/lista',
-                data: {
-                    "id": $('#id_provincia option:selected').val(),
-                    'action': 'canton_insert'
-                },
-                dataType: 'json',
-                success: function (data) {
-                    $('#id_canton')
-                        .empty().trigger("change")
-                        .select2({
-                            data: data, language: {
-                                "noResults": function () {
-                                    return "Sin resultados";
-                                },
-                            }
-                        });
-                },
-                error: function (xhr, status, data) {
-                    alert(data);
-                },
-
-            })
+            load_prov($('#id_provincia option:selected').val());
         })
         .on("change", function () {
             if ($(this).val() === null) {
@@ -121,22 +98,172 @@ $(document).ready(function () {
 
     $('#signupForm').on('submit', function (e) {
         e.preventDefault();
-        var parametros = new FormData(this);
-        var isvalid = $(this).valid();
-        if (isvalid) {
-            save_with_ajax2('Alerta',
-                window.location.pathname, 'Esta seguro que desea editar los parametros de la empresa?', parametros,
-                function () {
-                    menssaje_ok('Exito!', 'Exito al actulizar los parametros de la empresa!', 'far fa-smile-wink', function () {
-                       location.reload();
+        if ($('#id_canton').val() === '0' || $('#id_canton').val() === null || $('#id_parroquia').val() === '0' || $('#id_parroquia').val() === null) {
+            menssaje_error('Error!', 'Debe seleccionar una Provincia, Canton y Parroquia', '', function () {
+
+            })
+        } else {
+            var parametros = new FormData(this);
+            var isvalid = $(this).valid();
+            if (isvalid) {
+                save_with_ajax2('Alerta',
+                    window.location.pathname, 'Esta seguro que desea editar los parametros de la empresa?', parametros,
+                    function () {
+                        menssaje_ok('Exito!', 'Exito al actulizar los parametros de la empresa!', 'far fa-smile-wink', function () {
+                            location.reload();
+                        });
                     });
-                });
+            }
         }
+
 
     })
 
 
 });
+
+function load_prov(id) {
+    $.ajax({
+        type: "POST",
+        url: '/ubicacion/lista',
+        data: {
+            "id": id,
+            'action': 'canton_insert'
+        },
+        dataType: 'json',
+        success: function (data) {
+            $('#id_canton')
+                .empty().trigger("change")
+                .select2({
+                    data: data, language: {
+                        "noResults": function () {
+                            return "Sin resultados";
+                        },
+                    }
+                });
+        },
+        error: function (xhr, status, data) {
+            alert(data);
+        },
+
+    })
+}
+
+function load_canton(id) {
+    $.ajax({
+        type: "POST",
+        url: '/ubicacion/lista',
+        data: {
+            "id": id,
+            'action': 'canton_insert'
+        },
+        dataType: 'json',
+        success: function (data) {
+            $('#id_canton')
+                .empty().trigger("change")
+                .select2({
+                    data: data,
+                    language: {
+                        "noResults": function () {
+                            return "Sin resultados";
+                        },
+                    }
+                });
+        },
+        error: function (xhr, status, data) {
+            alert(data);
+        },
+
+    })
+}
+
+function load_canton_edit(id) {
+    $.ajax({
+        type: "POST",
+        url: '/ubicacion/lista',
+        data: {
+            "id": id,
+            'action': 'canton_insert'
+        },
+        dataType: 'json',
+        success: function (data) {
+            $('#id_canton')
+                .select2({
+                    data: data,
+                    language: {
+                        "noResults": function () {
+                            return "Sin resultados";
+                        },
+                    }
+                })
+                .val($('#id_cant').val()).trigger('change');
+        },
+        error: function (xhr, status, data) {
+            alert(data);
+        },
+
+    })
+}
+
+function load_parroquia(id) {
+    $.ajax({
+        type: "POST",
+        url: '/ubicacion/lista',
+        data: {
+            "id": id,
+            'action': 'parroquia'
+        },
+        dataType: 'json',
+        success: function (data) {
+            $('#id_ubicacion')
+                .empty().trigger("change")
+                .select2({
+                    data: data,
+                    language: {
+                        "noResults": function () {
+                            return "Sin resultados";
+                        },
+                    }
+                });
+            // $.each(data, function (key, value) {
+            //     var newOption = new Option(value.text, value.id, false, true);
+            //     $('#id_canton').append(newOption).trigger('change');
+            // })
+        },
+        error: function (xhr, status, data) {
+            alert(data);
+        },
+
+    })
+}
+
+function load_parroquia_edit(id) {
+    $.ajax({
+        type: "POST",
+        url: '/ubicacion/lista',
+        data: {
+            "id": id,
+            'action': 'parroquia'
+        },
+        dataType: 'json',
+        success: function (data) {
+            $('#id_ubicacion')
+                .select2({
+                    data: data,
+                    language: {
+                        "noResults": function () {
+                            return "Sin resultados";
+                        },
+                    }
+                })
+                .val($('#id_parr').val()).trigger("change");
+        },
+        error: function (xhr, status, data) {
+            alert(data);
+        },
+
+    })
+}
 
 function editar() {
     $('#guardar').show();
@@ -146,49 +273,26 @@ function editar() {
     $('#id_ruc').attr('readonly', false);
     $('#id_correo').attr('readonly', false);
     $('#id_direccion').attr('readonly', false);
-    $('#id_facebook').attr('readonly', false);
-    $('#id_instagram').attr('readonly', false);
-    $('#id_twitter').attr('readonly', false);
     $('#id_iva').prop('disabled', false);
     $('#id_indice').prop('disabled', false);
     $('#id_tasa').prop('disabled', false);
     $('#id_telefono').attr('readonly', false);
 
+
+    load_canton_edit($('#id_provincia').val());
+    load_parroquia_edit($('#id_canton').val());
+
+
     $('#id_canton')
         .select2({theme: "classic", allowClear: true})
         .on('select2:select', function (e) {
-            $.ajax({
-                type: "POST",
-                url: '/ubicacion/lista',
-                data: {
-                    "id": $('#id_canton option:selected').val(),
-                    'action': 'parroquia'
-                },
-                dataType: 'json',
-                success: function (data) {
-                    $('#id_ubicacion')
-                        .empty().trigger("change")
-                        .select2({ data:data,
-                            language: {
-                                "noResults": function () {
-                                    return "Sin resultados";
-                                },
-                            }
-                        });
-                    // $.each(data, function (key, value) {
-                    //     var newOption = new Option(value.text, value.id, false, true);
-                    //     $('#id_canton').append(newOption).trigger('change');
-                    // })
-                },
-                error: function (xhr, status, data) {
-                    alert(data);
-                },
-
-            })
+            if ($(this).val() !== 0) {
+                load_parroquia($('#id_canton option:selected').val());
+            }
         })
         .prop('disabled', false)
         .on('change', function () {
-           if ($(this).val() === null) {
+            if ($(this).val() === null || $(this).val() === '') {
                 $('#id_ubicacion').empty().trigger("change");
             }
         });
@@ -233,35 +337,9 @@ function editar() {
             minimumInputLength: 1,
         })
         .on('select2:select', function (e) {
-            $.ajax({
-                type: "POST",
-                url: '/ubicacion/lista',
-                data: {
-                    "id": $('#id_provincia option:selected').val(),
-                    'action': 'canton_insert'
-                },
-                dataType: 'json',
-                success: function (data) {
-                    $('#id_canton')
-                        .empty().trigger("change")
-                        .select2({
-                            data: data,
-                            language: {
-                                "noResults": function () {
-                                    return "Sin resultados";
-                                },
-                            }
-                        });
-                    // $.each(data, function (key, value) {
-                    //     var newOption = new Option(value.text, value.id, false, false);
-                    //     $('#id_canton').append(newOption).trigger('change');
-                    // })
-                },
-                error: function (xhr, status, data) {
-                    alert(data);
-                },
-
-            })
+            if ($(this).val() !== 0) {
+                load_canton($('#id_provincia option:selected').val());
+            }
         })
         .on("change", function () {
             if ($(this).val() === null) {
@@ -281,20 +359,7 @@ jQuery.validator.addMethod("lettersonly", function (value, element) {
 }, "Letters and spaces only please");
 
 
-$.validator.setDefaults({
-    errorClass: 'invalid-feedback',
-
-    highlight: function (element, errorClass, validClass) {
-        $(element)
-            .addClass("is-invalid")
-            .removeClass("is-valid");
-    },
-    unhighlight: function (element, errorClass, validClass) {
-        $(element)
-            .addClass("is-valid")
-            .removeClass("is-invalid");
-    }
-});
+validador();
 $("#signupForm").validate({
     rules: {
         nombre: {
@@ -321,15 +386,6 @@ $("#signupForm").validate({
             required: true,
             minlength: 5,
             maxlength: 50
-        },
-        facebook: {
-            required: false
-        },
-        instagram: {
-            required: false
-        },
-        twitter: {
-            required: false
         },
         telefono: {
             required: true,

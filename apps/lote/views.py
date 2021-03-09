@@ -52,51 +52,65 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 for c in query:
                     data.append(c.toJSON())
             elif action == 'close':
-                data = []
-                id = request.POST['id']
-                dist = Distribucion.objects.filter(lote_id=id)
-                prod = Produccion.objects.filter(lote_id=id)
-                total = 0
-                total_muertes = 0
-                gastos_lote = 0
-                sueldo_lote = 0
-                lot = self.model.objects.get(id=id)
-                lot.estado = 1
-                for e in prod:
-                    emp = Empleado.objects.get(id=e.empleado.id)
-                    emp.estado = 0
-                    sueldo_lote += e.sueldo
-                    emp.save()
-                for g in dist:
-                    galpon = Galpon.objects.get(id=g.galpon.id)
-                    galpon.estado = 0
-                    galpon.save()
-                    p = Peso.objects.filter(distribucion_id=g.id).last()
-                    g.peso_promedio = p.peso_promedio
-                    total += g.cantidad_pollos
-                    for gst in Gasto.objects.filter(distribucion_id=g.id):
-                        g.total_gastos += gst.valor
-                    for med in g.medicacion_set.all():
-                        x = med.medicina.insumo.detalle_compra_set.all().values('insumo_id') \
-                            .annotate(total=Sum('p_compra')).order_by('total')
-                        for xt in x:
-                            g.total_gastos += xt['total']
-                    for alt in g.alimentacion_set.all():
-                        a = alt.alimento.insumo.detalle_compra_set.all().values('insumo_id') \
-                            .annotate(total=Sum('p_compra')).order_by('total')
-                        for alt_tot in a:
-                            g.total_gastos += alt_tot['total']
-                    for mort in g.mortalidad_set.all():
-                        total_muertes += mort.cantidad_muertes
-                    g.total_gastos += lot.valor_pollito * (total+total_muertes)
-                    g.total_gastos += sueldo_lote / dist.count()
-                    g.stock_actual += g.cantidad_pollos
-                    gastos_lote += g.total_gastos
-                    g.save()
-                lot.stock_produccion = int(total)
-                lot.stock_actual = int(total)
-                lot.total_gastos = float(gastos_lote)
-                lot.save()
+                with transaction.atomic():
+                    data = []
+                    key = 0
+                    id = request.POST['id']
+                    dist = Distribucion.objects.filter(lote_id=id)
+                    prod = Produccion.objects.filter(lote_id=id)
+                    total = 0
+                    total_muertes = 0
+                    gastos_lote = 0
+                    sueldo_lote = 0
+                    lot = self.model.objects.get(id=id)
+                    lot.estado = 1
+                    for e in prod:
+                        emp = Empleado.objects.get(id=e.empleado.id)
+                        emp.estado = 0
+                        sueldo_lote += e.sueldo
+                        emp.save()
+                    for g in dist:
+                        if Peso.objects.filter(distribucion_id=g.id).exists() and Gasto.objects.filter(distribucion_id=g.id).exists() and \
+                                g.medicacion_set.all().exists() and g.alimentacion_set.all().exists():
+                            p = Peso.objects.filter(distribucion_id=g.id).last()
+                            galpon = Galpon.objects.get(id=g.galpon.id)
+                            galpon.estado = 0
+                            galpon.save()
+                            g.peso_promedio = p.peso_promedio
+                            total += g.cantidad_pollos
+                            for gst in Gasto.objects.filter(distribucion_id=g.id):
+                                g.total_gastos += gst.valor
+                            for med in g.medicacion_set.all():
+                                x = med.medicina.insumo.detalle_compra_set.all().values('insumo_id') \
+                                    .annotate(total=Sum('p_compra')).order_by('total')
+                                for xt in x:
+                                    g.total_gastos += xt['total']
+                            for alt in g.alimentacion_set.all():
+                                a = alt.alimento.insumo.detalle_compra_set.all().values('insumo_id') \
+                                    .annotate(total=Sum('p_compra')).order_by('total')
+                                for alt_tot in a:
+                                    g.total_gastos += alt_tot['total']
+                            for mort in g.mortalidad_set.all():
+                                total_muertes += mort.cantidad_muertes
+                            g.total_gastos += lot.valor_pollito * (total+total_muertes)
+                            g.total_gastos += sueldo_lote / dist.count()
+                            g.stock_actual += g.cantidad_pollos
+                            gastos_lote += g.total_gastos
+                            g.save()
+                        else:
+                            key = 1
+                            for e in prod:
+                                emp = Empleado.objects.get(id=e.empleado.id)
+                                emp.estado = 1
+                                emp.save()
+                            data = {'error': 'No se puede cerrar la produccion de este lote ya que existe un galpon '
+                                             'sin registros, por favor reivsa el control de Produccion por Galpon!!! '}
+                        break
+                    if key == 0:
+                        lot.stock_produccion = int(total)
+                        lot.stock_actual = int(total)
+                        lot.total_gastos = float(gastos_lote)
+                        lot.save()
             elif action == 'search_ave':
                 data = []
                 term = request.POST['term']

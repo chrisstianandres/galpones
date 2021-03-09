@@ -42,6 +42,7 @@ def editar(request):
                 config.tasa = dato['tasa']
                 config.save()
                 data['resp'] = True
+                print(data)
                 return JsonResponse(data, safe=False)
         except Exception as e:
             print(e)

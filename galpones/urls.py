@@ -29,6 +29,7 @@ urlpatterns = [
     path('connect/', backEnd.connect, name='connect'),
     path('verificar/', backEnd.check_ced, name='verificar'),
     path('logout', login_required(backEnd.disconnect), name='logout'),
+    path('ubicacion/', include('apps.ubicacion.urls', namespace='ubicacion')),
     path('user/', include('apps.user.urls', namespace='user')),
     path('empresa/', include('apps.empresa.urls', namespace='empresa')),
     path('medicina/', include('apps.medicina.urls', namespace='medicina')),
