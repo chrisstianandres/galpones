@@ -8,7 +8,7 @@ class Empresa(models.Model):
     nombre = models.CharField(max_length=50)
     ciudad = models.CharField(max_length=25)
     ruc = models.CharField(max_length=13, unique=True)
-    direccion = models.CharField(max_length=25)
+    direccion = models.CharField(max_length=100)
     telefono = models.CharField(max_length=10, unique=True)
     correo = models.CharField(max_length=50, null=True, blank=True, unique=True)
     iva = models.IntegerField(default=12, blank=True, null=True)

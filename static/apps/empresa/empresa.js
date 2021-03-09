@@ -385,7 +385,7 @@ $("#signupForm").validate({
         direccion: {
             required: true,
             minlength: 5,
-            maxlength: 50
+            maxlength: 100
         },
         telefono: {
             required: true,
@@ -422,7 +422,7 @@ $("#signupForm").validate({
         direccion: {
             required: "Porfavor ingresa una direccion de la empresa",
             minlength: "Ingresa al menos 5 letras",
-            maxlength: "Tu direccion debe tener maximo 50 caracteres",
+            maxlength: "Tu direccion debe tener maximo 100 caracteres",
         }
     },
 });
