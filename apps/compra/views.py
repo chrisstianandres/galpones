@@ -18,6 +18,7 @@ from apps.alimento.models import Alimento
 from apps.backEnd import nombre_empresa
 from apps.compra.forms import CompraForm, Detalle_CompraForm
 from apps.compra.models import Compra, Detalle_compra
+from apps.devoluciones.models import Devolucion_compra
 from apps.empresa.models import Empresa
 from apps.medicina.models import Medicina
 from apps.mixins import ValidatePermissionRequiredMixin
@@ -82,6 +83,36 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 else:
 
                     data['error'] = 'Ha ocurrido un error'
+            elif action == 'devolucion':
+                id = request.POST['id']
+                key = 0
+                ahora = datetime.now()
+                dev = self.model.objects.get(id=id)
+                fechaCadena = str(dev.fecha_compra) + " 00:00:00"
+                fecha = datetime.strptime(fechaCadena, '%Y-%m-%d %H:%M:%S')
+                if ahora > (fecha + timedelta(days=1)):
+                    data['error'] = 'Solo puede abular las compras maximo 1 dia despues de la transaccion'
+                else:
+                    for det in dev.detalle_compra_set.all():
+                        if det.stock_actual < det.stock_inicial:
+                            key = 1
+                        break
+                    if key == 0:
+                        dev.estado = 0
+                        dev.save()
+                        add = Devolucion_compra()
+                        add.compra_id = id
+                        add.save()
+            elif action == 'list_dev':
+                data = []
+                start = request.POST['start_date']
+                end = request.POST['end_date']
+                if start and end:
+                    compra = Devolucion_compra.objects.filter(fecha__range=[start, end])
+                else:
+                    compra = Devolucion_compra.objects.all()
+                for c in compra:
+                    data.append(c.toJSON())
             else:
                 data['error'] = 'No ha seleccionado una opcion'
         except Exception as e:
@@ -101,6 +132,96 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['form2'] = Detalle_CompraForm()
         # data['detalle'] = []
         data['formp'] = ProveedorForm()
+        return data
+
+
+class devolucion(ValidatePermissionRequiredMixin, ListView):
+    model = Compra
+    template_name = 'front-end/compra/devolucion.html'
+    permission_required = 'compra.view_compra'
+
+    @csrf_exempt
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Compra.objects.none()
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            if action == 'detalle_medicina':
+                id = request.POST['id']
+                if id:
+                    data = []
+                    for p in Detalle_compra.objects.filter(compra_id=id, insumo__tipo_insumo=1):
+                        med = Medicina.objects.get(insumo_id=int(p.insumo_id))
+                        item = p.toJSON()
+                        item['p_compra'] = p.p_compra
+                        item['insumo'] = med.toJSON()
+                        item['subtotal'] = float(p.subtotal)
+                        data.append(item)
+                else:
+                    data['error'] = 'Ha ocurrido un error'
+            elif action == 'detalle_alimentos':
+                id = request.POST['id']
+                if id:
+                    data = []
+                    for p in Detalle_compra.objects.filter(compra_id=id, insumo__tipo_insumo=0):
+                        al = Alimento.objects.get(insumo_id=int(p.insumo_id))
+                        item = p.toJSON()
+                        item['p_compra'] = p.p_compra
+                        item['insumo'] = al.toJSON()
+                        item['subtotal'] = float(p.subtotal)
+                        data.append(item)
+                else:
+
+                    data['error'] = 'Ha ocurrido un error'
+            elif action == 'devolucion':
+                id = request.POST['id']
+                key = 0
+                ahora = datetime.now()
+                dev = self.model.objects.get(id=id)
+                fechaCadena = str(dev.fecha_compra) + " 00:00:00"
+                fecha = datetime.strptime(fechaCadena, '%Y-%m-%d %H:%M:%S')
+                if ahora > (fecha + timedelta(days=1)):
+                    data['error'] = 'Solo puede abular las compras maximo 1 dia despues de la transaccion'
+                else:
+                    for det in dev.detalle_compra_set.all():
+                        if det.stock_actual < det.stock_inicial:
+                            key = 1
+                        break
+                    if key == 0:
+                        dev.estado = 0
+                        dev.save()
+                        add = Devolucion_compra()
+                        add.compra_id = id
+                        add.save()
+            elif action == 'list':
+                data = []
+                start = request.POST['start_date']
+                end = request.POST['end_date']
+                if start and end:
+                    compra = Devolucion_compra.objects.filter(fecha__range=[start, end])
+                else:
+                    compra = Devolucion_compra.objects.all()
+                for c in compra:
+                    data.append(c.toJSON())
+            else:
+                data['error'] = 'No ha seleccionado una opcion'
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data, safe=False)
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['icono'] = opc_icono
+        data['entidad'] = opc_entidad
+        data['boton'] = 'Guardar'
+        data['titulo'] = 'Compras'
+        data['titulo_lista'] = 'Listado de Compras Devueltas'
+        data['empresa'] = empresa
         return data
 
 

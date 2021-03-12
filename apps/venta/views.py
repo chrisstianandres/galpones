@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from apps.cliente.forms import ClienteForm
 from apps.cliente.models import Cliente
 from apps.compra.models import Compra
+from apps.devoluciones.models import Devolucion_venta
 from apps.distribucion.models import Distribucion
 from apps.empleado.models import Empleado
 from apps.galpon.models import Galpon
@@ -95,16 +96,19 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                         es = Venta.objects.get(id=id)
                         fechaCadena = str(es.fecha) + " 00:00:00"
                         fecha = datetime.strptime(fechaCadena, '%Y-%m-%d %H:%M:%S')
-                        if ahora > (fecha + timedelta(days=3)):
-                            data['error'] = 'Solo puede abular las ventas maximo 3 dias despues de la transaccion'
+                        if ahora > (fecha + timedelta(days=1)):
+                            data['error'] = 'Solo puede abular las ventas maximo 1 dia despues de la transaccion'
                         else:
                             es.estado = 0
                             es.save()
+                            dev = Devolucion_venta()
+                            dev.venta_id = id
+                            dev.save()
                             for i in Detalle_venta.objects.filter(venta_id=id):
                                 for dist in i.lote.distribucion_set.all():
                                     dist.stock_actual += i.cantidad
                                     dist.save()
-                                lot = Lote.objects.get(id= i.lote_id)
+                                lot = Lote.objects.get(id=i.lote_id)
                                 lot.stock_actual += i.cantidad
                                 lot.save()
                 else:
@@ -137,6 +141,57 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['form2'] = Detalle_VentaForm()
         # data['detalle'] = []
         data['formp'] = ClienteForm()
+        return data
+
+
+class devolucion(ValidatePermissionRequiredMixin, ListView):
+    model = Venta
+    template_name = 'front-end/venta/devolucion.html'
+    permission_required = 'venta.view_venta'
+
+    @csrf_exempt
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            if action == 'list':
+                start = request.POST['start_date']
+                end = request.POST['end_date']
+                data = []
+                if start == '' and end == '':
+                    query = Devolucion_venta.objects.all()
+                else:
+                    query = Devolucion_venta.objects.filter(fecha__range=[start, end])
+                for c in query:
+                    data.append(c.toJSON())
+            elif action == 'detalle':
+                id = request.POST['id']
+                if id:
+                    data = []
+                    result = Detalle_venta.objects.filter(venta_id=id)
+                    for p in result:
+                        for dist in p.lote.distribucion_set.all():
+                            item = dist.toJSON()
+                            item['valores'] = p.toJSON()
+                            item['costo_libra'] = dist.get_costo_libra()
+                            data.append(item)
+            else:
+                data['error'] = 'No ha seleccionado una opcion'
+        except Exception as e:
+            data['error'] = 'No ha seleccionado una opcion'
+        return JsonResponse(data, safe=False)
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['icono'] = opc_icono
+        data['entidad'] = opc_entidad
+        data['boton'] = 'Guardar'
+        data['titulo'] = 'Ventas Devueltas'
+        data['titulo_lista'] = 'Listado de Ventas Devueltas'
+        data['empresa'] = empresa
         return data
 
 

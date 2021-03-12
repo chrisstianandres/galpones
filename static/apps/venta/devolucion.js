@@ -41,13 +41,14 @@ function datatable_fun() {
             dataSrc: ""
         },
         columns: [
-            {"data": "fecha_compra"},
-            {"data": "proveedor.nombre"},
-            {"data": "user"},
-            {"data": "total"},
-            {"data": "comprobante"},
-            {"data": "estado"},
-            {"data": "id"}
+            {"data": "venta.fecha"},
+            {"data": "fecha"},
+            {"data": "venta.cliente.full_name_list"},
+            {"data": "venta.subtotal"},
+            {"data": "venta.iva"},
+            {"data": "venta.total"},
+            {"data": "venta.id"},
+            {"data": "venta.id"}
         ],
         language: {
             url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json',
@@ -95,41 +96,29 @@ function datatable_fun() {
             {
                 targets: [-1],
                 class: 'text-center',
-                width: "15%",
                 render: function (data, type, row) {
-                    var detalle = '<a type="button" rel="detalle" class="btn btn-success btn-xs btn-round" style="color: white" data-toggle="tooltip" title="Detalle de Productos" ><i class="fa fa-search"></i></a>' + ' ';
-                    var devolver = '<a type="button" rel="devolver" class="btn btn-danger btn-xs btn-round" style="color: white" data-toggle="tooltip" title="Devolver"><i class="fa fa-times"></i></a>' + ' ';
-                    return detalle + devolver;
+                    return '<a type="button" rel="detalle" class="btn btn-success btn-xs btn-round" style="color: white" data-toggle="tooltip" title="Detalle de Venta" ><i class="fa fa-search"></i></a>' + ' ' ;
                 }
             },
             {
                 targets: [-2],
                 render: function (data, type, row) {
-                    return row.estado_text;
+                    return pad(data, 10);
                 }
             },
             {
-                targets: [-4],
+                targets: [-5, -3, -4],
                 render: function (data, type, row) {
                     return '$ ' + data;
                 }
             },
-        ],
-        createdRow: function (row, data, dataIndex) {
-            if (data.estado === 1) {
-                $('td', row).eq(5).html('<span class = "badge badge-success" style="color: white ">'+data.estado_text+' </span>');
-            } else  {
-                $('td', row).eq(5).html('<span class = "badge badge-danger" style="color: white "> '+data.estado_text+' </span>');
-                $('td', row).eq(6).find('a[rel="devolver"]').hide();
-            }
-
-        }
+        ]
     });
 }
 
 
 function daterange() {
-    $('input[name="fecha"]').daterangepicker({
+    $('#fecha').daterangepicker({
         locale: {
             format: 'YYYY-MM-DD',
             applyLabel: '<i class="fas fa-search"></i> Buscar',
@@ -148,32 +137,22 @@ function daterange() {
 
 }
 
+function pad(str, max) {
+    str = str.toString();
+    return str.length < max ? pad("0" + str, max) : str;
+}
 
 $(function () {
     formulario.prop('style', 'display:none');
     daterange();
     datatable_fun();
     $('#datatable tbody')
-        .on('click', 'a[rel="devolver"]', function () {
-        $('.tooltip').remove();
-        var tr = datatable.cell($(this).closest('td, li')).index();
-        var data = datatable.row(tr.row).data();
-        var parametros = {'id': data.id, 'action': 'devolucion'};
-        save_estado('Alerta',
-            '/compra/lista', 'Esta seguro que desea devolver esta compra?', parametros,
-            function () {
-                menssaje_ok('Exito!', 'Exito al devolver la compra', 'far fa-smile-wink', function () {
-                    location.reload();
-                })
-            });
-
-    })
         .on('click', 'a[rel="detalle"]', function () {
             $('.tooltip').remove();
             var tr = datatable.cell($(this).closest('td, li')).index();
             var data = datatable.row(tr.row).data();
             $('#Modal').modal('show');
-            $("#tbldetalle_insumos").DataTable({
+            $("#tbldetalle_venta").DataTable({
                 responsive: true,
                 autoWidth: false,
                 language: {
@@ -184,19 +163,18 @@ $(function () {
                     url: window.location.pathname,
                     type: 'POST',
                     data: {
-                        'action': 'detalle_medicina',
-                        'id': data.id
+                        'action': 'detalle',
+                        'id': data.venta.id
                     },
                     dataSrc: ""
                 },
                 columns: [
-                    {data: 'insumo.insumo.nombre'},
-                    {data: 'insumo.insumo.categoria.nombre'},
-                    {data: 'insumo.tipo_medicina.nombre'},
-                    {data: 'insumo.insumo.descripcion'},
-                    {data: 'cantidad'},
-                    {data: 'p_compra'},
-                    {data: 'subtotal'}
+                    {data: 'lote.raza.nombre'},
+                    {data: 'peso_promedio'},
+                    {data: 'costo_libra'},
+                    {data: 'valores.pvp_actual'},
+                    {data: 'valores.cantidad'},
+                    {data: 'valores.subtotal'}
                 ],
                 columnDefs: [
                     {
@@ -204,66 +182,23 @@ $(function () {
                         class: 'text-center'
                     },
                     {
-                        targets: [-1, -2],
+                        targets: [-1, -3, -4],
                         class: 'text-center',
                         orderable: false,
                         render: function (data, type, row) {
                             return '$' + parseFloat(data).toFixed(2);
                         }
                     },
-                ],
-            });
-            $("#tbldetalle_alimentos").DataTable({
-                responsive: true,
-                autoWidth: false,
-                language: {
-                    "url": '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json'
-                },
-                destroy: true,
-                ajax: {
-                    url: window.location.pathname,
-                    type: 'POST',
-                    data: {
-                        'action': 'detalle_alimentos',
-                        'id': data.id
-                    },
-                    dataSrc: ""
-                },
-                columns: [
-                    {data: 'insumo.insumo.nombre'},
-                    {data: 'insumo.insumo.categoria.nombre'},
-                    {data: 'insumo.presentacion.nombre'},
-                    {data: 'insumo.insumo.descripcion'},
-                    {data: 'cantidad'},
-                    {data: 'p_compra'},
-                    {data: 'subtotal'}
-                ],
-                columnDefs: [
                     {
-                        targets: '_all',
-                        class: 'text-center'
-                    },
-                    {
-                        targets: [-1, -2],
+                        targets: [1],
                         class: 'text-center',
                         orderable: false,
                         render: function (data, type, row) {
-                            return '$' + parseFloat(data).toFixed(2);
+                            return parseFloat(data).toFixed(2)+' Lbs';
                         }
                     },
                 ],
             });
         });
-
-    $('#nuevo').on('click', function () {
-        listado.fadeOut();
-        formulario.fadeIn();
-        compras.list();
-        compras.list_alimentos();
-    });
-    $('#cancal_shop').on('click', function () {
-        listado.fadeIn();
-        formulario.fadeOut();
-    })
 });
 

@@ -8,6 +8,7 @@ app_name = 'Compra'
 
 urlpatterns = [
     path('lista', login_required(lista.as_view()), name='lista'),
+    path('devoluciones', login_required(devolucion.as_view()), name='devoluciones'),
     path('nuevo', login_required(CrudView.as_view()), name='nuevo'),
     # path('index', login_required(views.index), name='index'),
     # path('printpdf/<int:pk>', login_required(printpdf.as_view()), name='printpdf'),

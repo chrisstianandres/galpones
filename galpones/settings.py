@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'apps.insumo',
     'apps.categoria',
     'apps.presentacion',
+    'apps.devoluciones'
 ]
 
 MIDDLEWARE = [
