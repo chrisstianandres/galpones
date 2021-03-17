@@ -20,7 +20,7 @@ function datatable_fun() {
             {"data": "telefono"},
             {"data": "celular"},
             {"data": "direccion"},
-            {"data": "estado_text"},
+            {"data": "cargo"},
             {"data": "id"}
         ],
         language: {
@@ -79,25 +79,11 @@ function datatable_fun() {
 
                 }
             },
-            {
-                targets: [-2],
-                render: function (data, type, row) {
-                    return '<span>'+ data+'</span>'
-
-                }
-            },
-        ],
-        createdRow: function (row, data, dataIndex) {
-            if (data.estado === 1) {
-                $('td', row).eq(6).find('span').addClass("badge badge-danger");
-            } else if (data.estado === 0) {
-                $('td', row).eq(6).find('span').addClass("badge badge-success");
-            }
-
-        }
-
+        ]
     });
 }
+
+var num_emp = $('#num_emp').val();
 
 $(function () {
 
@@ -149,15 +135,21 @@ $(function () {
         parametros.append('action', action);
         parametros.append('id', pk);
         var isvalid = $(this).valid();
-        if (isvalid) {
-            save_with_ajax2('Alerta',
-                '/empleado/nuevo', 'Esta seguro que desea guardar este empleado?', parametros,
-                function (response) {
-                    menssaje_ok('Exito!', 'Exito al guardar este empleado!', 'far fa-smile-wink', function () {
-                        location.reload();
+        if (num_emp === '6' &&  action === 'add') {
+            menssaje_error('Error', 'Ya esta llena la nomina de 6 empleados', '', function () {
+            })
+        } else {
+            if (isvalid) {
+                save_with_ajax2('Alerta',
+                    '/empleado/nuevo', 'Esta seguro que desea guardar este empleado?', parametros,
+                    function (response) {
+                        menssaje_ok('Exito!', 'Exito al guardar este empleado!', 'far fa-smile-wink', function () {
+                            location.reload();
+                        });
                     });
-                });
+            }
         }
+
     });
 
 

@@ -1,9 +1,11 @@
+import base64
 import json
 import os
 from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.staticfiles import finders
+from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models import Sum
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
@@ -251,6 +253,7 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                         c.tasa_iva = float(datos['tasa_iva']) / float(100)
                         c.iva = float(datos['iva'])
                         c.total = float(datos['total'])
+                        c.jpg = self.base64_file(str(datos['jpg']))
                         c.save()
                         if datos['medicinas']:
                             for m in datos['medicinas']:
@@ -283,6 +286,13 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
         except Exception as e:
             data['error'] = str(e)
         return HttpResponse(json.dumps(data), content_type='application/json')
+
+    def base64_file(self, data, name=None):
+        _format, _img_str = data.split(';base64,')
+        _name, ext = _format.split('/')
+        if not name:
+            name = _name.split(":")[-1]
+        return ContentFile(base64.b64decode(_img_str), name='{}.{}'.format(name, ext))
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)

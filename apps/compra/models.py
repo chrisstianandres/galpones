@@ -6,6 +6,7 @@ from apps.insumo.models import Insumo
 from apps.user.models import User
 from apps.presentacion.models import Presentacion
 from apps.proveedor.models import Proveedor
+from galpones.settings import MEDIA_URL
 
 estado = (
     (0, 'DEVUELTA'),
@@ -23,9 +24,16 @@ class Compra(models.Model):
     iva = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     estado = models.IntegerField(choices=estado, default=1)
+    jpg = models.ImageField(upload_to='comprobante/%Y/%m/%d', blank=True, null=True)
 
     def __str__(self):
         return '%s %s' % (self.fecha_compra, self.proveedor.nombre)
+
+    def get_jpg(self):
+        if self.jpg:
+            return '{}{}'.format(MEDIA_URL, self.jpg)
+        else:
+            return '{}{}'.format(MEDIA_URL, 'comprobante/no_imagen.png')
 
     def toJSON(self):
         item = model_to_dict(self)
@@ -35,6 +43,7 @@ class Compra(models.Model):
         item['subtotal'] = format(self.subtotal, '.2f')
         item['iva'] = format(self.iva, '.2f')
         item['total'] = format(self.total, '.2f')
+        item['jpg'] = self.get_jpg()
         return item
 
     class Meta:

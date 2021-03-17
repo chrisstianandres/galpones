@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 # -----------------------------------------------PAGINA PRINCIPAL-----------------------------------------------------#
 # from apps.user.forms import UserForm, UserForm_online
+from apps.empleado.models import Empleado
 from apps.user.models import User
 from apps.empresa.models import Empresa
 
@@ -29,7 +30,7 @@ def nombre_empresa():
 def menu(request):
     data = {
         'titulo': 'Menu Principal', 'empresa': nombre_empresa(),
-        'icono': 'fas fa-tachometer-alt', 'entidad': 'Menu Principal',
+        'icono': 'fas fa-tachometer-alt', 'entidad': 'Menu Principal'
     }
     return render(request, 'front-end/index.html', data)
 

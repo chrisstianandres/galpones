@@ -89,8 +89,7 @@ var lotes = {
             columns: [
                 {"data": "id"},
                 {"data": "text"},
-                {"data": "cedula"},
-                {"data": "id"}
+                {"data": "cedula"}
             ],
             columnDefs: [
                 {
@@ -103,31 +102,8 @@ var lotes = {
                             '<i class="fa fa-trash"></i></a>' + ' ';
 
                     }
-                },
-                {
-                    targets: [-1],
-                    class: 'text-center',
-                    orderable: false,
-                    render: function (data, type, row) {
-                        return '<input type="text" class="form-control input-sm" name="cantidad" value="1.00">';
-
-                    }
                 }
-            ],
-            rowCallback: function (row, data) {
-                $(row).find('input[name="cantidad"]').TouchSpin({
-                    min: 0.05,
-                    max: 1000000,
-                    step: 0.01,
-                    decimals: 2,
-                    forcestepdivisibility: 'none',
-                    boostat: 5,
-                    maxboostedstep: 10,
-                    prefix: '$',
-                    // verticalupclass: 'glyphicon glyphicon-plus',
-                    // verticaldownclass: 'glyphicon glyphicon-minus'
-                });
-            }
+            ]
         });
     },
     get_ids_galpon: function () {
@@ -458,38 +434,6 @@ $(function () {
                 });
 
         });
-    // datatable_fun();
-    // action = 'add';
-    // //Botones dentro de datatable
-    // $('#datatable tbody')
-    //     .on('click', 'a[rel="del"]', function () {
-    //         var tr = datatable.cell($(this).closest('td, li')).index();
-    //         var data = datatable.row(tr.row).data();
-    //         var parametros = {'id': data.id, 'action': 'delete'};
-    //         save_estado('Alerta',
-    //             '/galpon/nuevo', 'Esta seguro que desea eliminar este galpon?', parametros,
-    //             function () {
-    //                 menssaje_ok('Exito!', 'Exito al eliminar  este galpon!', 'far fa-smile-wink', function () {
-    //                     location.reload();
-    //                 })
-    //             });
-    //     })
-    //     .on('click', 'a[rel="edit"]', function () {
-    //         var tr = datatable.cell($(this).closest('td, li')).index();
-    //         var data = datatable.row(tr.row).data();
-    //         action = 'edit';
-    //         pk = data.id;
-    //         $('#id_capacidad').val(data.capacidad);
-    //         $('#id_numero').val(data.id);
-    //         $('#input_numero').show("slow");
-    //     });
-    //
-    // $('#id_capacidad').TouchSpin({
-    //     min: 1,
-    //     max: 1000000
-    // });
-    //
-    //enviar formulario de nuevo producto
     $('#guardar').on('click', function (e) {
         e.preventDefault();
         if (raza.val()=== ''){

@@ -8,7 +8,7 @@ from apps.empresa.models import Empresa
 from apps.lote.models import Lote
 
 estado = (
-    (0, 'ANULADA'),
+    (0, 'DEVUELTA'),
     (1, 'FINALIZADA'),
     (2, 'RESERVADA')
 )
@@ -41,6 +41,8 @@ class Venta(models.Model):
 class Detalle_venta(models.Model):
     venta = models.ForeignKey(Venta, on_delete=models.PROTECT)
     lote = models.ForeignKey(Lote, on_delete=models.PROTECT)
+    peso = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    valor_libra = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     pvp_actual = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     cantidad = models.IntegerField(default=0)
     subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)

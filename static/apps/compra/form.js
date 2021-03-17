@@ -8,6 +8,7 @@ var compras = {
         fecha_compra: '',
         comprobante: '',
         proveedor: '',
+        jpg: '',
         subtotal: 0.00,
         iva: 0.00,
         tasa_iva: 0.00,
@@ -207,7 +208,7 @@ $(function () {
     //Iva porcentaje
     $('#id_tasa_iva')
         .TouchSpin({
-            min: 0.01,
+            min: 0.00,
             decimals: 2,
             max: 100000000,
             step: 0.01,
@@ -589,6 +590,7 @@ $(function () {
                 compras.items.comprobante = $('#id_comprobante').val();
                 parametros = {'compras': JSON.stringify(compras.items)};
                 parametros['action'] = 'add';
+
                 save_with_ajax('Alerta',
                     '/compra/nuevo', 'Esta seguro que desea guardar esta compra?', parametros, function (response) {
                         listado.fadeIn();
@@ -612,3 +614,11 @@ $(function () {
 
 });
 
+function encodeImageFileAsURL(element) {
+    var file = element.files[0];
+    var reader = new FileReader();
+    reader.onloadend = function() {
+        compras.items.jpg = reader.result;
+    };
+    reader.readAsDataURL(file);
+}

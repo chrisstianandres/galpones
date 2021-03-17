@@ -11,4 +11,5 @@ urlpatterns = [
     path('nuevo', login_required(CrudView.as_view()), name='nuevo'),
     path('report', login_required(report.as_view()), name='report'),
     path('ciudad', login_required(views.ciudad), name='ciudad'),
+    path('permisos', login_required(views.permisos), name='permisos'),
 ]

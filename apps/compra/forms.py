@@ -42,6 +42,9 @@ class CompraForm(forms.ModelForm):
                 'class': 'form-control',
                 'readonly': True
             }
+            self.fields['jpg'].widget.attrs = {
+                'onchange': "encodeImageFileAsURL(this)",
+            }
 
         # habilitar, desabilitar, y mas
 
@@ -54,7 +57,8 @@ class CompraForm(forms.ModelForm):
             'subtotal',
             'iva',
             'tasa_iva',
-            'total'
+            'total',
+            'jpg'
         ]
         labels = {
             'fecha_compra': 'Fecha de Compra',
@@ -63,7 +67,8 @@ class CompraForm(forms.ModelForm):
             'subtotal': 'Subtotal',
             'tasa_iva': 'I.V.A',
             'iva': 'I.V.A. Calculado',
-            'total': 'TOTAL'
+            'total': 'TOTAL',
+            'jpg': 'Imagen'
         }
         widgets = {
             'fecha_compra': forms.DateInput(

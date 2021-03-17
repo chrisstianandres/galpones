@@ -5,11 +5,11 @@
     <tr>
         <th style="width: 18%">Empleado</th>
         <th style="width: 10%">Cedula</th>
-        <th style="width: 10%">correo </th>
-        <th style="width: 10%">telefono  </th>
-        <th style="width: 10%">celular  </th>
-        <th style="width: 10%">direccion  </th>
-        <th style="width: 10%">estado  </th>
+        <th style="width: 10%">Correo </th>
+        <th style="width: 10%">Telefono  </th>
+        <th style="width: 10%">Celular  </th>
+        <th style="width: 10%">Direccion  </th>
+        <th style="width: 10%">Cargo  </th>
         <th style="width: 10%" class="text-center">Opciones</th>
     </tr>
     </thead>
@@ -18,6 +18,7 @@
     </tbody>
 {% endblock %}
 {% block extra %}
+    <input type="hidden" id="num_emp" value="{{ num_emp }}">
     <script src="{% static 'apps/empleado/list.js' %}"></script>
     <script src="{% static 'apps/empleado/form.js' %}"></script>
 {% endblock %}

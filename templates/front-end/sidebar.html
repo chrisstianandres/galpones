@@ -30,7 +30,8 @@
                 <i class="fa fa-dashboard"></i><span class="link-title">&nbsp;Menu principal</span>
             </a>
         </li>
-        <li class="">
+
+        <li class="" id="module_ingresos">
             <a href="javascript:;">
                 <i class="far fa-folder-open"></i>
                 <span class="link-title">Ingresos</span>
@@ -71,7 +72,7 @@
                 </li>
             </ul>
         </li>
-        <li class="">
+        <li class="" id="module_produccion">
             <a href="javascript:;">
                 <i class="fas fa-crow"></i>
                 <span class="link-title">Produccion</span>
@@ -88,12 +89,16 @@
                 </li>
             </ul>
         </li>
-        <li>
+
+
+        <li id="module_ventas">
             <a href="{% url 'venta:lista' %}">
                 <i class="fas fa-piggy-bank"></i>
                 <span class="link-title"> Ventas</span> </a>
         </li>
-        <li class="">
+
+
+        <li class="" id="module_reportes">
             <a href="javascript:;">
                 <i class="fas fa-file-signature"></i>
                 <span class="link-title">Reportes</span>
@@ -115,6 +120,7 @@
                         <li><a href="{% url 'compra:report_total' %}"><i class="fa fa-angle-right"></i> Totales</a></li>
                         <li><a href="{% url 'compra:report_by_product' %}"><i class="fa fa-angle-right"></i> Por
                             Producto</a></li>
+                        <li><a href="{% url 'compra:devoluciones' %}"><i class="fa fa-angle-right"></i> Devoluciones</a></li>
                     </ul>
                 </li>
                 <li>
@@ -122,6 +128,7 @@
                     <ul class="collapse">
                         <li><a href="{% url 'venta:report_total' %}"><i class="fa fa-angle-right"></i> Totales</a></li>
                         <li><a href="{% url 'venta:report_by_product' %}"><i class="fa fa-angle-right"></i> Por Producto</a>
+                        <li><a href="{% url 'venta:devoluciones' %}"><i class="fa fa-angle-right"></i> Devoluciones</a>
                         </li>
                     </ul>
                 </li>
@@ -139,8 +146,10 @@
                 </li>
             </ul>
         </li>
+
+
         <li class="nav-divider"></li>
-        <li>
+        <li id="module_seguridad">
             <a><i class="fas fa-lock-open"></i> <span class="link-title">Seguridad</span> <span class="fa arrow"></span> </a>
             <ul class="collapse">
                 <li><a href="{% url 'user:lista' %}"><i class="fa fa-angle-right"></i> Usuarios</a></li>
@@ -149,7 +158,9 @@
                 </li>
             </ul>
         </li>
+
     </ul>
+
     <!-- /#menu -->
 </div>
 {#<!-- End of Sidebar -->#}

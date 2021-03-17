@@ -184,7 +184,7 @@ function menssaje_error(title, content, icon, callback) {
 }
 
 function error_login(title, content, icon, callback) {
-     Swal.fire({
+    Swal.fire({
             title: title,
             text: content,
             icon: 'error',
@@ -221,7 +221,7 @@ function login(url, parametros, callback, callback2) {
             callback();
             return false;
         }
-         menssaje_error('Error!', data.error, 'far fa-times-circle');
+        menssaje_error('Error!', data.error, 'far fa-times-circle');
     }).fail(function (jqXHR, textStatus, errorThrown) {
         alert(textStatus + ': ' + errorThrown);
     })
@@ -353,7 +353,7 @@ function customize(doc) {
         return {
             columns: [
                 {
-                    text: $("#nombre_empresa").val()+'\n\n', fontSize: 30,
+                    text: $("#nombre_empresa").val() + '\n\n', fontSize: 30,
                     alignment: 'center',
                 },
                 // {
@@ -439,7 +439,7 @@ function customize_report(doc) {
         return {
             columns: [
                 {
-                    text: $("#nombre_empresa").val()+'\n\n', fontSize: 30,
+                    text: $("#nombre_empresa").val() + '\n\n', fontSize: 30,
                     alignment: 'center',
                 },
                 // {
@@ -629,4 +629,33 @@ function year_footer() {
 
 }
 
+function persmisos() {
+    var ingresos = $('#module_ingresos');
+    var produccion = $('#module_produccion');
+    var ventas = $('#module_ventas');
+    var seguridad = $('#module_seguridad');
+    var reportes = $('#module_reportes');
+    $.ajax({
+        dataType: 'JSON',
+        type: 'POST',
+        url: '/empleado/permisos',
+    }).done(function (data) {
+        console.log(data);
+       if (data.permiso.secretaria === 1) {
+           ingresos.hide();
+           produccion.hide();
+           ventas.hide();
+           seguridad.hide();
+       } else if (data.permiso.vendedor === 1) {
+           ingresos.hide();
+           produccion.hide();
+           reportes.hide();
+           seguridad.hide();
+       }
+
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        alert(textStatus + ': ' + errorThrown);
+    });
+
+}
 

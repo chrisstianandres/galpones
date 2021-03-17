@@ -99,7 +99,7 @@ function datatable_fun() {
                 render: function (data, type, row) {
                     var detalle = '<a type="button" rel="detalle" class="btn btn-success btn-xs btn-round" style="color: white" data-toggle="tooltip" title="Detalle de Venta" ><i class="fa fa-search"></i></a>' + ' ';
                     var devolver = '<a type="button" rel="devolver" class="btn btn-danger btn-xs btn-round" style="color: white" data-toggle="tooltip" title="Anular"><i class="fa fa-times"></i></a>' + ' ';
-                     var pdf = '<a type="button" href= "/venta/printpdf/' + data + '" rel="pdf" ' +
+                    var pdf = '<a type="button" href= "/venta/printpdf/' + data + '" rel="pdf" ' +
                         'class="btn btn-primary btn-xs btn-round" style="color: white" data-toggle="tooltip" ' +
                         'title="Reporte PDF"><i class="fa fa-file-pdf"></i></a>';
                     return detalle + devolver + pdf;
@@ -205,8 +205,8 @@ $(function () {
                 },
                 columns: [
                     {data: 'lote.raza.nombre'},
-                    {data: 'peso_promedio'},
-                    {data: 'costo_libra'},
+                    {data: 'valores.peso'},
+                    {data: 'valores.valor_libra'},
                     {data: 'valores.pvp_actual'},
                     {data: 'valores.cantidad'},
                     {data: 'valores.subtotal'}
@@ -229,7 +229,7 @@ $(function () {
                         class: 'text-center',
                         orderable: false,
                         render: function (data, type, row) {
-                            return parseFloat(data).toFixed(2)+' Lbs';
+                            return parseFloat(data).toFixed(2) + ' Lbs';
                         }
                     },
                 ],
@@ -237,11 +237,15 @@ $(function () {
         });
 
     $('#nuevo').on('click', function () {
-        listado.fadeOut();
-        formulario.fadeIn();
-        $('#id_cliente').val(null).trigger('change');
-        ventas.items.lotes = [];
-        ventas.list();
+        $('#modal_tipo_venta').modal('show');
+        $('#select_tipo').on('click', function () {
+            $('#modal_tipo_venta').modal('hide');
+            listado.fadeOut();
+            formulario.fadeIn();
+            $('#id_cliente').val(null).trigger('change');
+            ventas.items.lotes = [];
+            ventas.list();
+        })
     });
     $('#cancal_shop').on('click', function () {
         listado.fadeIn();

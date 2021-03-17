@@ -46,6 +46,7 @@ function datatable_fun() {
             {"data": "user"},
             {"data": "total"},
             {"data": "comprobante"},
+            {"data": "jpg"},
             {"data": "estado"},
             {"data": "id"}
         ],
@@ -78,7 +79,7 @@ function datatable_fun() {
                     pageSize: 'A4', //A3 , A5 , A6 , legal , letter
                     download: 'open',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5],
+                        columns: [0, 1, 2, 3, 4, 6],
                         search: 'applied',
                         order: 'applied'
                     },
@@ -109,7 +110,15 @@ function datatable_fun() {
                 }
             },
             {
-                targets: [-4],
+                targets: [-3],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    return '<img src="' + data + '" width="50" height="50" class="img-circle elevation-2" alt="Image">';
+                }
+            },
+            {
+                targets: [-5],
                 render: function (data, type, row) {
                     return '$ ' + data;
                 }
@@ -117,10 +126,10 @@ function datatable_fun() {
         ],
         createdRow: function (row, data, dataIndex) {
             if (data.estado === 1) {
-                $('td', row).eq(5).html('<span class = "badge badge-success" style="color: white ">'+data.estado_text+' </span>');
+                $('td', row).eq(6).html('<span class = "badge badge-success" style="color: white ">'+data.estado_text+' </span>');
             } else  {
-                $('td', row).eq(5).html('<span class = "badge badge-danger" style="color: white "> '+data.estado_text+' </span>');
-                $('td', row).eq(6).find('a[rel="devolver"]').hide();
+                $('td', row).eq(6).html('<span class = "badge badge-danger" style="color: white "> '+data.estado_text+' </span>');
+                $('td', row).eq(7).find('a[rel="devolver"]').hide();
             }
 
         }
@@ -168,6 +177,12 @@ $(function () {
             });
 
     })
+        .on('click', 'img[alt="Image"]', function () {
+        $('.tooltip').remove();
+        var tr = datatable.cell($(this).closest('td, li')).index();
+        var data = datatable.row(tr.row).data();
+        $('#Modal_image').modal('show');
+        $('#image_modal').html('<img src="' + data.jpg + '" width="650" height="650" class="elevation-2" alt="Image">')})
         .on('click', 'a[rel="detalle"]', function () {
             $('.tooltip').remove();
             var tr = datatable.cell($(this).closest('td, li')).index();

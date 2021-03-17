@@ -89,8 +89,8 @@
     {% for d in det_sale %}
         <tr {% if forloop.first %}style="padding-top: 3px;" {% endif %}>
             <td>{{ d.lote.raza.nombre }}</td>
-            <td>{{ d.peso_promedio }}</td>
-            <td>{{ d.costo_libra }}</td>
+            <td>{{ d.valores.peso }}</td>
+            <td>{{ d.valores.valor_libra }}</td>
             <td>{{ d.valores.pvp_actual}}</td>
             <td style="text-align: center;">{{ d.valores.cantidad }}</td>
             <td style="text-align: center;">${{ d.valores.subtotal }}</td>

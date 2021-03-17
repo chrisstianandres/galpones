@@ -1,9 +1,11 @@
 from datetime import *
 
 from django import forms
+from django.db import transaction
 from django.forms import TextInput, EmailInput
 
 from .models import Empleado
+from ..user.models import User
 
 
 class EmpleadoForm(forms.ModelForm):
@@ -42,7 +44,8 @@ class EmpleadoForm(forms.ModelForm):
                   'sexo',
                   'telefono',
                   'celular',
-                  'direccion'
+                  'direccion',
+                  'cargo'
                   ]
         labels = {
             'nombres': 'Nombres',
@@ -52,7 +55,8 @@ class EmpleadoForm(forms.ModelForm):
             'sexo': 'Genero',
             'telefono': 'Telefono',
             'celular': 'Celular',
-            'Direccion': 'direccion'
+            'Direccion': 'direccion',
+            'cargo': 'Cargo'
 
         }
         widgets = {
@@ -60,6 +64,7 @@ class EmpleadoForm(forms.ModelForm):
             'apellidos': forms.TextInput(),
             'cedula': forms.TextInput(),
             'sexo': forms.Select(attrs={'class': 'selectpicker', 'data-width': 'fit'}),
+            'cargo': forms.Select(attrs={'class': 'selectpicker', 'data-width': 'fit'}),
             'correo': forms.EmailInput(),
             'telefono': forms.TextInput(),
             'celular': forms.TextInput(),

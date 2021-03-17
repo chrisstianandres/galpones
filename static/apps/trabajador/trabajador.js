@@ -25,6 +25,7 @@ $(document).ready(function () {
                 .removeClass("has-error");
         }
     });
+     $('select[name="user_tipo"]').prop('disabled', true);
     $("#form").validate({
         rules: {
             username: {

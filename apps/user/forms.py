@@ -40,7 +40,8 @@ class UserForm(forms.ModelForm):
                 'class': 'form-control select2'
             }
             self.fields['tipo'].widget.attrs = {
-                'class': 'form-control select2'
+                'class': 'form-control select2',
+                'style': "display: none"
             }
             # self.fields["fecha_nacimiento"].widget = SelectDateWidget(years=years,
             #                                                         attrs={'class': 'selectpicker'})

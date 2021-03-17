@@ -44,21 +44,20 @@
                                             </div>
                                             <div class="col-lg-10">
                                                 <label class="control-label">{{ form.cliente.label_tag }}</label>
-
                                                 <div class="input-group">
                                                     {{ form.cliente }}
                                                     <span class="input-group-btn">
-                                            <button class="btn btn-primary btn-sm" id="id_new_cliente"
-                                                    data-toggle="tooltip" title="Agregar Cliente" type="button">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </span>
+                                                        <button class="btn btn-primary btn-sm" id="id_new_cliente"
+                                                                data-toggle="tooltip" title="Agregar Cliente"
+                                                                type="button">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                             <div class="col-lg-1"></div>
                             <div class="col-lg-5">
@@ -90,7 +89,7 @@
                                             </div>
                                             <div class="col-lg-10">
                                                 <label class="control-label">{{ form.total.label_tag }}</label>
-                                               <div class="input-group">
+                                                <div class="input-group">
                                                     <div class="input-group-addon">
                                                         <i class="fa fa-dollar"></i>
                                                     </div>
@@ -289,6 +288,31 @@
                     <button type="button" class="btn btn-danger" data-dismiss="modal">
                         <i class="far fa-window-close"></i> Cancelar
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal_tipo_venta" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle"><i class="fas fa-cart-arrow-down"></i> Seleccione
+                        el tipo de venta </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label class="control-label" for="id_tipo_venta">Tipo de venta</label>
+                    <select name="tipo_venta" class="form-control select2" style="width: 100%"
+                            required="" id="id_tipo_venta" aria-invalid="false">
+                        <option value="1">Al por Mayor</option>
+                        <option value="0">Al por Menor</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="select_tipo"><i class="fa fa-check"></i> Seleccionar</button>
                 </div>
             </div>
         </div>

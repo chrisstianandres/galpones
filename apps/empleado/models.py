@@ -15,6 +15,13 @@ ESTADO = (
     (0, 'DISPONIBLE'),
 )
 
+CARGO = (
+    (3, 'OPERATIVO'),
+    (2, 'VENDEDOR'),
+    (1, 'SECRETARIA'),
+    (0, 'GERENTE'),
+)
+
 
 class Empleado(models.Model):
     nombres = models.CharField(max_length=50)
@@ -27,6 +34,7 @@ class Empleado(models.Model):
     direccion = models.CharField(max_length=50)
     fecha = models.DateField(default=datetime.now)
     estado = models.IntegerField(choices=ESTADO, default=0)
+    cargo = models.IntegerField(choices=CARGO, default=0)
 
     def __str__(self):
         return '%s %s' % (self.nombres, self.apellidos)
@@ -41,6 +49,7 @@ class Empleado(models.Model):
         item['fecha'] = self.fecha.strftime('%d/%m/%Y')
         item['sexo'] = self.get_sexo_display()
         item['estado_text'] = self.get_estado_display()
+        item['cargo'] = self.get_cargo_display()
         return item
 
     class Meta:

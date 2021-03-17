@@ -57,15 +57,6 @@
                     <div class="row">
                         <div class="form-group col-lg-4">
                                 <div class="col-lg-12">
-                                    <label for="id_tipo">{{ form.tipo.label_tag }}</label>
-                                    {{ form.tipo }}
-                                    <div class="col-lg-12">
-                                        <label class="help-block">{{ form.tipo.errors }}</label>
-                                    </div>
-                                </div>
-                            </div>
-                        <div class="form-group col-lg-4">
-                                <div class="col-lg-12">
                                     <label for="id_cedula">{{ form.cedula.label_tag }}</label>
                                     {{ form.cedula }}
                                     <div class="col-lg-12">
@@ -79,6 +70,15 @@
                                     {{ form.email }}
                                     <div class="col-lg-12">
                                         <label class="help-block">{{ form.email.errors }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="form-group col-lg-4">
+                                <div class="col-lg-12">
+                                    <label for="id_tipo" style="display: none">{{ form.tipo.label_tag }}</label>
+                                    {{ form.tipo }}
+                                    <div class="col-lg-12">
+                                        <label class="help-block" style="display: none">{{ form.tipo.errors }}</label>
                                     </div>
                                 </div>
                             </div>

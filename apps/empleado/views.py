@@ -10,6 +10,7 @@ from apps.empleado.forms import EmpleadoForm
 from apps.empleado.models import Empleado
 from apps.mixins import ValidatePermissionRequiredMixin
 from apps.ubicacion.models import *
+from apps.user.models import User
 
 opc_icono = 'fas fa-people-carry'
 opc_entidad = 'Empleados'
@@ -38,7 +39,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 import json
                 data = []
                 ids = json.loads(request.POST['ids'])
-                query = Empleado.objects.filter(estado=0)
+                query = Empleado.objects.filter(cargo=3)
                 for a in query.exclude(id__in=ids):
                     item = a.toJSON()
                     item['text'] = a.__str__()
@@ -71,6 +72,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['form'] = EmpleadoForm
         data['nuevo'] = '/empleado/nuevo'
         data['empresa'] = empresa
+        data['num_emp'] = self.model.objects.count()
         return data
 
 
@@ -93,7 +95,7 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                 pk = request.POST['id']
                 cliente = Empleado.objects.get(pk=int(pk))
                 f = EmpleadoForm(request.POST, instance=cliente)
-                data = self.save_data(f)
+                data = self.save_data_edit(f)
             elif action == 'delete':
                 pk = request.POST['id']
                 cli = Empleado.objects.get(pk=pk)
@@ -106,6 +108,27 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
         return HttpResponse(json.dumps(data), content_type='application/json')
 
     def save_data(self, f):
+        data = {}
+        if f.is_valid():
+            f.save(commit=False)
+            if verificar(f.data['cedula']):
+                cli = f.save()
+                data['resp'] = True
+                data['empleado'] = cli.toJSON()
+                if cli.cargo == 0 or 1 or 2:
+                    us = User()
+                    us.cedula = cli.cedula
+                    us.username = cli.cedula
+                    us.set_password(cli.cedula)
+                    us.save()
+            else:
+                f.add_error("cedula", "Numero de Cedula no valido para Ecuador")
+                data['error'] = f.errors
+        else:
+            data['error'] = f.errors
+        return data
+
+    def save_data_edit(self, f):
         data = {}
         if f.is_valid():
             f.save(commit=False)
@@ -181,3 +204,25 @@ def ciudad(request):
                     par.save()
         data = Parroquia.objects.all()
     return HttpResponse(data)
+
+
+@csrf_exempt
+def permisos(request):
+    permiso = {
+        'gerente': '',
+        'secretaria': '',
+        'vendedor': ''
+    }
+    us = User.objects.get(pk=request.user.pk)
+    if Empleado.objects.filter(cedula=us.cedula).exists():
+        empelado = Empleado.objects.get(cedula=us.cedula)
+        if empelado.cargo == 0:
+            permiso['gerente'] = 1
+        elif empelado.cargo == 1:
+            permiso['secretaria'] = 1
+        elif empelado.cargo == 2:
+            permiso['vendedor'] = 1
+    else:
+        permiso['gerente'] = 1
+    data = {'permiso': permiso}
+    return JsonResponse(data, safe=False)

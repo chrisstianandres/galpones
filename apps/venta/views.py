@@ -225,6 +225,8 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                                 dv.venta_id = c.id
                                 dv.lote_id = int(i['lote']['id'])
                                 dv.cantidad = int(i['cantidad'])
+                                dv.valor_libra = float(i['valor_libra'])
+                                dv.peso = float(i['peso_promedio'])
                                 dv.pvp_actual = float(i['valor_ave'])
                                 dv.subtotal = float(i['subtotal'])
                                 dv.save()

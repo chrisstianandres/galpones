@@ -40,15 +40,21 @@
                                             </div>
                                             <div class="col-lg-10">
                                                 <label class="control-label">{{ form.proveedor.label_tag }}</label>
-
                                                 <div class="input-group">
                                                     {{ form.proveedor }}
                                                     <span class="input-group-btn">
-                                            <button class="btn btn-primary btn-sm" id="id_new_proveedor"
-                                                    data-toggle="tooltip" title="Agregar Proveedor" type="button">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </span>
+                                                    <button class="btn btn-primary btn-sm" id="id_new_proveedor"
+                                                            data-toggle="tooltip" title="Agregar Proveedor"
+                                                            type="button">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                     </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-10">
+                                                <label class="control-label">{{ form.jpg.label_tag }}</label>
+                                                <div class="input-group">
+                                                    {{ form.jpg }}
                                                 </div>
                                             </div>
                                         </div>
@@ -233,6 +239,7 @@
         <th>Empleado</th>
         <th>Total</th>
         <th>N° Comprobante</th>
+        <th>Imagen</th>
         <th>Estado</th>
         <th class="text-center" scope="col" style="width: 10%"><em class="fa fa-cog"></em></th>
     </tr>
@@ -381,8 +388,10 @@
                 </div>
                 <div class="modal-body">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a data-toggle="tab" href="#medicina_detalle"><i class="fas fa-pills"></i> Medicinas</a></li>
-                        <li><a data-toggle="tab" href="#alimento_detalle"><i class="fas fa-utensils"></i> Alimentos</a></li>
+                        <li class="active"><a data-toggle="tab" href="#medicina_detalle"><i class="fas fa-pills"></i>
+                            Medicinas</a></li>
+                        <li><a data-toggle="tab" href="#alimento_detalle"><i class="fas fa-utensils"></i> Alimentos</a>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         <div id="medicina_detalle" class="tab-pane fade in active">
@@ -423,6 +432,30 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="Modal_image" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <style>
+            img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="exampleModalLongTitle"><i class="fas fa-file-image-o"></i> Comprobante de Compra </h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <hr>
+                <div class="modal-body">
+                    <div id="image_modal" class="container-fluid"></div>
                 </div>
             </div>
         </div>
