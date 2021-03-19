@@ -1,22 +1,14 @@
-from django.contrib.auth.models import Group
-from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, HttpResponseRedirect
-from django.contrib.auth import *
-from django.http import HttpResponse
-from django.http import *
-from django.urls import reverse_lazy
-from django.utils.decorators import method_decorator
-
-from django.views.generic import FormView, TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin, AccessMixin
 import json
+
+from django.contrib.auth import *
+from django.http import *
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
 # -----------------------------------------------PAGINA PRINCIPAL-----------------------------------------------------#
 # from apps.user.forms import UserForm, UserForm_online
-from apps.empleado.models import Empleado
-from apps.user.models import User
 from apps.empresa.models import Empresa
+from galpones.settings import MEDIA_URL
 
 
 def nombre_empresa():
@@ -30,7 +22,9 @@ def nombre_empresa():
 def menu(request):
     data = {
         'titulo': 'Menu Principal', 'empresa': nombre_empresa(),
-        'icono': 'fas fa-tachometer-alt', 'entidad': 'Menu Principal'
+        'icono': 'fas fa-tachometer-alt', 'entidad': 'Menu Principal',
+        'imagen1': '{}{}'.format(MEDIA_URL, 'frente1.jpeg'),
+        'imagen2': '{}{}'.format(MEDIA_URL, 'frente2.jpeg'),
     }
     return render(request, 'front-end/index.html', data)
 
