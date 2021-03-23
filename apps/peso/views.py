@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from django.http import JsonResponse, HttpResponse
 from django.utils.decorators import method_decorator
@@ -31,11 +32,15 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
         datos = request.POST
         try:
             if action == 'add':
-                peso = self.model_class()
-                peso.distribucion_id = int(datos['distribucion_id'])
-                peso.peso_promedio = float(datos['peso_promedio'])
-                peso.save()
-                data['resp'] = True
+                if self.model_class.objects.filter(distribucion_id=int(datos['distribucion_id']), fecha=datetime.now()):
+                    data['resp'] = False
+                    data['error'] = 'No puede agregar varios pesos el mismo dia'
+                else:
+                    peso = self.model_class()
+                    peso.distribucion_id = int(datos['distribucion_id'])
+                    peso.peso_promedio = float(datos['peso_promedio'])
+                    peso.save()
+                    data['resp'] = True
             elif action == 'edit':
                 pk = request.POST['id']
                 peso = self.model_class.objects.get(pk=int(pk))

@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db import transaction
 from django.db.models import Sum
@@ -52,65 +52,75 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 for c in query:
                     data.append(c.toJSON())
             elif action == 'close':
-                with transaction.atomic():
-                    data = []
-                    key = 0
-                    id = request.POST['id']
-                    dist = Distribucion.objects.filter(lote_id=id)
-                    prod = Produccion.objects.filter(lote_id=id)
-                    total = 0
-                    total_muertes = 0
-                    gastos_lote = 0
-                    sueldo_lote = 0
-                    lot = self.model.objects.get(id=id)
-                    lot.estado = 1
-                    for e in prod:
-                        emp = Empleado.objects.get(id=e.empleado.id)
-                        emp.estado = 0
-                        sueldo_lote += e.sueldo
-                        emp.save()
-                    for g in dist:
-                        if Peso.objects.filter(distribucion_id=g.id).exists() and Gasto.objects.filter(distribucion_id=g.id).exists() and \
-                                g.medicacion_set.all().exists() and g.alimentacion_set.all().exists():
-                            p = Peso.objects.filter(distribucion_id=g.id).last()
-                            galpon = Galpon.objects.get(id=g.galpon.id)
-                            galpon.estado = 0
-                            galpon.save()
-                            g.peso_promedio = p.peso_promedio
-                            total += g.cantidad_pollos
-                            for gst in Gasto.objects.filter(distribucion_id=g.id):
-                                g.total_gastos += gst.valor
-                            for med in g.medicacion_set.all():
-                                x = med.medicina.insumo.detalle_compra_set.all().values('insumo_id') \
-                                    .annotate(total=Sum('p_compra')).order_by('total')
-                                for xt in x:
-                                    g.total_gastos += xt['total']
-                            for alt in g.alimentacion_set.all():
-                                a = alt.alimento.insumo.detalle_compra_set.all().values('insumo_id') \
-                                    .annotate(total=Sum('p_compra')).order_by('total')
-                                for alt_tot in a:
-                                    g.total_gastos += alt_tot['total']
-                            for mort in g.mortalidad_set.all():
-                                total_muertes += mort.cantidad_muertes
-                            g.total_gastos += lot.valor_pollito * (total+total_muertes)
-                            g.total_gastos += sueldo_lote / dist.count()
-                            g.stock_actual += g.cantidad_pollos
-                            gastos_lote += g.total_gastos
-                            g.save()
-                        else:
-                            key = 1
-                            for e in prod:
-                                emp = Empleado.objects.get(id=e.empleado.id)
-                                emp.estado = 1
-                                emp.save()
-                            data = {'error': 'No se puede cerrar la produccion de este lote ya que existe un galpon '
+                id = request.POST['id']
+                check = self.model.objects.get(id=id)
+                ahora = datetime.now()
+                fechaCadena = str(check.fecha) + " 00:00:00"
+                fecha = datetime.strptime(fechaCadena, '%Y-%m-%d %H:%M:%S')
+                if ahora < (fecha + timedelta(weeks=8)):
+                    data['error'] = 'No puede cerrar este lote antes de 8 semanas <br> Fecha estimada de cierre: ' + \
+                                    '<h3>' + str((fecha + timedelta(weeks=8)).date()) + '</h3>'
+                else:
+                    with transaction.atomic():
+                        data = []
+                        key = 0
+                        dist = Distribucion.objects.filter(lote_id=id)
+                        prod = Produccion.objects.filter(lote_id=id)
+                        total = 0
+                        total_muertes = 0
+                        gastos_lote = 0
+                        sueldo_lote = 0
+                        lot = self.model.objects.get(id=id)
+                        lot.estado = 1
+                        for e in prod:
+                            emp = Empleado.objects.get(id=e.empleado.id)
+                            emp.estado = 0
+                            sueldo_lote += e.sueldo
+                            emp.save()
+                        for g in dist:
+                            if Peso.objects.filter(distribucion_id=g.id).exists() and Gasto.objects.filter(
+                                    distribucion_id=g.id).exists() and \
+                                    g.medicacion_set.all().exists() and g.alimentacion_set.all().exists():
+                                p = Peso.objects.filter(distribucion_id=g.id).last()
+                                galpon = Galpon.objects.get(id=g.galpon.id)
+                                galpon.estado = 0
+                                galpon.save()
+                                g.peso_promedio = p.peso_promedio
+                                total += g.cantidad_pollos
+                                for gst in Gasto.objects.filter(distribucion_id=g.id):
+                                    g.total_gastos += gst.valor
+                                for med in g.medicacion_set.all():
+                                    x = med.medicina.insumo.detalle_compra_set.all().values('insumo_id') \
+                                        .annotate(total=Sum('p_compra')).order_by('total')
+                                    for xt in x:
+                                        g.total_gastos += xt['total']
+                                for alt in g.alimentacion_set.all():
+                                    a = alt.alimento.insumo.detalle_compra_set.all().values('insumo_id') \
+                                        .annotate(total=Sum('p_compra')).order_by('total')
+                                    for alt_tot in a:
+                                        g.total_gastos += alt_tot['total']
+                                for mort in g.mortalidad_set.all():
+                                    total_muertes += mort.cantidad_muertes
+                                g.total_gastos += lot.valor_pollito * (total + total_muertes)
+                                g.total_gastos += sueldo_lote / dist.count()
+                                g.stock_actual += g.cantidad_pollos
+                                gastos_lote += g.total_gastos
+                                g.save()
+                            else:
+                                key = 1
+                                for e in prod:
+                                    emp = Empleado.objects.get(id=e.empleado.id)
+                                    emp.estado = 1
+                                    emp.save()
+                                data = {
+                                    'error': 'No se puede cerrar la produccion de este lote ya que existe un galpon '
                                              'sin registros, por favor reivsa el control de Produccion por Galpon!!! '}
-                        break
-                    if key == 0:
-                        lot.stock_produccion = int(total)
-                        lot.stock_actual = int(total)
-                        lot.total_gastos = float(gastos_lote)
-                        lot.save()
+                            break
+                        if key == 0:
+                            lot.stock_produccion = int(total)
+                            lot.stock_actual = int(total)
+                            lot.total_gastos = float(gastos_lote)
+                            lot.save()
             elif action == 'search_ave':
                 data = []
                 term = request.POST['term']
@@ -125,13 +135,35 @@ class lista(ValidatePermissionRequiredMixin, ListView):
             elif action == 'search_ave_list':
                 data = []
                 ids = json.loads(request.POST['ids'])
+                stock = json.loads(request.POST['stock'])
+                result = self.contarElementosLista(ids)
+                ids_result = []
+                for p in stock:
+                    if result['id'] == p['id'] and p['stock'] == int(result['veces']):
+                        ids_result.append(p['id'])
                 query = Lote.objects.filter(estado=1)
-                for a in query.exclude(id__in=ids):
+                for a in query.exclude(id__in=ids_result):
                     for ad in a.distribucion_set.all():
                         item = ad.toJSON()
                         item['valor_libra'] = float(ad.get_costo_libra()) * float(1 + (empresa.indice / 100))
-                        item['valor_ave'] = float(ad.peso_promedio) * float(ad.get_costo_libra()) * float(1 + (empresa.indice / 100))
+                        item['valor_ave'] = float(ad.peso_promedio) * float(ad.get_costo_libra()) * float(
+                            1 + (empresa.indice / 100))
                         item['cantidad'] = 1
+                        item['subtotal'] = 0.00
+                        item['iva'] = 0.00
+                        item['total'] = 0.00
+                        data.append(item)
+            elif action == 'search_ave_list_mayor':
+                data = []
+                ids = json.loads(request.POST['ids'])
+                query = Lote.objects.filter(estado=1)
+                for a in query.exclude(id__in=ids):
+                    for ad in Distribucion.objects.filter(lote_id=a.id, stock_actual__gte=12):
+                        item = ad.toJSON()
+                        item['valor_libra'] = float(ad.get_costo_libra()) * float(1 + (empresa.indice / 100))
+                        item['valor_ave'] = float(ad.peso_promedio) * float(ad.get_costo_libra()) * float(
+                            1 + (empresa.indice / 100))
+                        item['cantidad'] = 12
                         item['subtotal'] = 0.00
                         item['iva'] = 0.00
                         item['total'] = 0.00
@@ -143,8 +175,9 @@ class lista(ValidatePermissionRequiredMixin, ListView):
                 for a in query:
                     for ad in a.distribucion_set.all():
                         item = ad.toJSON()
-                        item['valor_libra'] = float(ad.get_costo_libra()) * float(1 + (empresa.indice/100))
-                        item['valor_ave'] = float(ad.peso_promedio) * float(ad.get_costo_libra()) * float(1 + (empresa.indice / 100))
+                        item['valor_libra'] = float(ad.get_costo_libra()) * float(1 + (empresa.indice / 100))
+                        item['valor_ave'] = float(ad.peso_promedio) * float(ad.get_costo_libra()) * float(
+                            1 + (empresa.indice / 100))
                         item['cantidad'] = 1
                         item['subtotal'] = 0.00
                         item['iva'] = 0.00
@@ -156,6 +189,11 @@ class lista(ValidatePermissionRequiredMixin, ListView):
             print(e)
             data['error'] = str(e)
         return JsonResponse(data, safe=False)
+
+    def contarElementosLista(self, lista):
+        for i in lista:
+            result = {'id': i, 'veces': lista.count(i)}
+            return result
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -194,7 +232,8 @@ class report(ValidatePermissionRequiredMixin, ListView):
                     query = Lote.objects.all()
                 for c in query:
                     for d in c.distribucion_set.all():
-                        for g in d.mortalidad_set.all().values('cantidad_muertes').annotate(total=Sum('cantidad_muertes')):
+                        for g in d.mortalidad_set.all().values('cantidad_muertes').annotate(
+                                total=Sum('cantidad_muertes')):
                             item = c.toJSON()
                             item['bajas'] = g['total']
                             data.append(item)
@@ -260,9 +299,6 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                         galp.estado = 1
                         galp.save()
                     data['resp'] = True
-
-                # f = LoteForm(request.POST)
-                # data = self.save_data(f)
             elif action == 'edit':
                 pk = request.POST['id']
                 cat = Lote.objects.get(pk=int(pk))

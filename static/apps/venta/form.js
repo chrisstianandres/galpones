@@ -1,6 +1,6 @@
 var dt_detalle;
 var tipo_venta = $('#id_tipo_venta');
-var iva_emp = $('#iva_emp').val();
+var iva_emp = 0.00;
 var ventas = {
     items: {
         fecha: '',
@@ -16,6 +16,19 @@ var ventas = {
             ids.push(value.lote.id);
         });
         return ids;
+    },
+    get_stock: function () {
+        var ids = [];
+        var array = this.exclude_duplicados(this.items.lotes);
+        $.each(array, function (key, value) {
+            ids.push({'stock': value.stock_actual, 'id': value.lote.id});
+        });
+        return ids;
+    },
+    exclude_duplicados: function (array) {
+        let hash = {};
+        return array.filter(o => hash[o.id] ? false : hash[o.id] = true);
+
     },
     calculate: function () {
         var subtotal = 0.00;
@@ -33,7 +46,7 @@ var ventas = {
     calculate_por_menor: function () {
         var subtotal = 0.00;
         $.each(this.items.lotes, function (pos, dict) {
-            dict.subtotal = dict.peso_promedio * dict.cantidad* parseFloat(dict.valor_libra).toFixed(2);
+            dict.subtotal = dict.peso_promedio * dict.cantidad * parseFloat(dict.valor_libra).toFixed(2);
             dict.valor_ave = dict.peso_promedio * parseFloat(dict.valor_libra).toFixed(2);
             subtotal += dict.subtotal;
         });
@@ -82,7 +95,7 @@ var ventas = {
                         targets: [1],
                         class: 'text-center',
                         render: function (data, type, row) {
-                            return parseFloat(data).toFixed(2) + ' Lbs';
+                            return '<input type="text" class="form-control input-sm" value="' + data + '" name="peso">';
                         }
                     },
                     {
@@ -104,7 +117,7 @@ var ventas = {
                     {
                         targets: [-4],
                         render: function (data, type, row) {
-                            return '$ '+parseFloat(data).toFixed(2);
+                            return '$ ' + parseFloat(data).toFixed(2);
                         }
                     },
                     {
@@ -122,9 +135,16 @@ var ventas = {
                 ],
                 createdRow: function (row, data, dataIndex) {
                     $(row).find('input[name="cantidad"]').TouchSpin({
-                        min: 1,
+                        min: 12,
                         max: data.stock_actual,
                         step: 1
+                    });
+                    $(row).find('input[name="peso"]').TouchSpin({
+                        min: 0.01,
+                        decimals: 2,
+                        max: 100000000,
+                        step: 0.01,
+                        postfix: 'Lbs'
                     });
                     $(row).find('input[name="v_libra"]').TouchSpin({
                         min: 0.01,
@@ -288,9 +308,13 @@ $(function () {
     $('#id_search_tipo_ave')
         .on('click', function () {
             var ids = ventas.get_ids();
+            var stock = ventas.get_stock();
+            var action_busqueda;
             $('#modal_search_tipo_ave').modal('show');
             if (tipo_venta.val() === '0') {
-                ids = [];
+                action_busqueda = 'search_ave_list'
+            } else {
+                action_busqueda = 'search_ave_list_mayor'
             }
             tbl_productos = $("#datatable_search_tipo_ave").DataTable({
                 destroy: true,
@@ -300,7 +324,7 @@ $(function () {
                 ajax: {
                     url: '/lote/lista',
                     type: 'POST',
-                    data: {'action': 'search_ave_list', 'ids': JSON.stringify(ids)},
+                    data: {'action': action_busqueda, 'ids': JSON.stringify(ids), 'stock': JSON.stringify(stock)},
                     dataSrc: ""
                 },
                 language: {
