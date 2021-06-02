@@ -1,0 +1,19 @@
+{% extends 'front-end/list.html' %}
+{% load static %}
+{% block table %}
+    <thead>
+    <tr>
+        <th style="width: 15%">ID</th>
+        <th style="width: 15%">IMAGEN</th>
+        <th class="text-center" style="width: 10%"><em class="fa fa-cog"></em></th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+{% endblock %}
+
+
+{% block extra %}
+    <script src="{% static 'apps/portada/list.js' %}"></script>
+    <script src="{% static 'apps/portada/form.js' %}"></script>
+{% endblock %}

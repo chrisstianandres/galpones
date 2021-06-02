@@ -2,6 +2,7 @@ from django.db import models
 from django.forms import model_to_dict
 
 from apps.ubicacion.models import Parroquia
+from galpones.settings import MEDIA_URL
 
 
 class Empresa(models.Model):
@@ -28,3 +29,22 @@ class Empresa(models.Model):
         verbose_name = 'empresa'
         verbose_name_plural = 'empresas'
         ordering = ['-nombre', '-ruc', '-direccion']
+
+
+class Portadas(models.Model):
+    avatar = models.ImageField(upload_to='portadas', blank=True, null=True)
+
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['avatar'] = self.get_image()
+        return item
+
+    def get_image(self):
+        if self.avatar:
+            return '{}{}'.format(MEDIA_URL, self.avatar)
+        else:
+            return '{}{}'.format(MEDIA_URL, 'user/user_women.png')
+    class Meta:
+        db_table = 'portadas'
+        verbose_name = 'portadas'
+        verbose_name_plural = 'portadas'

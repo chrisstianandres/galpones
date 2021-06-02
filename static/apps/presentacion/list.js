@@ -40,7 +40,7 @@ function datatable_fun(){
     });
 }
 $(function () {
-    var action = '';
+    var action = 'add';
     var pk = '';
     datatable_fun();
     $('#datatable tbody')
@@ -64,14 +64,12 @@ $(function () {
             $('input[name="nombre"]').val(data.nombre);
             $('input[name="abreviatura"]').val(data.abreviatura);
             $('input[name="descripcion"]').val(data.descripcion);
-            mostrar();
             action = 'edit';
             pk = data.id;
         });
 
 
     $('#nuevo').on('click', function () {
-        mostrar();
         action = 'add';
         pk = '';
     });
@@ -81,6 +79,7 @@ $(function () {
         e.preventDefault();
         var parametros = new FormData(this);
         parametros.append('action', action);
+        console.log(action);
         parametros.append('id', pk);
         var isvalid = $(this).valid();
         if (isvalid) {
@@ -88,7 +87,7 @@ $(function () {
                 '/presentacion/nuevo', 'Esta seguro que desea guardar esta presentacion?', parametros,
                 function (response) {
                     menssaje_ok('Exito!', 'Exito al guardar esta presentacion!', 'far fa-smile-wink', function () {
-                       ocultar('#form');
+                       window.location.reload();
                     });
                 });
         }

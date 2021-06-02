@@ -96,9 +96,11 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
                         break
                     else:
                         cal = cantidad - a.stock_actual
-                        med.cantidad = cal
-                        a.stock_actual -= cantidad
+                        admid = cal - cantidad
+                        med.cantidad = admid
+                        a.stock_actual -= admid
                         a.save()
+                        cantidad = cal
                 med.save()
                 data['resp'] = True
             else:

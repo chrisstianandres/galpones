@@ -30,45 +30,13 @@
                 <i class="fa fa-dashboard"></i><span class="link-title">&nbsp;Menu principal</span>
             </a>
         </li>
-
-        <li class="" id="module_ingresos">
-            <a href="javascript:;">
-                <i class="far fa-folder-open"></i>
-                <span class="link-title">Ingresos</span>
-                <span class="fa arrow"></span>
+        <li id="module_seguridad">
+            <a><i class="fas fa-lock-open"></i> <span class="link-title">Seguridad</span> <span class="fa arrow"></span>
             </a>
             <ul class="collapse">
-                <li>
-                    <a href="{% url 'compra:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Compras </a>
-                </li>
-                <li>
-                    <a href="{% url 'lote:nuevo' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Lotes </a>
-                </li>
-                <li>
-                    <a href="{% url 'cliente:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Clientes </a>
-                </li>
-                <li>
-                    <a href="{% url 'empleado:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Empleados </a>
-                </li>
-                <li>
-                    <a href="{% url 'galpon:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Galpones</a>
-                </li>
-                <li>
-                    <a href="{% url 'medicina:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Medicinas </a>
-                </li>
-                <li>
-                    <a href="{% url 'alimento:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Alimentos </a>
-                </li>
-                 <li>
-                    <a href="{% url 'raza:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Aves </a>
+                <li><a href="{% url 'user:lista' %}"><i class="fa fa-angle-right"></i> Usuarios</a></li>
+                <li><a href="{% url 'user:groups' %}"><i class="fa fa-angle-right"></i> Grupos</a>
+                <li><a href="{% url 'empresa:editar' %}"><i class="fa fa-angle-right"></i> Configurar Empresa</a>
                 </li>
             </ul>
         </li>
@@ -80,24 +48,94 @@
             </a>
             <ul class="collapse">
                 <li>
+                    <a href="{% url 'galpon:lista' %}">
+                        <i class="fa fa-angle-right"></i>&nbsp; Galpones</a>
+                </li>
+                <li>
+                    <a href="{% url 'lote:nuevo' %}">
+                        <i class="fa fa-angle-right"></i>&nbsp; Gestion de Produccion </a>
+                </li>
+                <li>
                     <a href="{% url 'distribucion:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Control de Produccion </a>
+                        <i class="fa fa-angle-right"></i>&nbsp; Gestion de Galpones </a>
                 </li>
                 <li>
                     <a href="{% url 'lote:lista' %}">
                         <i class="fa fa-angle-right"></i>&nbsp; Control de Lotes </a>
                 </li>
+                <li>
+                    <a href="{% url 'medicina:lista' %}">
+                        <i class="fa fa-angle-right"></i>&nbsp; Medicinas </a>
+                </li>
+                <li>
+                    <a href="{% url 'alimento:lista' %}">
+                        <i class="fa fa-angle-right"></i>&nbsp; Alimentos </a>
+                </li>
+                <li>
+                    <a href="{% url 'raza:lista' %}">
+                        <i class="fa fa-angle-right"></i>&nbsp; Aves </a>
+                </li>
             </ul>
         </li>
-
-
+        <div id="module_ingresos">
+            <br>
+            <li class="">
+                <a href="javascript:;">
+                    &nbsp;&nbsp;<i class="far fa-users"></i>
+                    <span class="link-title">Clientes</span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul class="collapse">
+                    <br>
+                    <li>
+                        <a href="{% url 'cliente:lista' %}">
+                            <i class="fa fa-angle-right"></i>&nbsp; Clientes </a>
+                    </li>
+                </ul>
+            </li>
+            <br>
+            <li class="">
+                <a href="javascript:;">
+                    &nbsp;&nbsp;<i class="fa fa-shopping-bag"></i>
+                    <span class="link-title">Compras</span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul class="collapse">
+                    <br>
+                    <li>
+                        <a href="{% url 'compra:lista' %}">
+                            <i class="fa fa-angle-right"></i>&nbsp; Compras </a>
+                    </li>
+                    <br>
+                    <li>
+                        <a href="{% url 'proveedor:lista' %}">
+                            <i class="fa fa-angle-right"></i>&nbsp; Proveedores </a>
+                    </li>
+                </ul>
+            </li>
+            <br>
+            <li class="">
+                <a href="javascript:;">
+                   &nbsp;&nbsp;<i class="fa fa-user-plus"></i>
+                    <span class="link-title">Empleados</span>
+                    <span class="fa arrow"></span>
+                </a>
+                <ul class="collapse">
+                    <br>
+                    <li>
+                        <a href="{% url 'empleado:lista' %}">
+                            <i class="fa fa-angle-right"></i>&nbsp; Empleados </a>
+                    </li>
+                </ul>
+            </li>
+        </div>
+        <br>
         <li id="module_ventas">
             <a href="{% url 'venta:lista' %}">
                 <i class="fas fa-piggy-bank"></i>
                 <span class="link-title"> Ventas</span> </a>
         </li>
-
-
+        <li class="nav-divider"></li>
         <li class="" id="module_reportes">
             <a href="javascript:;">
                 <i class="fas fa-file-signature"></i>
@@ -120,7 +158,8 @@
                         <li><a href="{% url 'compra:report_total' %}"><i class="fa fa-angle-right"></i> Totales</a></li>
                         <li><a href="{% url 'compra:report_by_product' %}"><i class="fa fa-angle-right"></i> Por
                             Producto</a></li>
-                        <li><a href="{% url 'compra:devoluciones' %}"><i class="fa fa-angle-right"></i> Devoluciones</a></li>
+                        <li><a href="{% url 'compra:devoluciones' %}"><i class="fa fa-angle-right"></i> Devoluciones</a>
+                        </li>
                     </ul>
                 </li>
                 <li>
@@ -147,17 +186,6 @@
             </ul>
         </li>
 
-
-        <li class="nav-divider"></li>
-        <li id="module_seguridad">
-            <a><i class="fas fa-lock-open"></i> <span class="link-title">Seguridad</span> <span class="fa arrow"></span> </a>
-            <ul class="collapse">
-                <li><a href="{% url 'user:lista' %}"><i class="fa fa-angle-right"></i> Usuarios</a></li>
-                <li><a href="{% url 'user:groups' %}"><i class="fa fa-angle-right"></i> Grupos</a>
-                <li><a href="{% url 'empresa:editar' %}"><i class="fa fa-angle-right"></i> Configurar Empresa</a>
-                </li>
-            </ul>
-        </li>
 
     </ul>
 

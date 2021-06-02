@@ -2,7 +2,7 @@ from django import forms
 from datetime import *
 from django.forms import SelectDateWidget, TextInput, NumberInput, EmailInput
 
-from .models import Empresa
+from .models import Empresa, Portadas
 from ..ubicacion.models import Parroquia
 
 
@@ -70,3 +70,11 @@ class EmpresaForm(forms.ModelForm):
             'indice': forms.TextInput(),
             'telefono': forms.TextInput()
         }
+
+
+class PortadaForm(forms.ModelForm):
+
+    class Meta:
+        model = Portadas
+        fields = ['avatar']
+        labels = {'avatar': 'Foto'}

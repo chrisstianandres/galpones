@@ -44,7 +44,7 @@ function datatable_fun() {
 }
 
 $(function () {
-    var action = '';
+    var action = 'add';
     var pk = '';
     datatable_fun();
     $('#datatable tbody')
@@ -67,7 +67,6 @@ $(function () {
             var data = datatable.row(tr.row).data();
             $('input[name="nombre"]').val(data.nombre);
             $('input[name="descripcion"]').val(data.descripcion);
-            mostrar();
             action = 'edit';
             pk = data.id;
         });
@@ -75,7 +74,6 @@ $(function () {
 
     $('#nuevo').on('click', function () {
         reset('#form');
-        mostrar();
         action = 'add';
     });
 
@@ -91,8 +89,7 @@ $(function () {
                 '/categoria/nuevo', 'Esta seguro que desea guardar esta categoria?', parametros,
                 function (response) {
                     menssaje_ok('Exito!', 'Exito al guardar esta categoria!', 'far fa-smile-wink', function () {
-                         reset('#form');
-                        ocultar( '#form');
+                        window.location.reload();
                     });
                 });
         }

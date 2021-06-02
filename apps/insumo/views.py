@@ -29,10 +29,13 @@ class report(ValidatePermissionRequiredMixin, ListView):
                 medicinas = []
                 alimentos = []
                 if start_date == '' and end_date == '':
-                    query = self.model.objects.filter(compra__estado=1, insumo__tipo_insumo=1).annotate(
+                    query = self.model.objects.annotate(
+                        stock=Sum('stock_actual')).filter(compra__estado=1, insumo__tipo_insumo=1)
+                    qq = self.model.objects.values('insumo_id').annotate(
                         stock=Sum('stock_actual'))
-                    query2 = self.model.objects.filter(compra__estado=1, insumo__tipo_insumo=0).annotate(
-                        stock=Sum('stock_actual'))
+                    print(qq.query)
+                    query2 = self.model.objects.annotate(
+                        stock=Sum('stock_actual')).filter(compra__estado=1, insumo__tipo_insumo=0)
                 else:
                     query = self.model.objects.filter(
                         compra__fecha_compra__range=[start_date, end_date], compra__estado=1,
