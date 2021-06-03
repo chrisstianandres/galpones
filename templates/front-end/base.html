@@ -92,6 +92,9 @@
             <div class="inner bg-light lter">
                 <input type="hidden" id="nombre_empresa" value="{{ empresa.nombre }}" style="font-size: 120px">
                 <input type="hidden" id="direccion_empresa" value="{{ empresa.direccion }}" style="font-size: 100px">
+                <input type="hidden" id="ruc_empresa" value="{{ empresa.ruc }}">
+                <input type="hidden" id="parroquia_empresa" value="{{ empresa.get_canton }}">
+                <input type="hidden" id="foto" value="{{ empresa.get_image }}">
                 {% block content %}
 
                 {% endblock %}

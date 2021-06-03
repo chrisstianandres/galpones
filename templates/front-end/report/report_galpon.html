@@ -3,6 +3,11 @@
 <title>{{ title }}</title>
 <meta http-equiv="Content-Type" content="multipart/mixed; charset=UTF-8"/>
 <style>
+      .img-invoice {
+        width: 400px;
+        text-align: center;
+        margin: 0 auto;
+    }
     .head {
         text-align: center;
         text-transform: uppercase;
@@ -10,7 +15,7 @@
     }
 
     .head2 {
-        text-align: center;
+        text-align: right;
         text-transform: uppercase;
         font-size: xx-large
     }
@@ -45,7 +50,10 @@
 <body>
 <i class="fas fa-crow fa-5x"></i>
 <p class="head2">
-    <b class="tit_emp">{{ empresa.nombre|upper }}</b><br>
+    <img src="{{ empresa.get_image }}" class="img-invoice" alt="logo"><b class="tit_emp">{{ empresa.nombre|upper }}</b><br>
+    <b class="tit_emp">{{ empresa.direccion }}</b><br>
+    <b class="tit_emp">{{ empresa.ruc }}</b><br>
+    <b class="tit_emp">{{ empresa.get_canton|upper }}</b><br>
     <b>Reporte de Produccion por Galpon</b><br>
 </p>
 {% for l in data %}

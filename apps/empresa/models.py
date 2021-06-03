@@ -16,12 +16,23 @@ class Empresa(models.Model):
     tasa = models.IntegerField(default=16, blank=True, null=True)
     indice = models.IntegerField(default=12, blank=True, null=True)
     ubicacion = models.ForeignKey(Parroquia, on_delete=models.PROTECT, null=True, blank=True)
+    foto = models.ImageField(upload_to='empresa/logo', blank=True, null=True)
 
     def __str__(self):
         return '%s %s' % (self.nombre, self.ruc)
 
+    def get_canton(self):
+        return '{}-{}-{}'.format(self.ubicacion.canton.provincia.nombre, self.ubicacion.canton.nombre, 'ECUADOR')
+
+    def get_image(self):
+        if self.foto:
+            return '{}{}'.format(MEDIA_URL, self.foto)
+        else:
+            return '{}{}'.format(MEDIA_URL, 'empresa/nofoto.png')
+
     def toJSON(self):
         item = model_to_dict(self)
+        # item['foto'] = self.get_image()
         return item
 
     class Meta:

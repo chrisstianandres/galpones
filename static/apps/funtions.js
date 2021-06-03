@@ -1,5 +1,16 @@
 var tbl_productos;
+var logotipo;
+const toDataURL = url => fetch(url).then(response => response.blob())
+    .then(blob => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob)
+    }));
 
+toDataURL($('#foto').val()).then(dataUrl => {
+    logotipo = dataUrl;
+});
 // function mostrar() {
 //     $('#div_table').removeClass('col-xl-12').addClass('col-xl-8 col-lg-12');
 //     $('#div_form').show();
@@ -342,36 +353,40 @@ function customize(doc) {
 
     var jsDate = formatDateToString(date);
     //[izquierda, arriba, derecha, abajo]
-    doc.pageMargins = [25, 50, 25, 50];
+    doc.pageMargins = [25, 150, -70, 50];
     doc.defaultStyle.fontSize = 12;
     doc.styles.tableHeader.fontSize = 12;
-    doc.content[1].table.body[0].forEach(function (h) {
-        h.fillColor = '#97AF83'
-    });
-    doc.styles.title = {color: '#2D1D10', fontSize: '16', alignment: 'center'};
+    // doc.content[1].table.body[0].forEach(function (h) { h.fillColor = 'rgb(21,72,185)' });
+    doc.styles.title = {color: '#000000', fontSize: '16', alignment: 'center'};
+    var direccion = $('#direccion_empresa').val();
+    var ruc = $('#ruc_empresa').val();
+    var parroquia = $('#parroquia_empresa').val();
+    var empresa = $('#nombre_empresa').val() + "\n" + ruc + "\n" + direccion + "\n" + parroquia;
     doc['header'] = (function () {
         return {
             columns: [
                 {
-                    text: $("#nombre_empresa").val() + '\n\n', fontSize: 30,
-                    alignment: 'center',
+                    image: logotipo,
+                    width: 120
                 },
-                // {
-                //     text: $('#direccion_empresa').val(), fontSize: 45, alignment: 'center', margin: [-90, 33, 0]
-                // },
+                {
+                    alignment: 'left',
+                    margin: [10, 0],
+                    text: empresa,
+                    fontSize: 15,
+                },
+                {
+                    alignment: 'center',
+                    fontSize: 14,
+                    text: ['Reporte creado el: ', {text: jsDate.toString()}]
+                }
             ],
-            margin: [20, 10, 0, 0],  //[izquierda, arriba, derecha, abajo]
-
-
+            margin: 20
         }
     });
     doc['footer'] = (function (page, pages) {
         return {
             columns: [
-                {
-                    alignment: 'left',
-                    text: ['Reporte creado el: ', {text: jsDate.toString()}]
-                },
                 {
                     alignment: 'right',
                     text: ['Pagina ', {text: page.toString()}, ' de ', {text: pages.toString()}]
@@ -380,26 +395,8 @@ function customize(doc) {
             margin: 20
         }
     });
-    var objLayout = {};
-    objLayout['hLineWidth'] = function (i) {
-        return .5;
-    };
-    objLayout['vLineWidth'] = function (i) {
-        return .5;
-    };
-    objLayout['hLineColor'] = function (i) {
-        return '#000000';
-    };
-    objLayout['vLineColor'] = function (i) {
-        return '#000000';
-    };
-    objLayout['paddingLeft'] = function (i) {
-        return 4;
-    };
-    objLayout['paddingRight'] = function (i) {
-        return 4;
-    };
-    doc.content[0].layout = objLayout;
+    doc.content[1].margin = [0, 35, 0, 0];
+    doc.content[1].layout = {};
     doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 2).join('*').split('');
     doc.styles.tableBodyEven.alignment = 'center';
     doc.styles.tableBodyOdd.alignment = 'center';
@@ -425,39 +422,45 @@ function customize_report(doc) {
 
     var jsDate = formatDateToString(date);
     //[izquierda, arriba, derecha, abajo]
-    doc.pageMargins = [25, 50, 25, 50];
+    doc.pageMargins = [25, 150, -100, 50];
     doc.defaultStyle.fontSize = 12;
     doc.styles.tableHeader.fontSize = 12;
-    doc.content[1].table.body[0].forEach(function (h) {
-        h.fillColor = '#97af83'
-    });
+    doc.content[1].table.body[0].forEach(function (h) { h.fillColor = 'rgb(0,0,0)' });
+    // doc.styles.title = {color: '#1548b9', fontSize: '16', alignment: 'center'};
+    console.log(doc.content[1].table.body[1]);
     doc.content[1].table.body[doc.content[1].table.body.length - 1].forEach(function (h) {
-        h.fillColor = '#97AF83'
+        h.fillColor = '#f3f3f3';
+        h.style = "tableBodyOdd"
     });
-    doc.styles.title = {color: '#2D1D10', fontSize: '16', alignment: 'center'};
+    var direccion = $('#direccion_empresa').val();
+    var ruc = $('#ruc_empresa').val();
+    var parroquia = $('#parroquia_empresa').val();
+    var empresa = $('#nombre_empresa').val() + "\n" + ruc + "\n" + direccion + "\n" + parroquia;
     doc['header'] = (function () {
         return {
             columns: [
                 {
-                    text: $("#nombre_empresa").val() + '\n\n', fontSize: 30,
-                    alignment: 'center',
+                    image: logotipo,
+                    width: 120
                 },
-                // {
-                //     text: $('#direccion_empresa').val(), fontSize: 45, alignment: 'center', margin: [-90, 33, 0]
-                // },
+                {
+                    alignment: 'left',
+                    margin: [10, 0],
+                    text: empresa,
+                    fontSize: 15,
+                },
+                {
+                    alignment: 'center',
+                    fontSize: 14,
+                    text: ['Reporte creado el: ', {text: jsDate.toString()}]
+                }
             ],
-            margin: [20, 10, 0, 0],  //[izquierda, arriba, derecha, abajo]
-
-
+            margin: 20
         }
     });
     doc['footer'] = (function (page, pages) {
         return {
             columns: [
-                {
-                    alignment: 'left',
-                    text: ['Reporte creado el: ', {text: jsDate.toString()}]
-                },
                 {
                     alignment: 'right',
                     text: ['Pagina ', {text: page.toString()}, ' de ', {text: pages.toString()}]
@@ -466,117 +469,14 @@ function customize_report(doc) {
             margin: 20
         }
     });
-    var objLayout = {};
-    objLayout['hLineWidth'] = function (i) {
-        return .5;
-    };
-    objLayout['vLineWidth'] = function (i) {
-        return .5;
-    };
-    objLayout['hLineColor'] = function (i) {
-        return '#000000';
-    };
-    objLayout['vLineColor'] = function (i) {
-        return '#000000';
-    };
-    objLayout['paddingLeft'] = function (i) {
-        return 4;
-    };
-    objLayout['paddingRight'] = function (i) {
-        return 4;
-    };
-    doc.content[0].layout = objLayout;
-    doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+    doc.content[1].margin = [0, 35, 0, 0];
+    doc.content[1].layout = {};
+    doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 2).join('*').split('');
     doc.styles.tableBodyEven.alignment = 'center';
     doc.styles.tableBodyOdd.alignment = 'center';
 }
 
-// function customize_report(doc) {
-//     const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre",
-//         "Noviembre", "Diciembre"
-//     ];
-//     var date = new Date();
-//
-//     function formatDateToString(date) {
-//         // 01, 02, 03, ... 29, 30, 31
-//         var dd = (date.getDate() < 10 ? '0' : '') + date.getDate();
-//         // 01, 02, 03, ... 10, 11, 12
-//         // month < 10 ? '0' + month : '' + month; // ('' + month) for string result
-//         var MM = monthNames[date.getMonth() + 1]; //monthNames[d.getMonth()])
-//         // 1970, 1971, ... 2015, 2016, ...
-//         var yyyy = date.getFullYear();
-//         // create the format you want
-//         return (dd + " de " + MM + " de " + yyyy);
-//     }
-//
-//     var jsDate = formatDateToString(date);
-//     //[izquierda, arriba, derecha, abajo]
-//     doc.pageMargins = [25, 150, 25, 50];
-//     doc.defaultStyle.fontSize = 12;
-//     doc.styles.tableHeader.fontSize = 12;
-//     doc.content[1].table.body[0].forEach(function (h) {
-//         h.fillColor = '#4e73df'
-//     });
-//     doc.content[1].table.body[doc.content[1].table.body.length - 1].forEach(function (h) {
-//         h.fillColor = '#4e73df'
-//     });
-//     doc.styles.title = {color: '#2D1D10', fontSize: '16', alignment: 'center'};
-//     doc['header'] = (function () {
-//         return {
-//             columns: [
-//                 {
-//                     alignment: 'left', image: logotipo, width: 100, height: 100
-//                 },
-//                 {
-//                     text: $('#nombre_empresa').text(), fontSize: 45, alignment: 'center', margin: [-90, 30, 0]
-//                 },
-//             ],
-//             margin: [20, 10, 0, 0],  //[izquierda, arriba, derecha, abajo]
-//
-//
-//         }
-//     });
-//     doc['footer'] = (function (page, pages) {
-//         return {
-//             columns: [
-//                 {
-//                     alignment: 'left',
-//                     text: ['Reporte creado el: ', {text: jsDate.toString()}]
-//                 },
-//                 {
-//                     alignment: 'right',
-//                     text: ['Pagina ', {text: page.toString()}, ' de ', {text: pages.toString()}]
-//                 }
-//             ],
-//             margin: 20
-//         }
-//     });
-//     var objLayout = {};
-//     objLayout['hLineWidth'] = function (i) {
-//         return .5;
-//     };
-//     objLayout['vLineWidth'] = function (i) {
-//         return .5;
-//     };
-//     objLayout['hLineColor'] = function (i) {
-//         return '#000000';
-//     };
-//     objLayout['vLineColor'] = function (i) {
-//         return '#000000';
-//     };
-//     objLayout['paddingLeft'] = function (i) {
-//         return 4;
-//     };
-//     objLayout['paddingRight'] = function (i) {
-//         return 4;
-//     };
-//     doc.content[0].layout = objLayout;
-//     doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
-//     doc.styles.tableBodyEven.alignment = 'center';
-//     doc.styles.tableBodyOdd.alignment = 'center';
-// }
-//
-//
+
 function validador() {
     jQuery.validator.addMethod("lettersonly", function (value, element) {
         return this.optional(element) || /^[a-z," "]+$/i.test(value);
@@ -641,17 +541,17 @@ function persmisos() {
         url: '/empleado/permisos',
     }).done(function (data) {
         console.log(data);
-       if (data.permiso.secretaria === 1) {
-           ingresos.hide();
-           produccion.hide();
-           ventas.hide();
-           seguridad.hide();
-       } else if (data.permiso.vendedor === 1) {
-           ingresos.hide();
-           produccion.hide();
-           reportes.hide();
-           seguridad.hide();
-       }
+        if (data.permiso.secretaria === 1) {
+            ingresos.hide();
+            produccion.hide();
+            ventas.hide();
+            seguridad.hide();
+        } else if (data.permiso.vendedor === 1) {
+            ingresos.hide();
+            produccion.hide();
+            reportes.hide();
+            seguridad.hide();
+        }
 
     }).fail(function (jqXHR, textStatus, errorThrown) {
         alert(textStatus + ': ' + errorThrown);
