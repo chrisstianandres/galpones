@@ -1,10 +1,5 @@
 var check = 0;
 var user_tipo = parseInt($('input[name="user_tipo"]').val());
-// var myPieChart, chart, graph, myLineChart;
-// var ctx = document.getElementById("myAreaChart");
-//
-// // Pie Chart Example
-// ctx2 = document.getElementById("myPieChart");
 
 function graficos() {
     // myLineChart = new Chart(ctx, {
@@ -240,85 +235,68 @@ function graficos() {
 
 function datatbles() {
     $("#datatable").DataTable({
+        destroy: true,
+        scrollX: true,
         autoWidth: false,
-        dom: "tip",
-        ScrollX: '90%',
-        language: {
-            "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
-        },
+        order: [[2, "asc"]],
         ajax: {
-            url: '/producto/index',
+            url: window.location.pathname,
             type: 'POST',
-            dataSrc: "",
+            data: {'action': 'report'},
+            dataSrc: ""
         },
-        columns: [
-            {data: "producto_base.nombre"},
-            {data: "producto_base.categoria.nombre"},
-            {data: "presentacion.nombre"},
-            {data: "stock"},
-            {data: "imagen"}
-        ],
-        columnDefs: [
-            {
-                targets: [-2],
-                class: 'text-center',
-                orderable: false,
-                render: function (data, type, row) {
-                    return '<span>' + data + '</span>';
-                }
-            },
-            {
-                targets: [-1],
-                class: 'text-center',
-                orderable: false,
-                render: function (data, type, row) {
-                    return '<img src="' + data + '" width="30" height="30" class="img-circle elevation-2" alt="User Image">';
-                }
-            }
-        ],
-        createdRow: function (row, data, dataIndex) {
-            $('td', row).eq(3).find('span').addClass('badge bg-danger').attr("style", "color: white");
-        }
-    });
-    $("#datatable2").DataTable({
-        autoWidth: false,
-        // responsive: true,
-        dom: "tip",
-        // ScrollX: '90%',
         language: {
-            "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+            url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json',
         },
-        ajax: {
-            url: '/compra/index',
-            type: 'POST',
-            dataSrc: "",
-        },
-        columns: [
-            {data: 'compra.fecha_compra'},
-            {data: "material.producto_base.nombre"},
-            {data: "cantidad"},
-            {data: "compra.total"}
-        ],
-        columnDefs: [
-            {
-                targets: [-1],
-                class: 'text-center',
-                orderable: false,
-                render: function (data, type, row) {
-                    return '$' + data;
+
+        dom: "<'row'<'col-sm-12 col-md-12'B>>" +
+            "<'row'<'col-sm-12 col-md-3'l>>" +
+            "<'row'<'col-sm-12 col-md-12'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        buttons: {
+            dom: {
+                button: {
+                    className: '',
+
+                },
+                container: {
+                    className: 'buttons-container float-right'
                 }
             },
-            {
-                targets: [-2],
-                class: 'text-center',
-                width: '10%'
-            },
+            buttons: [
+                {
+                    text: '<i class="far fa-file-pdf"></i> PDF</i>',
+                    className: 'btn btn-danger',
+                    extend: 'pdfHtml5',
+                    footer: true,
+                    //filename: 'dt_custom_pdf',
+                    orientation: 'landscape', //portrait
+                    pageSize: 'A4', //A3 , A5 , A6 , legal , letter
+                    download: 'open',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4],
+                        search: 'applied',
+                        order: 'applied'
+                    },
+                    customize:customize
+                }
+            ]
+        },
+        columnDefs: [
             {
                 targets: '_all',
                 class: 'text-center',
-                orderable: false
-            }
-        ]
+
+            },
+            {
+                targets: [-1],
+                width: '20%',
+                render: function (data, type, row) {
+                    return '<spam>' + data +'</spam>';
+                }
+            },
+        ],
     });
 }
 
@@ -354,21 +332,6 @@ function addDataPie(chart, fecha, data) {
     chart.update();
 }
 
-// Area Chart Example
-
-
-function check_ctas() {
-    if (check === 0) {
-        $.ajax({
-            url: '/ctas_cobrar/lista',
-            type: 'POST',
-            data: {'action': 'check'},
-            dataSrc: "",
-        }).done(function (data) {
-            check = data;
-        })
-    }
-}
 
 var barChartData = [];
 var ctx = document.getElementById('myChart').getContext('2d');
@@ -420,7 +383,7 @@ $(function () {
 
     });
     if (user_tipo === 1) {
-        // datatbles();
+        datatbles();
         graficos();
     }
 
