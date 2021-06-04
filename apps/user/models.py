@@ -30,6 +30,7 @@ class User(AbstractUser):
     sexo = models.IntegerField(choices=SEXO, default=1)
     estado = models.IntegerField(choices=ESTADO, default=1)
     tipo = models.IntegerField(choices=tipo, default=1)
+    token = models.UUIDField(primary_key=False, editable=False, null=True, blank=True)
 
     def __str__(self):
         return '%s %s' % (self.username, self.first_name)

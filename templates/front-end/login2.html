@@ -58,46 +58,45 @@
         <img src="{% static 'sistema/assets/img/logo.png' %}" alt="Metis Logo">
     </div>
     <hr>
-    <div class="tab-content">
-        <div id="login" class="tab-pane active">
-            <form id="formlogin" method="post">
-                {% csrf_token %}
-                <p class="text-muted text-center">
-                    Ingresa Tu nombre de usuario y tu contraseña
-                </p>
-                <div class="form-group">
-                    <label for="username">Nombre de Usuario: </label>
-                <input type="text" name="username" placeholder="Nombre de Usuario" class="form-control top">
-                </div>
+    {% block formulario %}
+        <div class="tab-content">
+            <div id="login" class="tab-pane active">
+                <form id="formlogin" method="post">
+                    {% csrf_token %}
+                    <p class="text-muted text-center">
+                        Ingresa Tu nombre de usuario y tu contraseña
+                    </p>
+                    <div class="form-group">
+                        <label for="username">Nombre de Usuario: </label>
+                        <input type="text" name="username" placeholder="Nombre de Usuario" class="form-control top">
+                    </div>
 
-                <div class="form-group">
-                    <label for="password">Contraseña: </label>
-                <input type="password" name="password" placeholder="************" class="form-control bottom">
-                </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña: </label>
+                        <input type="password" name="password" placeholder="************" class="form-control bottom">
+                    </div>
 
-                <hr>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Ingresar</button>
-            </form>
+                    <hr>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Ingresar</button>
+                </form>
+            </div>
+            <div id="forgot" class="tab-pane">
+                <form id="form" method="post">
+                    <p class="text-muted text-center">Ingresa tu nombre de usuario</p>
+                    <input type="email" placeholder="Username" class="form-control">
+                    <br>
+                    <button class="btn btn-lg btn-danger btn-block" type="submit">Resetear contrseña</button>
+                </form>
+            </div>
         </div>
-        <div id="forgot" class="tab-pane">
-            <form id="form" method="post">
-                <p class="text-muted text-center">Enter your valid e-mail</p>
-                <input type="email" placeholder="mail@domain.com" class="form-control">
-                <br>
-                <button class="btn btn-lg btn-danger btn-block" type="submit">Recover Password</button>
-            </form>
+        <hr>
+        <div class="text-center">
+            <ul class="list-inline">
+                <li><a class="text-muted" onclick="location.href='{% url 'reset' %}'" data-toggle="tab">Olvide mi contraseña</a></li>
+            </ul>
         </div>
-        <div id="signup" class="tab-pane">
-            <form action="index.html">
-                <input type="text" placeholder="username" class="form-control top">
-                <input type="email" placeholder="mail@domain.com" class="form-control middle">
-                <input type="password" placeholder="password" class="form-control middle">
-                <input type="password" placeholder="re-password" class="form-control bottom">
-                <button class="btn btn-lg btn-success btn-block" type="submit">Register</button>
-            </form>
-        </div>
-    </div>
-    <hr>
+    {% endblock %}
+
 </div>
 
 

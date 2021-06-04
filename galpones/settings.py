@@ -165,3 +165,15 @@ STATICFILES_DIRS = [
 ]
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = '/login'
+
+
+
+EMAIL_HOST = 'smtp.gmail.com'
+
+EMAIL_PORT = 587
+
+EMAIL_HOST_USER = 'wg29327@gmail.com'
+
+EMAIL_HOST_PASSWORD = '2Soloperofeliz'
+
+DOMAIN = ''

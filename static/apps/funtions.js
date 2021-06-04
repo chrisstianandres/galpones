@@ -183,9 +183,19 @@ function printpdf(title, content, callback, cancel) {
 }
 
 function menssaje_error(title, content, icon, callback) {
+    var html = '';
+    if (typeof (content) === 'object') {
+        html = '<ul style="text-align: left;">';
+        $.each(content, function (key, value) {
+            html += '<li>' + key + ': ' + value + '</li>';
+        });
+        html += '</ul>';
+    } else {
+        html = '<p>' + content + '</p>';
+    }
     var obj = Swal.fire(
         title,
-        content,
+        html,
         'error'
     );
     setTimeout(function () {
@@ -216,7 +226,6 @@ function menssaje_ok(title, content, icon, callback) {
     ).then((result) => {
         if (result.isConfirmed) {
             callback();
-
         }
     });
 }
@@ -228,6 +237,7 @@ function login(url, parametros, callback, callback2) {
         url: url,
         data: parametros,
     }).done(function (data) {
+         $.isLoading('hide');
         if (!data.hasOwnProperty('error')) {
             callback();
             return false;
@@ -271,7 +281,7 @@ function save_with_ajax2(title, url, content, parametros, callback) {
                     }, 1000);
                     return false;
                 }
-                menssaje_error_form('Error', data.error, 'fas fa-exclamation-circle');
+                menssaje_error('Error', data.error, 'fas fa-exclamation-circle');
 
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 alert(textStatus + ': ' + errorThrown);
@@ -425,7 +435,9 @@ function customize_report(doc) {
     doc.pageMargins = [25, 150, -100, 50];
     doc.defaultStyle.fontSize = 12;
     doc.styles.tableHeader.fontSize = 12;
-    doc.content[1].table.body[0].forEach(function (h) { h.fillColor = 'rgb(0,0,0)' });
+    doc.content[1].table.body[0].forEach(function (h) {
+        h.fillColor = 'rgb(0,0,0)'
+    });
     // doc.styles.title = {color: '#1548b9', fontSize: '16', alignment: 'center'};
     console.log(doc.content[1].table.body[1]);
     doc.content[1].table.body[doc.content[1].table.body.length - 1].forEach(function (h) {
