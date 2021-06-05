@@ -125,14 +125,11 @@ class GroupForm(forms.ModelForm):
             })
             self.fields['name'].widget.attrs = {
                 'class': 'form-control form-control-sm input-sm'}
-            self.fields['permissions'].widget.attrs = {
-                'class': 'form-control form-control-sm input-sm select2',
-            'multiple': 'multiple'}
 
     class Meta:
         model = Group
-        fields = ['name', 'permissions']
-        labels = {'name': 'Nombre', 'permissions': 'Permisos'}
+        fields = ['name']
+        labels = {'name': 'Nombre'}
         widgets = {'name': forms.TextInput()}
 
 

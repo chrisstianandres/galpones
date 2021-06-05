@@ -30,14 +30,20 @@
                 <i class="fa fa-dashboard"></i><span class="link-title">&nbsp;Menu principal</span>
             </a>
         </li>
-        <li id="module_seguridad">
+        <li>
             <a><i class="fas fa-lock-open"></i> <span class="link-title">Seguridad</span> <span class="fa arrow"></span>
             </a>
             <ul class="collapse">
-                <li><a href="{% url 'user:lista' %}"><i class="fa fa-angle-right"></i> Usuarios</a></li>
-                <li><a href="{% url 'user:groups' %}"><i class="fa fa-angle-right"></i> Grupos</a>
-                <li><a href="{% url 'empresa:editar' %}"><i class="fa fa-angle-right"></i> Configurar Empresa</a>
-                </li>
+                {% if perms.user.add_user %}
+                    <li><a href="{% url 'user:lista' %}"><i class="fa fa-angle-right"></i> Usuarios</a></li>
+                {% endif %}
+                {% if perms.auth.add_group %}
+                    <li><a href="{% url 'user:groups' %}"><i class="fa fa-angle-right"></i> Grupos</a>
+                {% endif %}
+                {% if perms.empresa.add_empresa %}
+                    <li><a href="{% url 'empresa:editar' %}"><i class="fa fa-angle-right"></i> Configurar Empresa</a>
+                    </li>
+                {% endif %}
             </ul>
         </li>
         <li class="" id="module_produccion">
@@ -47,53 +53,62 @@
                 <span class="fa arrow"></span>
             </a>
             <ul class="collapse">
-                <li>
-                    <a href="{% url 'galpon:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Galpones</a>
-                </li>
-                <li>
-                    <a href="{% url 'lote:nuevo' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Gestion de Produccion </a>
-                </li>
-                <li>
-                    <a href="{% url 'distribucion:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Gestion de Galpones </a>
-                </li>
-                <li>
-                    <a href="{% url 'lote:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Control de Lotes </a>
-                </li>
-                <li>
-                    <a href="{% url 'medicina:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Medicinas </a>
-                </li>
-                <li>
-                    <a href="{% url 'alimento:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Alimentos </a>
-                </li>
-                <li>
-                    <a href="{% url 'raza:lista' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Aves </a>
-                </li>
+                {% if perms.galpon.add_galpon %}
+                    <li><a href="{% url 'galpon:lista' %}"><i class="fa fa-angle-right"></i>&nbsp; Galpones</a></li>
+                {% endif %}
+                {% if perms.lote.add_lote %}
+                    <li><a href="{% url 'lote:nuevo' %}"><i class="fa fa-angle-right"></i>&nbsp; Gestion de Produccion
+                    </a></li>
+                {% endif %}
+                {% if perms.distribucion.add_distribucion %}
+                    <li><a href="{% url 'distribucion:lista' %}"><i class="fa fa-angle-right"></i>&nbsp; Gestion de
+                        Galpones </a></li>
+                {% endif %}
+                {% if perms.lote.add_lote %}
+                    <li><a href="{% url 'lote:lista' %}"><i class="fa fa-angle-right"></i>&nbsp; Control de Lotes </a>
+                    </li>
+                {% endif %}
+                {% if perms.medicina.add_medicina %}
+                    <li>
+                        <a href="{% url 'medicina:lista' %}">
+                            <i class="fa fa-angle-right"></i>&nbsp; Medicinas </a>
+                    </li>
+                {% endif %}
+                {% if perms.alimento.add_alimento %}
+                    <li>
+                        <a href="{% url 'alimento:lista' %}">
+                            <i class="fa fa-angle-right"></i>&nbsp; Alimentos </a>
+                    </li>
+                {% endif %}
+                {% if perms.raza.add_raza %}
+                    <li>
+                        <a href="{% url 'raza:lista' %}">
+                            <i class="fa fa-angle-right"></i>&nbsp; Aves </a>
+                    </li>
+                {% endif %}
             </ul>
         </li>
-        <div id="module_ingresos">
+        <div>
             <br>
-            <li class="">
-                <a href="javascript:;">
-                    &nbsp;&nbsp;<i class="far fa-users"></i>
-                    <span class="link-title">Clientes</span>
-                    <span class="fa arrow"></span>
-                </a>
-                <ul class="collapse">
-                    <br>
-                    <li>
-                        <a href="{% url 'cliente:lista' %}">
-                            <i class="fa fa-angle-right"></i>&nbsp; Clientes </a>
-                    </li>
-                </ul>
-            </li>
-            <br>
+            {% if perms.cliente.add_cliente %}
+                <li class="">
+                    <a href="javascript:;">
+                        &nbsp;&nbsp;<i class="far fa-users"></i>
+                        <span class="link-title">Clientes</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="collapse">
+                        <br>
+
+                        <li>
+                            <a href="{% url 'cliente:lista' %}">
+                                <i class="fa fa-angle-right"></i>&nbsp; Clientes </a>
+                        </li>
+
+                    </ul>
+                </li>
+                <br>
+            {% endif %}
             <li class="">
                 <a href="javascript:;">
                     &nbsp;&nbsp;<i class="fa fa-shopping-bag"></i>
@@ -102,90 +117,103 @@
                 </a>
                 <ul class="collapse">
                     <br>
-                    <li>
-                        <a href="{% url 'compra:lista' %}">
-                            <i class="fa fa-angle-right"></i>&nbsp; Compras </a>
-                    </li>
+                    {% if perms.compra.add_compra %}
+                        <li>
+                            <a href="{% url 'compra:lista' %}">
+                                <i class="fa fa-angle-right"></i>&nbsp; Compras </a>
+                        </li>
+                    {% endif %}
                     <br>
-                    <li>
-                        <a href="{% url 'proveedor:lista' %}">
-                            <i class="fa fa-angle-right"></i>&nbsp; Proveedores </a>
-                    </li>
+                    {% if perms.proveedor.add_proveedor %}
+                        <li>
+                            <a href="{% url 'proveedor:lista' %}">
+                                <i class="fa fa-angle-right"></i>&nbsp; Proveedores </a>
+                        </li>
+                    {% endif %}
                 </ul>
             </li>
             <br>
+            {% if perms.empleado.add_empleado %}
+                <li class="">
+                    <a href="javascript:;">
+                        &nbsp;&nbsp;<i class="fa fa-user-plus"></i>
+                        <span class="link-title">Empleados</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="collapse">
+                        <br>
+                        <li>
+                            <a href="{% url 'empleado:lista' %}">
+                                <i class="fa fa-angle-right"></i>&nbsp; Empleados </a>
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+        </div>
+        <br>
+        {% if perms.ventas.add_ventas %}
+            <li>
+                <a href="{% url 'venta:lista' %}">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span class="link-title"> Ventas</span> </a>
+            </li>
+        {% endif %}
+        <li class="nav-divider"></li>
+        {% if perms.reportes.view_reportes %}
             <li class="">
                 <a href="javascript:;">
-                   &nbsp;&nbsp;<i class="fa fa-user-plus"></i>
-                    <span class="link-title">Empleados</span>
+                    <i class="fas fa-file-signature"></i>
+                    <span class="link-title">Reportes</span>
                     <span class="fa arrow"></span>
                 </a>
                 <ul class="collapse">
-                    <br>
                     <li>
-                        <a href="{% url 'empleado:lista' %}">
+                        <a href="javascript:;">Produccion <span class="fa arrow"></span> </a>
+                        <ul class="collapse">
+                            <li><a href="{% url 'lote:report' %}"><i class="fa fa-angle-right"></i>&nbsp; Produccion por
+                                Lote </a></li>
+                            <li><a href="{% url 'distribucion:reporte' %}"><i class="fa fa-angle-right"></i>&nbsp;
+                                Producion
+                                por Galpon </a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">Compras <span class="fa arrow"></span> </a>
+                        <ul class="collapse">
+                            <li><a href="{% url 'compra:report_total' %}"><i class="fa fa-angle-right"></i> Totales</a>
+                            </li>
+                            <li><a href="{% url 'compra:report_by_product' %}"><i class="fa fa-angle-right"></i> Por
+                                Producto</a></li>
+                            <li><a href="{% url 'compra:devoluciones' %}"><i class="fa fa-angle-right"></i> Devoluciones</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;">Ventas <span class="fa arrow"></span> </a>
+                        <ul class="collapse">
+                            <li><a href="{% url 'venta:report_total' %}"><i class="fa fa-angle-right"></i> Totales</a>
+                            </li>
+                            <li><a href="{% url 'venta:report_by_product' %}"><i class="fa fa-angle-right"></i> Por
+                                Producto</a>
+                            <li><a href="{% url 'venta:devoluciones' %}"><i class="fa fa-angle-right"></i> Devoluciones</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'insumo:reporte' %}">
+                            <i class="fa fa-angle-right"></i>&nbsp; Stock Insumos </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'empleado:report' %}">
                             <i class="fa fa-angle-right"></i>&nbsp; Empleados </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'cliente:report' %}">
+                            <i class="fa fa-angle-right"></i>&nbsp; Clientes </a>
                     </li>
                 </ul>
             </li>
-        </div>
-        <br>
-        <li id="module_ventas">
-            <a href="{% url 'venta:lista' %}">
-                <i class="fas fa-piggy-bank"></i>
-                <span class="link-title"> Ventas</span> </a>
-        </li>
-        <li class="nav-divider"></li>
-        <li class="" id="module_reportes">
-            <a href="javascript:;">
-                <i class="fas fa-file-signature"></i>
-                <span class="link-title">Reportes</span>
-                <span class="fa arrow"></span>
-            </a>
-            <ul class="collapse">
-                <li>
-                    <a href="javascript:;">Produccion <span class="fa arrow"></span> </a>
-                    <ul class="collapse">
-                        <li><a href="{% url 'lote:report' %}"><i class="fa fa-angle-right"></i>&nbsp; Produccion por
-                            Lote </a></li>
-                        <li><a href="{% url 'distribucion:reporte' %}"><i class="fa fa-angle-right"></i>&nbsp; Producion
-                            por Galpon </a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript:;">Compras <span class="fa arrow"></span> </a>
-                    <ul class="collapse">
-                        <li><a href="{% url 'compra:report_total' %}"><i class="fa fa-angle-right"></i> Totales</a></li>
-                        <li><a href="{% url 'compra:report_by_product' %}"><i class="fa fa-angle-right"></i> Por
-                            Producto</a></li>
-                        <li><a href="{% url 'compra:devoluciones' %}"><i class="fa fa-angle-right"></i> Devoluciones</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript:;">Ventas <span class="fa arrow"></span> </a>
-                    <ul class="collapse">
-                        <li><a href="{% url 'venta:report_total' %}"><i class="fa fa-angle-right"></i> Totales</a></li>
-                        <li><a href="{% url 'venta:report_by_product' %}"><i class="fa fa-angle-right"></i> Por Producto</a>
-                        <li><a href="{% url 'venta:devoluciones' %}"><i class="fa fa-angle-right"></i> Devoluciones</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="{% url 'insumo:reporte' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Stock Insumos </a>
-                </li>
-                <li>
-                    <a href="{% url 'empleado:report' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Empleados </a>
-                </li>
-                <li>
-                    <a href="{% url 'cliente:report' %}">
-                        <i class="fa fa-angle-right"></i>&nbsp; Clientes </a>
-                </li>
-            </ul>
-        </li>
-
+        {% endif %}
 
     </ul>
 

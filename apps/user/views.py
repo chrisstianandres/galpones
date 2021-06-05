@@ -1,21 +1,22 @@
 import json
 
-from django.contrib.auth.models import Group
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse, request
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Count
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, UpdateView, TemplateView
 
 from apps.backEnd import nombre_empresa
-# from apps.cliente.models import Cliente
+
 from apps.mixins import ValidatePermissionRequiredMixin
 from apps.user.forms import GroupForm
-# from apps.user.forms import UserForm, UserForm_online
+
 from apps.user.forms import UserForm
 from apps.user.models import User
 
-# from apps.proveedor.models import Proveedor
 
 opc_icono = 'fas fa-user-shield'
 opc_entidad = 'Usuarios'
@@ -37,7 +38,10 @@ class lista(ValidatePermissionRequiredMixin, ListView):
             action = request.POST['action']
             if action == 'list':
                 data = []
-                user = User.objects.all()
+                if request.user.username == 'soporte':
+                    user = User.objects.all()
+                else:
+                    user = User.objects.all().exclude(username='soporte')
                 for c in user:
                     data.append(c.toJSON())
             elif action == 'estado':
@@ -199,7 +203,7 @@ class Updateview(ValidatePermissionRequiredMixin, UpdateView):
 class Listgroupsview(ValidatePermissionRequiredMixin, ListView):
     model = Group
     template_name = 'front-end/group/group_list.html'
-    permission_required = 'user.view_user'
+    permission_required = 'group.view_group'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
@@ -214,15 +218,23 @@ class Listgroupsview(ValidatePermissionRequiredMixin, ListView):
                 user = Group.objects.all()
                 for c in user:
                     data.append({'id': int(c.id), 'nombre': str(c.name),
-                                 'permisos': [{'id': p.id, 'nombre': p.name} for p in c.permissions.all()]})
-                    print(data)
+                                 'permisos': [{'nombre': p['content_type__model']}
+                                              for p in c.permissions.values('content_type__model')
+                                .annotate(Count('content_type__model')).order_by('content_type__model')
+                                .exclude(content_type__model__in=['logentry', 'permission', 'contenttype', 'session',
+                                                                                              'detalle_venta',
+                                                                                              'detalle_compra',
+                                                                  'portadas', 'canton',  'provincia', 'parroquia'])]})
             elif action == 'delete':
                 try:
                     id = request.POST['id']
                     if id:
                         ps = Group.objects.get(pk=id)
-                        ps.delete()
-                        data['resp'] = True
+                        if not request.user.groups.filter(id=ps.id):
+                            ps.delete()
+                            data['resp'] = True
+                        else:
+                            data['error'] = 'Este grupo de permisos esta asignado a 1 o mas usuarios'
                     else:
                         data['error'] = 'Ha ocurrido un error'
                 except Exception as e:
@@ -248,8 +260,13 @@ class Listgroupsview(ValidatePermissionRequiredMixin, ListView):
 class CrudViewGroup(ValidatePermissionRequiredMixin, TemplateView):
     form_class = Group
     template_name = 'front-end/group/group_form.html'
+    permission_required = 'group.add_group'
 
     @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -257,18 +274,38 @@ class CrudViewGroup(ValidatePermissionRequiredMixin, TemplateView):
         data = {}
         action = request.POST['action']
         try:
-            if action == 'add':
-                f = GroupForm(request.POST)
-                if f.is_valid():
-                    f.save()
-                    return HttpResponseRedirect('/user/groups')
-                else:
-                    data['form'] = f
-                return render(request, 'front-end/group/group_form.html', data)
-            elif action == 'delete':
-                pk = request.POST['id']
-                cli = Group.objects.get(pk=pk)
-                cli.delete()
+            if action == 'modelos':
+                data = []
+                contentype = ContentType.objects.order_by('model')
+                x = 1
+                for c in contentype.exclude(model__in=['logentry', 'permission', 'session', 'contenttype', 'cargo',
+                                                       'detalle_venta', 'detalle_compra', 'portadas', 'canton',
+                                                       'provincia', 'parroquia']):
+                    nombre = c.model
+                    if c.name == 'grupo':
+                        nombre = 'rol'
+                    data.append({'id': c.id, 'nombre': nombre, 'num': x, 'check': 0})
+                    x += 1
+            elif action == 'add':
+                datos = json.loads(request.POST['permisos'])
+                grupo = Group()
+                grupo.name = datos['nombre']
+                grupo.save()
+                for p in datos['modelos']:
+                    if p['check'] == 1:
+                        add = '{}_{}'.format('add', p['nombre'])
+                        permiso_add = Permission.objects.get(codename=add)
+                        grupo.permissions.add(permiso_add.id)
+                        view = '{}_{}'.format('view', p['nombre'])
+                        permiso_view = Permission.objects.get(codename=view)
+                        grupo.permissions.add(permiso_view.id)
+                        change = '{}_{}'.format('change', p['nombre'])
+                        permiso_change = Permission.objects.get(codename=change)
+                        grupo.permissions.add(permiso_change.id)
+                        delete = '{}_{}'.format('delete', p['nombre'])
+                        permiso_delete = Permission.objects.get(codename=delete)
+                        grupo.permissions.add(permiso_delete.id)
+                    grupo.save()
                 data['resp'] = True
             else:
                 data['error'] = 'No ha seleccionado ninguna opción'
@@ -286,6 +323,7 @@ class CrudViewGroup(ValidatePermissionRequiredMixin, TemplateView):
         data['form'] = GroupForm
         data['action'] = 'add'
         data['empresa'] = empresa
+        data['option'] = 'modelos'
         return data
 
 
@@ -294,6 +332,7 @@ class UpdateGroup(ValidatePermissionRequiredMixin, UpdateView):
     form_class = GroupForm
     template_name = 'front-end/group/group_form.html'
     success_url = 'user:groups'
+    permission_required = 'group.add_change'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -303,21 +342,42 @@ class UpdateGroup(ValidatePermissionRequiredMixin, UpdateView):
         data = {}
         action = request.POST['action']
         try:
-            pk = self.kwargs.get('pk', 0)
-            group = self.model.objects.get(id=pk)
-            if action == 'edit':
-                f = self.form_class(request.POST, request.FILES, instance=group)
-                if f.is_valid():
-                    f.save()
-                    return HttpResponseRedirect('/user/groups')
-                else:
-                    data = self.get_context_data()
-                    data['form'] = f
-                return render(request, 'front-end/group/group_form.html', data)
-            elif action == 'delete':
-                pk = request.POST['id']
-                cli = Group.objects.get(pk=pk)
-                cli.delete()
+            if action == 'editar':
+                data = []
+                pk = self.kwargs['pk']
+                contentype = ContentType.objects.all().order_by('model')
+                x = 1
+                for c in contentype.exclude(model__in=['logentry', 'permission', 'session', 'contenttype', 'cargo',
+                                                       'detalle_venta', 'detalle_compra', 'portadas', 'canton',
+                                                       'provincia', 'parroquia']):
+                    nombre = c.model
+                    set_add = 0
+                    if Group.objects.filter(permissions__content_type__model=nombre, id=pk):
+                        set_add = 1
+                    data.append({'id': c.id, 'nombre': nombre, 'num': x, 'check': set_add})
+
+                    x += 1
+            elif action == 'add':
+                datos = json.loads(request.POST['permisos'])
+                grupo = Group.objects.get(id=self.kwargs['pk'])
+                grupo.permissions.clear()
+                grupo.name = datos['nombre']
+                grupo.save()
+                for p in datos['modelos']:
+                    if p['check'] == 1:
+                        add = '{}_{}'.format('add', p['nombre'])
+                        permiso_add = Permission.objects.get(codename=add)
+                        grupo.permissions.add(permiso_add.id)
+                        view = '{}_{}'.format('view', p['nombre'])
+                        permiso_view = Permission.objects.get(codename=view)
+                        grupo.permissions.add(permiso_view.id)
+                        change = '{}_{}'.format('change', p['nombre'])
+                        permiso_change = Permission.objects.get(codename=change)
+                        grupo.permissions.add(permiso_change.id)
+                        delete = '{}_{}'.format('delete', p['nombre'])
+                        permiso_delete = Permission.objects.get(codename=delete)
+                        grupo.permissions.add(permiso_delete.id)
+                    grupo.save()
                 data['resp'] = True
             else:
                 data['error'] = 'No ha seleccionado ninguna opción'
@@ -334,8 +394,9 @@ class UpdateGroup(ValidatePermissionRequiredMixin, UpdateView):
         data['titulo'] = 'Editar Grupos'
         data['nuevo'] = '/usuario/newgroup'
         data['form'] = GroupForm(instance=grupo)
-        data['action'] = 'edit'
+        data['action'] = 'add'
         data['empresa'] = empresa
+        data['option'] = 'editar'
         return data
 
 
