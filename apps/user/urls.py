@@ -14,5 +14,6 @@ urlpatterns = [
     path('editar/<int:pk>', login_required(Updateview.as_view()), name='editar'),
     path('grupo_editar/<int:pk>', login_required(UpdateGroup.as_view()), name='grupo_editar'),
     path('profile', login_required(views.profile), name='profile'),
+    path('change/group/<int:pk>/', UserChangeGroup.as_view(), name='user_change_group'),
 
 ]

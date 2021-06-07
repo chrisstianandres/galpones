@@ -23,8 +23,8 @@ from galpones import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', login_required(backEnd.menu)),
-    path('menu', login_required(backEnd.menu), name='menu'),
+    path('', login_required(backEnd.DashboardView.as_view())),
+    path('menu', login_required(backEnd.DashboardView.as_view()), name='menu'),
     path('login', backEnd.LoginFormView.as_view(), name='login'),
     path('reset_pass/', backEnd.ResetPasswordView.as_view(), name='reset'),
     path('change_pass/<str:token>/', backEnd.ChangePasswordView.as_view(), name='change_pass'),

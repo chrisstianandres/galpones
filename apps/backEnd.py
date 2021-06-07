@@ -5,22 +5,21 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from django.contrib.auth import *
+from django.contrib.auth.models import Group
 from django.contrib.auth.views import LoginView
 from django.db.models import Sum
 from django.http import *
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-
 # -----------------------------------------------PAGINA PRINCIPAL-----------------------------------------------------#
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
 
 from apps.alimento.models import Alimento
 from apps.compra.models import Detalle_compra
 from apps.empresa.models import Empresa
-
 from apps.medicina.models import Medicina
 from apps.user.forms import ResetPasswordForm, ChangePasswordForm
 from apps.user.models import User
@@ -35,42 +34,42 @@ def nombre_empresa():
     return empresa
 
 
-@csrf_exempt
-def menu(request):
-    data = {
-        'titulo': 'Menu Principal', 'empresa': nombre_empresa(),
-        'icono': 'fas fa-tachometer-alt', 'entidad': 'Menu Principal',
-        'imagen1': '{}{}'.format(MEDIA_URL, 'frente1.jpeg'),
-        'imagen2': '{}{}'.format(MEDIA_URL, 'frente2.jpeg'),
-    }
-    if request.method == 'POST':
-        try:
-            action = request.POST['action']
-            model = Detalle_compra
-            if action == 'report':
-                data = []
-                query = model.objects.values('insumo_id').annotate(
-                    stock=Sum('stock_actual')).filter(
-                    compra__estado=1, insumo__tipo_insumo=1).order_by('insumo_id')
-                query2 = model.objects.values('insumo_id').filter(
-                    compra__estado=1, insumo__tipo_insumo=0).annotate(
-                    stock=Sum('stock_actual')).order_by('insumo_id')
-                for p in query:
-                    for m in Medicina.objects.filter(insumo_id=p['insumo_id']):
-                        item = [m.insumo.nombre, m.insumo.get_tipo_insumo_display(),
-                                m.insumo.categoria.nombre, m.tipo_medicina.nombre, p['stock']]
-                        data.append(item)
-                for a in query2:
-                    for al in Alimento.objects.filter(insumo_id=a['insumo_id']):
-                        item = [al.insumo.nombre, al.insumo.get_tipo_insumo_display(),
-                                al.insumo.categoria.nombre, al.presentacion.nombre, a['stock']]
-                        data.append(item)
-            else:
-                data['error'] = 'No ha seccionado una opcion'
-        except Exception as e:
-             data['error'] = str(e)
-        return JsonResponse(data, safe=False)
-    return render(request, 'front-end/index.html', data)
+# @csrf_exempt
+# def menu(request):
+#     data = {
+#         'titulo': 'Menu Principal', 'empresa': nombre_empresa(),
+#         'icono': 'fas fa-tachometer-alt', 'entidad': 'Menu Principal',
+#         'imagen1': '{}{}'.format(MEDIA_URL, 'frente1.jpeg'),
+#         'imagen2': '{}{}'.format(MEDIA_URL, 'frente2.jpeg'),
+#     }
+#     if request.method == 'POST':
+#         try:
+#             action = request.POST['action']
+#             model = Detalle_compra
+#             if action == 'report':
+#                 data = []
+#                 query = model.objects.values('insumo_id').annotate(
+#                     stock=Sum('stock_actual')).filter(
+#                     compra__estado=1, insumo__tipo_insumo=1).order_by('insumo_id')
+#                 query2 = model.objects.values('insumo_id').filter(
+#                     compra__estado=1, insumo__tipo_insumo=0).annotate(
+#                     stock=Sum('stock_actual')).order_by('insumo_id')
+#                 for p in query:
+#                     for m in Medicina.objects.filter(insumo_id=p['insumo_id']):
+#                         item = [m.insumo.nombre, m.insumo.get_tipo_insumo_display(),
+#                                 m.insumo.categoria.nombre, m.tipo_medicina.nombre, p['stock']]
+#                         data.append(item)
+#                 for a in query2:
+#                     for al in Alimento.objects.filter(insumo_id=a['insumo_id']):
+#                         item = [al.insumo.nombre, al.insumo.get_tipo_insumo_display(),
+#                                 al.insumo.categoria.nombre, al.presentacion.nombre, a['stock']]
+#                         data.append(item)
+#             else:
+#                 data['error'] = 'No ha seccionado una opcion'
+#         except Exception as e:
+#              data['error'] = str(e)
+#         return JsonResponse(data, safe=False)
+#     return render(request, 'front-end/index.html', data)
 
 
 # -----------------------------------------------LOGEO----------------------------------------------------------------#
@@ -83,6 +82,61 @@ def menu(request):
 #     else:
 #         return HttpResponseRedirect("/menu")
 #     return render(request, 'front-end/login2.html', data)
+
+class DashboardView(TemplateView):
+    template_name = 'front-end/index.html'
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        request.user.get_group_session()
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            model = Detalle_compra
+            if action == 'report':
+                data = []
+                query = model.objects.values('insumo_id').annotate(stock=Sum('stock_actual')) \
+                    .filter(compra__estado=1, insumo__tipo_insumo=1).order_by('insumo_id')
+                query2 = model.objects.values('insumo_id').filter(compra__estado=1, insumo__tipo_insumo=0).annotate(
+                    stock=Sum('stock_actual')).order_by('insumo_id')
+                for p in query:
+                    for m in Medicina.objects.filter(insumo_id=p['insumo_id']):
+                        item = [m.insumo.nombre, m.insumo.get_tipo_insumo_display(),
+                                m.insumo.categoria.nombre, m.tipo_medicina.nombre, p['stock']]
+                        data.append(item)
+                    for a in query2:
+                        for al in Alimento.objects.filter(insumo_id=a['insumo_id']):
+                            item = [al.insumo.nombre, al.insumo.get_tipo_insumo_display(),
+                                    al.insumo.categoria.nombre, al.presentacion.nombre, a['stock']]
+                            data.append(item)
+            else:
+                data['error'] = 'No ha seccionado una opcion'
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data, safe=False)
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['titulo'] = 'Menu Principal'
+        data['empresa'] = nombre_empresa()
+        data['icono'] = 'fas fa-tachometer-alt'
+        data['entidad'] = 'Menu Principal'
+        data['imagen1'] = '{}{}'.format(MEDIA_URL, 'frente1.jpeg')
+        data['imagen2'] = '{}{}'.format(MEDIA_URL, 'frente2.jpeg')
+        data['imagen3'] = '{}{}'.format(MEDIA_URL, 'frente3.jpeg')
+        # group = Group.objects.filter(id=self.request.session['group'].id)
+        # if group.exists():
+        #     data['perms'] = [{p.content_type.app_label: p.codename} for p in Group.objects.get(id=self.request.session['group'].id).permissions.all()]
+        #     print(data['perms'])
+        return data
+
+
 class LoginFormView(LoginView):
     template_name = 'front-end/login2.html'
 
@@ -206,6 +260,7 @@ class ChangePasswordView(FormView):
         context['login_url'] = settings.LOGIN_URL
         context['nomb'] = nombre_empresa()
         return context
+
 
 # class signin(TemplateView):
 #     form_class = UserForm_online

@@ -5,9 +5,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, UpdateView, TemplateView
+from django.views.generic import ListView, UpdateView, TemplateView, View
+
 
 from apps.backEnd import nombre_empresa
 
@@ -203,7 +205,7 @@ class Updateview(ValidatePermissionRequiredMixin, UpdateView):
 class Listgroupsview(ValidatePermissionRequiredMixin, ListView):
     model = Group
     template_name = 'front-end/group/group_list.html'
-    permission_required = 'group.view_group'
+    permission_required = 'auth.view_group'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
@@ -260,7 +262,7 @@ class Listgroupsview(ValidatePermissionRequiredMixin, ListView):
 class CrudViewGroup(ValidatePermissionRequiredMixin, TemplateView):
     form_class = Group
     template_name = 'front-end/group/group_form.html'
-    permission_required = 'group.add_group'
+    permission_required = 'auth.add_group'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -332,7 +334,7 @@ class UpdateGroup(ValidatePermissionRequiredMixin, UpdateView):
     form_class = GroupForm
     template_name = 'front-end/group/group_form.html'
     success_url = 'user:groups'
-    permission_required = 'group.add_change'
+    permission_required = 'auth.add_change'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -493,3 +495,16 @@ def __validar_ced_ruc(nro, tipo):
     mod = total % base
     val = base - mod if mod != 0 else 0
     return val == d_ver
+
+
+class UserChangeGroup(View):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            request.session['group'] = Group.objects.get(pk=self.kwargs['pk'])
+            print(request.session)
+        except:
+            pass
+        return HttpResponseRedirect(reverse_lazy('menu'))
+
+

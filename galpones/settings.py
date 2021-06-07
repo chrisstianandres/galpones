@@ -76,6 +76,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'crum.CurrentRequestUserMiddleware',
 ]
 
 ROOT_URLCONF = 'galpones.urls'
@@ -177,3 +178,5 @@ EMAIL_HOST_USER = 'wg29327@gmail.com'
 EMAIL_HOST_PASSWORD = '2Soloperofeliz'
 
 DOMAIN = ''
+
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
