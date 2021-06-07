@@ -8,7 +8,6 @@ from django.views.generic import *
 from apps.backEnd import nombre_empresa
 from apps.galpon.forms import GalponForm
 from apps.galpon.models import Galpon
-from apps.medicina.models import Medicina
 from apps.mixins import ValidatePermissionRequiredMixin
 
 opc_icono = 'fas fa-farm'
@@ -20,7 +19,7 @@ empresa = nombre_empresa()
 class lista(ValidatePermissionRequiredMixin, ListView):
     model = Galpon
     template_name = 'front-end/galpon/list.html'
-    permission_required = 'galpon.view_galpon'
+    permission_required = 'view_galpon'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
@@ -58,8 +57,8 @@ class lista(ValidatePermissionRequiredMixin, ListView):
         data['icono'] = opc_icono
         data['entidad'] = opc_entidad
         data['boton'] = 'Guardar'
-        data['titulo'] = 'Medicinas'
-        data['nuevo'] = '/medicina/nuevo'
+        data['titulo'] = 'Listado de Galpones'
+        data['nuevo'] = '/galpon/nuevo'
         data['titulo_lista'] = 'Listado de Galpones'
         data['titulo_formulario'] = 'Formulario de Registro'
         data['empresa'] = empresa
@@ -69,6 +68,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
 
 class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     form_class = GalponForm
+    permission_required = 'add_galpon'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):

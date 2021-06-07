@@ -24,7 +24,7 @@ empresa = nombre_empresa()
 class lista(ValidatePermissionRequiredMixin, ListView):
     model = Alimento
     template_name = 'front-end/alimento/list.html'
-    permission_required = 'alimento.view_alimento'
+    permission_required = 'view_alimento'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
@@ -89,6 +89,7 @@ class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     model = Alimento
     second_model = Insumo
     second_form_class = InsumoForm
+    permission_required = 'add_alimento'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):

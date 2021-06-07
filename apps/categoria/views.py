@@ -19,7 +19,7 @@ empresa = nombre_empresa()
 class lista(ValidatePermissionRequiredMixin, ListView):
     model = Categoria
     template_name = 'front-end/categoria/list.html'
-    permission_required = 'categoria.view_categoria'
+    permission_required = 'view_categoria'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
@@ -60,6 +60,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
 
 class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     form_class = CategoriaForm
+    permission_required = 'add_categoria'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):

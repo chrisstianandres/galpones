@@ -35,7 +35,7 @@ empresa = nombre_empresa()
 class lista(ValidatePermissionRequiredMixin, ListView):
     model = Compra
     template_name = 'front-end/compra/list.html'
-    permission_required = 'compra.view_compra'
+    permission_required = 'view_compra'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
@@ -140,7 +140,7 @@ class lista(ValidatePermissionRequiredMixin, ListView):
 class devolucion(ValidatePermissionRequiredMixin, ListView):
     model = Compra
     template_name = 'front-end/compra/devolucion.html'
-    permission_required = 'compra.view_compra'
+    permission_required = 'view_compra'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
@@ -230,7 +230,7 @@ class devolucion(ValidatePermissionRequiredMixin, ListView):
 class CrudView(ValidatePermissionRequiredMixin, TemplateView):
     form_class = Compra
     template_name = 'front-end/compra/form.html'
-    permission_required = 'compra.add_compra'
+    permission_required = 'add_compra'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):

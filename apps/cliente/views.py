@@ -22,7 +22,7 @@ empresa = nombre_empresa()
 class lista(ValidatePermissionRequiredMixin, ListView):
     model = Cliente
     template_name = "front-end/cliente/list.html"
-    permission_required = 'cliente.view_cliente'
+    permission_required = 'view_cliente'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
