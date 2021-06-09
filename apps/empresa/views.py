@@ -38,6 +38,7 @@ def editar(request):
             dato = request.POST
             foto = request.FILES
             if dato:
+                print(dato)
                 config.nombre = dato['nombre']
                 config.ubicacion_id = dato['ubicacion']
                 config.direccion = dato['direccion']
@@ -47,11 +48,13 @@ def editar(request):
                 config.iva = dato['iva']
                 config.indice = dato['indice']
                 config.tasa = dato['tasa']
-                config.foto = foto['foto']
+                if foto:
+                    config.foto = foto['foto']
                 config.save()
                 data['resp'] = True
                 return JsonResponse(data, safe=False)
         except Exception as e:
+            print(e)
             data['error'] = str(e)
     return HttpResponseRedirect('/empresa/configuracion')
 

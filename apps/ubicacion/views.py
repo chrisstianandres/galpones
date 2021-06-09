@@ -7,10 +7,9 @@ from apps.mixins import ValidatePermissionRequiredMixin
 from apps.ubicacion.models import Provincia, Canton, Parroquia
 
 
-class lista(ValidatePermissionRequiredMixin, ListView):
+class lista(ListView):
     model = Provincia
     template_name = "front-end/cliente/list.html"
-    permission_required = 'cliente.view_cliente'
 
     @csrf_exempt
     def dispatch(self, request, *args, **kwargs):
